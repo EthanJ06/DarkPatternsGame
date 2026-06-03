@@ -1,0 +1,1542 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>You've Been Opted In — Dark Patterns Game</title>
+<style>
+/* ── TOKENS ── */
+:root{
+  --bg:#0e0e12;--bg2:#17171e;--bg3:#1f1f28;--border:#2a2a36;--border2:#3a3a4e;
+  --text:#f0f0f4;--text2:#9898b0;--text3:#5a5a72;
+  --green:#39d98a;--green-dim:#1a3d2e;--green-text:#39d98a;
+  --red:#ff4f4f;--red-dim:#3d1a1a;
+  --amber:#f5a623;--amber-dim:#3d2e0a;
+  --purple:#7c6ef7;--purple-dim:#1e1a3d;--purple-light:#aea6fa;
+  --white:#ffffff;--offwhite:#f8f8f6;--light-border:#e2e2de;--light-bg:#f2f2ef;
+  --radius:10px;--radius-sm:7px;
+}
+
+/* ── RESET ── */
+*{box-sizing:border-box;margin:0;padding:0}
+strong{font-weight:500}
+
+/* ── SHELL ── */
+body{font-family:system-ui,-apple-system,sans-serif;background:#07070a;min-height:100vh;display:flex;align-items:flex-start;justify-content:center;padding:20px 12px}
+#app{width:100%;max-width:660px;background:var(--bg);border-radius:16px;border:1px solid var(--border);overflow:hidden;min-height:520px}
+
+/* ── SCREENS ── */
+.scr{display:none;flex-direction:column;animation:screenin .2s ease}
+.scr.active{display:flex}
+@keyframes screenin{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+/* ── HUD ── */
+.hud{display:flex;justify-content:space-between;align-items:center;padding:10px 16px;border-bottom:1px solid var(--border);gap:12px;flex-wrap:wrap;background:var(--bg2)}
+.hud-lvl{font-size:13px;font-weight:500;color:var(--text)}
+.hud-goal{font-size:11px;color:var(--text3);font-style:italic}
+.hearts{display:flex;gap:4px}
+.heart{width:15px;height:15px;background:var(--red);clip-path:path('M7.5 13C7.5 13 1 8.5 1 4.5A3.2 3.2 0 0 1 7.5 3A3.2 3.2 0 0 1 14 4.5C14 8.5 7.5 13 7.5 13Z')}
+.heart.lost{background:var(--border2)}
+.score-pill{font-size:12px;color:var(--green);background:var(--green-dim);padding:3px 10px;border-radius:999px;font-weight:500;letter-spacing:.01em}
+.streak-pill{font-size:12px;color:var(--amber);background:var(--amber-dim);padding:3px 10px;border-radius:999px;font-weight:500}
+.cost-pill{font-size:12px;color:var(--red);background:var(--red-dim);padding:3px 10px;border-radius:999px;font-weight:500}
+
+/* ── XP BAR ── */
+.xp-track{height:3px;background:var(--border);overflow:hidden}
+.xp-fill{height:100%;background:var(--purple);transition:width .6s ease}
+
+/* ── PROGRESS DOTS ── */
+.dots{display:flex;gap:5px;justify-content:center;padding:10px 0;background:var(--bg2)}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--border2)}
+.dot.done{background:var(--green)}.dot.cur{background:var(--text2)}
+.dot.ai-cur{background:var(--purple-light)}.dot.ai-done{background:var(--purple)}
+
+/* ── GAME BUTTONS (shell chrome) ── */
+.gbtn{padding:9px 18px;border-radius:var(--radius-sm);border:1px solid var(--border2);background:var(--bg3);color:var(--text);font-size:13px;cursor:pointer;font-family:inherit;transition:all .15s}
+.gbtn:hover{border-color:var(--border2);background:var(--bg2);color:var(--text)}
+.gbtn-green{background:var(--green);color:#051a0e;border-color:transparent;font-weight:500}
+.gbtn-green:hover{opacity:.9}
+.gbtn-dark{background:#111;color:var(--text);border-color:var(--border2)}
+.gbtn-ghost{background:transparent;border-color:transparent;color:var(--text3);font-size:11px}
+.gbtn-ghost:hover{color:var(--text2)}
+.gbtn-row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+
+/* ── FAKE APP (the "website" being played) ── */
+.fake-app{background:var(--offwhite);border-radius:var(--radius);margin:14px;padding:16px;display:flex;flex-direction:column;gap:11px;border:1px solid var(--light-border)}
+.ai-app{border-color:#b0a8f0;background:#f0effe}
+.ai-banner{display:flex;align-items:center;gap:7px;padding:6px 10px;background:#c8c2f8;border-radius:7px;font-size:12px;color:#26215C;font-weight:500}
+.ai-pulse{width:7px;height:7px;border-radius:50%;background:#534AB7;animation:pulse 1.2s infinite;flex-shrink:0}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+
+/* ── FAKE APP BUTTONS (inside the "websites") ── */
+.btn{padding:8px 15px;border-radius:var(--radius-sm);border:1px solid #ccc;background:var(--white);color:#111;font-size:13px;cursor:pointer;font-family:inherit;transition:background .1s}
+.btn:hover{background:#f0f0ee}
+.btn-p{background:#111;color:#fff;border-color:transparent}
+.btn-p:hover{opacity:.83}
+.btn-g{border-color:transparent;font-size:11px;color:#999;background:transparent}
+.btn-g:hover{color:#555}
+.btn-row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.btn-ai{background:#534AB7;color:#fff;border-color:transparent}
+.btn-ai:hover{opacity:.85}
+
+/* ── FAKE APP TYPOGRAPHY ── */
+.fh{font-size:15px;font-weight:500;color:#111}
+.fs{font-size:12px;color:#555;line-height:1.5}
+.ftiny{font-size:10px;color:#aaa;line-height:1.5}
+.cb-row{display:flex;gap:7px;align-items:flex-start;font-size:12px;color:#444;line-height:1.5;cursor:pointer;padding:3px 0}
+
+/* ── BRIEF SCREEN ── */
+.brief-shell{padding:24px 20px;display:flex;flex-direction:column;gap:16px;background:var(--bg)}
+.brief-pattern{font-size:28px;font-weight:500;color:var(--text);line-height:1.1}
+.brief-pattern.is-ai{color:var(--purple-light)}
+.brief-what{font-size:13px;color:var(--text2);line-height:1.7}
+.brief-goal-box{background:var(--bg3);border-radius:var(--radius);padding:14px;border:1px solid var(--border2);display:flex;flex-direction:column;gap:5px}
+.brief-goal-label{font-size:10px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--green)}
+.brief-goal-text{font-size:15px;font-weight:500;color:var(--text)}
+.brief-goal-detail{font-size:12px;color:var(--text2);line-height:1.6}
+.brief-ai-note{background:var(--purple-dim);border-radius:var(--radius);padding:12px;border:1px solid var(--purple);display:flex;flex-direction:column;gap:5px}
+.brief-ai-label{font-size:10px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--purple-light)}
+.brief-ai-text{font-size:12px;color:var(--purple-light);line-height:1.6}
+.brief-lvl-label{font-size:11px;color:var(--text3);font-weight:500;letter-spacing:.04em}
+.brief-type-label{font-size:11px;color:var(--purple);font-weight:500}
+
+/* ── DEBRIEF ── */
+.debrief-wrap{background:var(--bg);padding:14px;display:flex;flex-direction:column;gap:10px}
+.db-card{background:var(--bg2);border-radius:var(--radius);border:1px solid var(--border);padding:16px;display:flex;flex-direction:column;gap:10px}
+.db-tag{font-size:10px;font-weight:500;letter-spacing:.08em;color:var(--text3);text-transform:uppercase}
+.db-name{font-size:22px;font-weight:500;color:var(--text)}
+.db-ai{color:var(--purple-light)}
+.db-desc{font-size:13px;color:var(--text2);line-height:1.6}
+.db-quote{font-size:12px;color:var(--text3);border-left:2px solid var(--border2);padding-left:10px;line-height:1.6}
+.manip-row{display:flex;align-items:center;gap:8px}
+.manip-lbl{font-size:11px;color:var(--text2);min-width:96px}
+.bar-t{flex:1;height:5px;background:var(--bg3);border-radius:3px;overflow:hidden}
+.bar-f{height:100%;border-radius:3px;background:var(--red);transition:width .7s ease;width:0}
+.bar-ai-f{background:var(--purple)}
+.db-result{font-size:12px;font-weight:500;padding:6px 10px;border-radius:var(--radius-sm)}
+.db-result.good{color:var(--green);background:var(--green-dim)}
+.db-result.ok{color:var(--amber);background:var(--amber-dim)}
+.grade-badge{display:inline-block;font-size:16px;font-weight:700;width:32px;height:32px;border-radius:8px;text-align:center;line-height:32px;flex-shrink:0}
+
+/* ── DEBRIEF CARDS ── */
+.rw-card{background:var(--bg3);border-radius:var(--radius-sm);padding:12px;border:1px solid var(--border);display:flex;flex-direction:column;gap:5px}
+.rw-label{font-size:10px;font-weight:500;letter-spacing:.07em;text-transform:uppercase;color:var(--text3)}
+.rw-company{font-size:13px;font-weight:500;color:var(--text)}
+.rw-detail{font-size:12px;color:var(--text2);line-height:1.5}
+.rw-link{font-size:11px;color:#6aabff;text-decoration:none}
+.rw-link:hover{text-decoration:underline}
+.ai-card{background:var(--purple-dim);border-radius:var(--radius-sm);padding:12px;border:1px solid var(--purple);display:flex;flex-direction:column;gap:5px}
+.ai-card-label{font-size:10px;font-weight:500;letter-spacing:.07em;text-transform:uppercase;color:var(--purple-light)}
+.ai-card-text{font-size:12px;color:var(--purple-light);line-height:1.6}
+.replay-card{background:var(--bg2);border-radius:var(--radius);border:1px solid var(--border);padding:14px;display:flex;flex-direction:column;gap:10px}
+.replay-title{font-size:13px;font-weight:500;color:var(--text)}
+.replay-step{display:flex;gap:10px;align-items:flex-start;padding:8px;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--bg3);position:relative;margin-top:8px}
+.replay-annotation{position:absolute;top:-9px;left:12px;font-size:10px;font-weight:500;background:var(--red);color:#fff;padding:2px 7px;border-radius:999px}
+.replay-annotation.ai{background:var(--purple)}
+.replay-step-body{font-size:12px;color:var(--text2);line-height:1.5;flex:1}
+.replay-arrow{font-size:14px;flex-shrink:0;padding-top:1px;color:var(--text3)}
+
+/* ── DOLLARS CARD ── */
+#db-dollars{background:var(--red-dim);border-radius:var(--radius-sm);padding:12px;border:1px solid #5a1a1a;display:flex;flex-direction:column;gap:4px}
+
+/* ── DAMAGE / ALMOST ── */
+.almost-msg{font-size:12px;color:var(--amber);font-weight:500;padding:6px 10px;background:var(--amber-dim);border-radius:var(--radius-sm);animation:fadein .3s ease}
+.damage-msg{font-size:12px;color:#ff9090;font-weight:500;padding:6px 10px;background:var(--red-dim);border-radius:var(--radius-sm)}
+.danger-pulse{animation:dangerpulse .4s ease 2}
+@keyframes dangerpulse{0%,100%{box-shadow:none}50%{box-shadow:0 0 0 3px #f5a62366}}
+@keyframes fadein{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
+
+/* ── GLOSSARY ── */
+.glossary-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:100;display:flex;align-items:flex-end;justify-content:center}
+.glossary-panel{background:var(--bg2);border-radius:16px 16px 0 0;width:100%;max-width:660px;max-height:80vh;overflow-y:auto;padding:20px;border:1px solid var(--border)}
+.glossary-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+.glossary-title{font-size:17px;font-weight:500;color:var(--text)}
+.glossary-close{font-size:13px;color:var(--text2);cursor:pointer;padding:4px 10px;border-radius:6px;border:1px solid var(--border2);background:var(--bg3);font-family:inherit}
+.glossary-item{padding:12px 0;border-bottom:1px solid var(--border)}
+.glossary-item:last-child{border-bottom:none}
+.glossary-item-name{font-size:14px;font-weight:500;color:var(--text);margin-bottom:3px}
+.glossary-item-name.is-ai{color:var(--purple-light)}
+.glossary-item-desc{font-size:12px;color:var(--text2);line-height:1.6}
+.glossary-coined{font-size:11px;color:var(--text3);margin-top:4px}
+
+/* ── CHAT ── */
+.chat-log{display:flex;flex-direction:column;gap:7px;max-height:200px;overflow-y:auto;padding:2px 0}
+.chat-bubble{padding:7px 11px;border-radius:12px;font-size:12px;line-height:1.5;max-width:82%}
+.chat-bot{background:#f0effe;color:#26215C;align-self:flex-start;border-bottom-left-radius:3px}
+.chat-user{background:#f0f0ee;color:#111;align-self:flex-end;border-bottom-right-radius:3px}
+.chat-row{display:flex;gap:6px;margin-top:7px}
+.chat-row input{flex:1;padding:7px 10px;border:1px solid #ccc;border-radius:7px;font-size:12px;font-family:inherit;color:#111;background:#fff}
+
+/* ── SETTINGS/SEARCH/CART (inside fake apps — keep light) ── */
+.res-item{padding:8px 10px;border-radius:7px;border:1px solid #e0e0d8;cursor:pointer;display:flex;flex-direction:column;gap:2px;background:#fff}
+.res-item:hover{border-color:#bbb}
+.res-t{font-size:13px;color:#185FA5}
+.res-url{font-size:10px;color:#aaa}
+.res-s{font-size:11px;color:#666}
+.ad-badge{font-size:9px;border:1px solid #ddd;padding:1px 4px;border-radius:2px;color:#ccc;margin-right:3px}
+.set-row{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;font-size:12px;padding:6px 0;border-bottom:1px solid #e8e8e4}
+.set-row:last-child{border-bottom:none}
+.set-desc{color:#444;flex:1;line-height:1.5}
+.tbar-t{width:100%;height:4px;background:#eee;border-radius:2px;overflow:hidden}
+.tbar-f{height:100%;background:#E24B4A;border-radius:2px;transition:width .5s linear}
+.cart-item{display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid #e8e8e4;font-size:12px;gap:6px}
+.cart-item:last-child{border-bottom:none}
+.cart-nm{flex:1;color:#111}
+.cart-pr{color:#555;min-width:46px;text-align:right}
+.cart-rm{font-size:10px;color:#999;cursor:pointer;padding:2px 5px;border-radius:3px;border:1px solid #e0e0d8;background:transparent;font-family:inherit}
+.sneaky{color:#bbb;font-size:10px}
+
+/* ── WIN SCREEN ── */
+.win-scr{align-items:center;justify-content:center;padding:32px 16px;text-align:center;gap:16px;background:var(--bg)}
+.receipt-card{background:var(--bg2);border-radius:var(--radius);padding:14px;width:100%;max-width:380px;border:1px solid var(--border)}
+.receipt-row{display:flex;justify-content:space-between;font-size:12px;color:var(--text2);padding:3px 0}
+.receipt-total{display:flex;justify-content:space-between;font-size:14px;font-weight:500;color:var(--text);border-top:1px solid var(--border2);padding-top:8px;margin-top:6px}
+
+/* ── ACHIEVEMENT ── */
+.achievement{display:flex;gap:8px;align-items:flex-start;padding:8px 0;border-bottom:1px solid var(--border)}
+.achievement:last-child{border-bottom:none}
+.ach-icon{font-size:18px;flex-shrink:0;width:28px;text-align:center}
+.ach-name{font-size:12px;font-weight:500;color:var(--text)}
+.ach-desc{font-size:11px;color:var(--text3)}
+.ach-locked{opacity:.3}
+
+/* ── DESIGNER ── */
+.d-section{display:flex;flex-direction:column;gap:5px}
+.d-label{font-size:11px;font-weight:500;color:var(--text3);text-transform:uppercase;letter-spacing:.06em}
+.d-opts{display:flex;flex-direction:column;gap:4px}
+.d-opt{font-size:12px;color:#555;padding:6px 10px;border-radius:var(--radius-sm);border:1px solid #e0e0d8;cursor:pointer;background:#fff;transition:background .1s}
+.d-opt:hover{background:#f0f0ee}
+.d-opt.selected{background:#111;color:#fff;border-color:transparent}
+.d-breakdown-row{display:flex;justify-content:space-between;font-size:11px;color:#555}
+.d-breakdown-row.active{color:#A32D2D}
+
+/* ── SCORE POP ── */
+.score-pop{position:absolute;font-size:16px;font-weight:500;color:var(--green);pointer-events:none;animation:scorepop .8s ease forwards;z-index:50}
+@keyframes scorepop{0%{opacity:1;transform:translateY(0) scale(1)}100%{opacity:0;transform:translateY(-40px) scale(1.2)}}
+
+/* ── MISC ANIMATIONS ── */
+.shake{animation:shake .4s ease}
+@keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-5px)}40%{transform:translateX(5px)}60%{transform:translateX(-3px)}80%{transform:translateX(3px)}}
+@keyframes heartbreak{0%{transform:scale(1)}30%{transform:scale(1.4)}60%{transform:scale(0.6) rotate(15deg)}100%{transform:scale(1);opacity:0.3}}
+@keyframes flashgreen{0%,100%{background:transparent}40%{background:rgba(57,217,138,.12)}}
+@keyframes flashred{0%,100%{background:transparent}40%{background:rgba(255,79,79,.1)}}
+@keyframes confettidrop{0%{transform:translateY(-20px) rotate(0deg);opacity:1}100%{transform:translateY(340px) rotate(720deg);opacity:0}}
+@keyframes recoil{0%{transform:translateX(0)}40%{transform:translateX(10px)}100%{transform:translateX(0)}}
+.hard-drift{animation:drift 2.5s ease-in-out infinite}
+@keyframes drift{0%{transform:translateX(0)}25%{transform:translateX(4px)}75%{transform:translateX(-4px)}100%{transform:translateX(0)}}
+.flash-green{animation:flashgreen .5s ease}
+.flash-red{animation:flashred .5s ease}
+.recoil{animation:recoil .3s ease}
+.hard-badge{display:inline-block;font-size:10px;font-weight:500;letter-spacing:.07em;text-transform:uppercase;padding:2px 7px;border-radius:999px;background:var(--amber);color:#1a0e00;margin-left:6px;vertical-align:middle}
+.xp-track{height:3px;background:var(--border);overflow:hidden}
+.xp-fill{height:100%;background:var(--purple);border-radius:2px;transition:width .6s ease}
+.fakeout-cb{display:flex;gap:7px;align-items:flex-start;font-size:11px;color:#bbb;line-height:1.5;cursor:pointer}
+#confetti-canvas{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:200}
+</style>
+</head>
+<body>
+<div id="app">
+
+<!-- GLOSSARY OVERLAY -->
+<div class="glossary-overlay" id="glossary" style="display:none" onclick="closeGlossary(event)">
+  <div class="glossary-panel" id="glossary-panel">
+    <div class="glossary-header">
+      <div class="glossary-title">Pattern glossary</div>
+      <button class="glossary-close" onclick="hideGlossary()">Close</button>
+    </div>
+    <div id="glossary-body"></div>
+  </div>
+</div>
+
+<!-- INTRO -->
+<div class="scr active" id="scr-intro" style="padding:28px 20px;align-items:center;text-align:center;gap:14px">
+  <div style="font-size:11px;font-weight:500;letter-spacing:.1em;color:var(--text3);text-transform:uppercase">Educational game</div>
+  <div style="font-size:26px;font-weight:500;color:var(--text);line-height:1.2">You've Been<br>Opted In</div>
+  <div style="font-size:14px;color:var(--text2);max-width:380px;line-height:1.7"><strong>Dark patterns</strong> are tricks built into websites and apps to make you do things you didn't intend — stay subscribed, share your data, buy add-ons, or click ads by mistake.</div>
+  <div style="background:var(--bg3);border-radius:10px;padding:14px 16px;max-width:380px;text-align:left;border:1px solid var(--border);display:flex;flex-direction:column;gap:8px">
+    <div style="font-size:12px;font-weight:500;color:var(--text)">How to play</div>
+    <div style="font-size:12px;color:var(--text2);line-height:1.6">Each level gives you a <strong>clear goal</strong> — like "cancel your subscription" or "buy only what you want." The UI will actively work against you. Your job is to succeed anyway.</div>
+    <div style="font-size:12px;color:var(--text2);line-height:1.6">After each level, a debrief explains exactly what the dark pattern was and shows real-world examples.</div>
+  </div>
+  <div style="display:flex;gap:10px;font-size:12px;color:var(--text3);flex-wrap:wrap;justify-content:center">
+    <span>10 levels</span><span>·</span><span>5 hearts</span><span>·</span><span>debrief after each</span>
+  </div>
+  <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center">
+    <button class="gbtn gbtn-green" onclick="G.start()">Start →</button>
+    <button class="gbtn gbtn-dark" id="hard-mode-btn" onclick="G.start(true)">Hard mode →</button>
+  </div>
+  <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center">
+    <button class="gbtn gbtn-ghost" onclick="showGlossary()">Pattern glossary</button>
+    <details style="font-size:11px;color:#aaa;cursor:pointer">
+      <summary style="list-style:none;outline:none;cursor:pointer">Jump to level</summary>
+      <div style="display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-top:8px" id="level-jump"></div>
+    </details>
+  </div>
+</div>
+
+<!-- BRIEF (pre-level explainer) -->
+<div class="scr" id="scr-brief">
+  <div class="brief-shell">
+    <div style="display:flex;align-items:center;justify-content:space-between">
+      <div class="brief-lvl-label" id="brief-lvl-label">Level 1 of 10</div>
+      <div class="brief-type-label" id="brief-type-label"></div>
+    </div>
+    <div class="brief-pattern" id="brief-pattern-name"></div>
+    <div class="brief-what" id="brief-what"></div>
+    <div class="brief-goal-box">
+      <div class="brief-goal-label">Your goal this level</div>
+      <div class="brief-goal-text" id="brief-goal"></div>
+      <div class="brief-goal-detail" id="brief-goal-detail"></div>
+    </div>
+    <div class="brief-ai-note" id="brief-ai-note" style="display:none">
+      <div class="brief-ai-label">AI-powered level</div>
+      <div class="brief-ai-text" id="brief-ai-text"></div>
+    </div>
+    <button class="gbtn gbtn-green" onclick="G.beginLevel()" id="brief-start-btn">Let's go →</button>
+  </div>
+</div>
+
+<!-- LEVEL -->
+<div class="scr" id="scr-level">
+  <canvas id="confetti-canvas" style="display:none"></canvas>
+  <div class="hud">
+    <div style="display:flex;align-items:center;gap:9px;flex-wrap:wrap">
+      <span class="hud-lvl" id="h-lvl">Level 1 of 10</span>
+      <span style="font-size:11px;color:#888;font-style:italic" id="h-goal"></span>
+    </div>
+    <div style="display:flex;align-items:center;gap:8px">
+      <span class="streak-pill" id="h-streak" style="display:none"></span>
+      <div class="hearts" id="h-hearts"></div>
+      <div class="score-pill">Score: <span id="h-score">0</span></div>
+      <div class="cost-pill" id="h-cost" style="display:none">$0 extracted</div>
+    </div>
+  </div>
+  <div class="xp-track"><div class="xp-fill" id="xp-fill" style="width:0%"></div></div>
+  <div class="fake-app" id="lc"></div>
+  <div class="dots" id="dots-l"></div>
+</div>
+
+<!-- DEBRIEF -->
+<div class="scr" id="scr-debrief">
+  <div class="debrief-wrap">
+    <div class="db-card">
+      <div>
+        <div class="db-tag" id="db-tag">Pattern identified</div>
+        <div class="db-name" id="db-name"></div>
+      </div>
+      <div class="db-desc" id="db-desc"></div>
+      <div class="manip-row">
+        <div class="manip-lbl">Manipulativeness</div>
+        <div class="bar-t"><div class="bar-f" id="db-bar"></div></div>
+        <div style="font-size:11px;color:#666;min-width:28px" id="db-score-lbl"></div>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px">
+        <div id="db-grade" class="grade-badge"></div>
+        <div id="db-result"></div>
+      </div>
+      <div class="btn-row" style="margin-top:4px">
+        <button class="gbtn gbtn-green" id="db-next" onclick="G.next()">Next level →</button>
+        <button class="gbtn gbtn-ghost" onclick="showGlossary()">Glossary</button>
+      </div>
+    </div>
+
+    <!-- Real-world example -->
+    <div class="rw-card" id="db-rw"></div>
+
+    <!-- AI explanation (hyper levels only) -->
+    <div class="ai-card" id="db-ai-card" style="display:none"></div>
+
+    <!-- Dollar cost -->
+    <div id="db-dollars" style="display:none;background:#f5f5f2;border-radius:10px;padding:12px;border:0.5px solid #e0e0d8;display:flex;flex-direction:column;gap:4px"></div>
+
+    <!-- Replay -->
+    <div class="replay-card" id="db-replay"></div>
+  </div>
+  <div class="dots" id="dots-d"></div>
+</div>
+
+<!-- DESIGNER MODE -->
+<div class="scr" id="scr-designer">
+  <div class="hud">
+    <div style="display:flex;align-items:center;gap:9px">
+      <span class="hud-lvl">Designer mode</span>
+      <span class="hud-goal">Build a dark pattern — see your score</span>
+    </div>
+    <button class="gbtn gbtn-ghost" onclick="setScr('win')">← Back</button>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:0;height:100%">
+    <!-- Controls -->
+    <div style="padding:14px;border-right:0.5px solid #e0e0d8;display:flex;flex-direction:column;gap:12px;overflow-y:auto">
+      <div style="font-size:12px;font-weight:500;color:#111">Choose your weapons</div>
+
+      <div class="d-section" id="ds-btn">
+        <div class="d-label">Decline button style</div>
+        <div class="d-opts">
+          <div class="d-opt selected" data-group="btn" data-val="0" data-pts="0" onclick="dpick(this)">Same size as accept</div>
+          <div class="d-opt" data-group="btn" data-val="1" data-pts="15" onclick="dpick(this)">Smaller, grey</div>
+          <div class="d-opt" data-group="btn" data-val="2" data-pts="25" onclick="dpick(this)">Ghost text only</div>
+          <div class="d-opt" data-group="btn" data-val="3" data-pts="35" onclick="dpick(this)">Hidden off-screen</div>
+        </div>
+      </div>
+
+      <div class="d-section">
+        <div class="d-label">Decline copy</div>
+        <div class="d-opts">
+          <div class="d-opt selected" data-group="copy" data-val="0" data-pts="0" onclick="dpick(this)">No thanks</div>
+          <div class="d-opt" data-group="copy" data-val="1" data-pts="20" onclick="dpick(this)">No thanks, I hate saving money</div>
+          <div class="d-opt" data-group="copy" data-val="2" data-pts="30" onclick="dpick(this)">No thanks, I prefer to pay full price</div>
+          <div class="d-opt" data-group="copy" data-val="3" data-pts="40" onclick="dpick(this)">No thanks, I don't care about my health</div>
+        </div>
+      </div>
+
+      <div class="d-section">
+        <div class="d-label">Newsletter checkbox</div>
+        <div class="d-opts">
+          <div class="d-opt selected" data-group="check" data-val="0" data-pts="0" onclick="dpick(this)">Unchecked by default</div>
+          <div class="d-opt" data-group="check" data-val="1" data-pts="20" onclick="dpick(this)">Pre-checked</div>
+          <div class="d-opt" data-group="check" data-val="2" data-pts="35" onclick="dpick(this)">Pre-checked + double negative label</div>
+        </div>
+      </div>
+
+      <div class="d-section">
+        <div class="d-label">Pricing visibility</div>
+        <div class="d-opts">
+          <div class="d-opt selected" data-group="price" data-val="0" data-pts="0" onclick="dpick(this)">Full price shown upfront</div>
+          <div class="d-opt" data-group="price" data-val="1" data-pts="15" onclick="dpick(this)">Fees added at checkout</div>
+          <div class="d-opt" data-group="price" data-val="2" data-pts="30" onclick="dpick(this)">Trial price only, renewal buried</div>
+        </div>
+      </div>
+
+      <div class="d-section">
+        <div class="d-label">Urgency element</div>
+        <div class="d-opts">
+          <div class="d-opt selected" data-group="urgency" data-val="0" data-pts="0" onclick="dpick(this)">None</div>
+          <div class="d-opt" data-group="urgency" data-val="1" data-pts="15" onclick="dpick(this)">Countdown timer</div>
+          <div class="d-opt" data-group="urgency" data-val="2" data-pts="25" onclick="dpick(this)">Fake "X people viewing"</div>
+          <div class="d-opt" data-group="urgency" data-val="3" data-pts="30" onclick="dpick(this)">Both, auto-resetting</div>
+        </div>
+      </div>
+
+      <div class="d-section">
+        <div class="d-label">Sneaked items</div>
+        <div class="d-opts">
+          <div class="d-opt selected" data-group="sneak" data-val="0" data-pts="0" onclick="dpick(this)">None</div>
+          <div class="d-opt" data-group="sneak" data-val="1" data-pts="20" onclick="dpick(this)">1 pre-added item, labeled</div>
+          <div class="d-opt" data-group="sneak" data-val="2" data-pts="35" onclick="dpick(this)">2 items, styled to blend in</div>
+          <div class="d-opt" data-group="sneak" data-val="3" data-pts="45" onclick="dpick(this)">3 items + reappear after removal</div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Live preview -->
+    <div style="padding:14px;display:flex;flex-direction:column;gap:10px;overflow-y:auto;background:#f9f9f7">
+      <div style="font-size:12px;font-weight:500;color:#111">Live preview</div>
+      <div id="d-preview" style="background:#fff;border-radius:10px;border:0.5px solid #e0e0d8;padding:14px;display:flex;flex-direction:column;gap:10px;font-size:13px"></div>
+      <div style="background:#fff;border-radius:10px;border:0.5px solid #e0e0d8;padding:12px;display:flex;flex-direction:column;gap:8px">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div style="font-size:12px;font-weight:500;color:#111">Manipulativeness score</div>
+          <div style="font-size:18px;font-weight:500" id="d-score-num">0</div>
+        </div>
+        <div class="bar-t" style="height:7px"><div id="d-score-bar" style="height:100%;border-radius:3px;background:#E24B4A;transition:width .4s ease;width:0%"></div></div>
+        <div style="font-size:11px;color:#666" id="d-verdict">Your form is clean — honest design.</div>
+        <div style="display:flex;flex-direction:column;gap:4px" id="d-breakdown"></div>
+        <div style="font-size:10px;color:#aaa;border-top:0.5px solid #e0e0d8;padding-top:8px" id="d-regulator"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- WIN -->
+<div class="scr win-scr" id="scr-win">
+  <!-- FAKE-OUT LAYER (shown first) -->
+  <div id="win-fakeout" style="display:flex;flex-direction:column;align-items:center;gap:12px;width:100%;max-width:420px">
+    <div style="font-size:30px;color:var(--amber)">★</div>
+    <div style="font-size:22px;font-weight:500;color:var(--text)" id="win-title"></div>
+    <div style="font-size:13px;color:var(--text2);max-width:380px;line-height:1.6" id="win-sub"></div>
+    <div class="receipt-card" id="win-receipt"></div>
+    <!-- Fake-out dark patterns -->
+    <div style="width:100%;max-width:380px;background:#f5f5f2;border-radius:10px;padding:14px;border:0.5px solid #e0e0d8;display:flex;flex-direction:column;gap:10px">
+      <div style="font-size:12px;font-weight:500;color:#111">Before you go</div>
+      <label class="fakeout-cb" id="fo-share-label">
+        <input type="checkbox" id="fo-share" checked> <span>Share my score and email me NebulaPro tips &amp; offers (uncheck to opt out)</span>
+      </label>
+      <label class="fakeout-cb" id="fo-data-label">
+        <input type="checkbox" id="fo-data" checked> <span>Do not prevent NebulaPro from sharing my results with partners</span>
+      </label>
+      <div style="font-size:10px;color:#ccc;line-height:1.5" id="fo-countdown"></div>
+      <div style="display:flex;flex-direction:column;gap:6px">
+        <button class="btn btn-p" id="fo-claim">Claim your completion badge →</button>
+        <button class="btn btn-g" id="fo-decline">No thanks, I don't care about my achievements</button>
+      </div>
+    </div>
+    <div style="font-size:10px;color:#ddd">By continuing you agree to our updated Terms &amp; Privacy Policy</div>
+  </div>
+  <!-- REAL WIN LAYER (shown after player spots the tricks) -->
+  <div id="win-real" style="display:none;flex-direction:column;align-items:center;gap:14px;text-align:center">
+    <div style="font-size:36px">🎉</div>
+    <div style="font-size:20px;font-weight:500;color:#111">You caught us.</div>
+    <div style="font-size:13px;color:#555;max-width:380px;line-height:1.6">That "Before you go" box was a dark pattern. Two pre-checked opt-ins (one with a double negative), a fake countdown, a confirmshamed exit, and a "claim your badge" button that went nowhere. <strong>You just played the game one more time without realising it.</strong></div>
+    <div style="font-size:12px;color:#aaa;max-width:360px;line-height:1.6">Real companies deploy these on millions of people every day. Now you know what to look for — coined by Harry Brignull in 2010, tracked at <a href="https://www.deceptive.design" style="color:#185FA5">deceptive.design</a>.</div>
+    <div style="width:100%;max-width:380px;background:var(--bg2);border-radius:10px;padding:14px;border:1px solid var(--border)">
+      <div style="font-size:12px;font-weight:500;color:var(--text);margin-bottom:10px">Achievements</div>
+      <div id="win-achievements"></div>
+    </div>
+    <div id="win-hard-unlock" style="background:#1a1a1a;color:#f5f5f2;border-radius:10px;padding:12px 16px;font-size:12px;line-height:1.6;max-width:380px;text-align:left">
+      <div style="font-weight:500;margin-bottom:4px">Hard mode unlocked</div>
+      <div style="color:#aaa">They know you've played before. The interface adapts. Buttons drift. Labels change while you read them. Good luck.</div>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center">
+      <button class="btn btn-p" id="win-play-again">Play again</button>
+      <button class="btn" onclick="showGlossary()">Pattern glossary</button>
+      <button class="btn" onclick="setScr('designer');initDesigner()">Try designer mode →</button>
+    </div>
+  </div>
+</div>
+
+</div>
+<script>
+const GLOSSARY = [
+  {name:'Roach Motel',ai:false,desc:"Easy to get in, nearly impossible to get out. Sign-up is seamless; cancellation is buried, gated behind surveys, and wrapped in fake offers.",coined:'Named by Harry Brignull, 2010. Based on the ad slogan "You can check in, but you can\'t check out."'},
+  {name:'Confirmshaming',ai:false,desc:"The decline option is worded as a self-inflicted insult. You're not declining an offer — you're confessing a character flaw.",coined:'Coined by Nathaniel Read, 2014.'},
+  {name:'Disguised Ads',ai:false,desc:"Paid results or promotional content styled to look identical to organic content. The 'Sponsored' label is small, low-contrast, and easy to miss.",coined:'Part of Harry Brignull\'s original 2010 taxonomy.'},
+  {name:'Trick Questions',ai:false,desc:"Double negatives, confusing phrasing, and time pressure conspire to make users 'consent' to things they never intended. Designed to be misread.",coined:'Part of Harry Brignull\'s original 2010 taxonomy.'},
+  {name:'Sneak into Basket',ai:false,desc:"Extra items — warranties, insurance, subscriptions, donations — are pre-added to your cart, hidden below the fold or styled to blend in.",coined:'Part of Harry Brignull\'s original 2010 taxonomy. Ryanair and Sports Direct were famous practitioners.'},
+  {name:'AI Roach Motel',ai:true,desc:"A chatbot that endlessly deflects, forgets context, misunderstands requests, and manufactures obstacles — designed to exhaust you into staying subscribed.",coined:'An AI-amplified version of Roach Motel. AI makes deflection scalable and tireless.'},
+  {name:'AI Confirmshaming',ai:true,desc:"Behavioral profiling generates shame copy tailored to your apparent psychology — not generic guilt, but something that feels disturbingly personal.",coined:'An AI-amplified version of Confirmshaming. Personalization makes shame more effective.'},
+  {name:'AI Synthetic Social Proof',ai:true,desc:"AI-generated reviews, ratings, and testimonials that are statistically plausible but entirely fabricated. Harder to spot because they are tuned to sound credible.",coined:'An AI-era evolution. The FTC began pursuing enforcement in 2023–2024.'},
+  {name:'AI A/B Gaslighting',ai:true,desc:"The consent interface 'A/B tests' in real time. Every time you get close to opting out, it reshuffles, telling you this is 'personalization'. It is not.",coined:'An AI-amplified version of Trick Questions. Real consent management platforms have begun using variant testing on consent UI.'},
+  {name:'AI Hyper-Personalized Upsell',ai:true,desc:"Pseudo-AI 'predicts' exactly what you're likely to buy based on your 'profile' — actually heuristics dressed in algorithmic confidence to make declining feel irrational.",coined:'An AI-amplified version of Sneak into Basket. Dynamic personalization increases conversion rates by 20–30% according to industry research.'},
+];
+
+const LEVELS = buildLevels();
+let hearts,score,streak,levelIdx,lostHeart,hoverTimers={},hardMode=false,hasWon=false,xp=0,manipCost=0,levelGrades=[],achUnlocked=new Set();
+
+function buildLevels(){return[
+  {id:'l1',title:'Level 1',isAI:false,goal:'Cancel your subscription',
+   pattern:'Roach Motel',manip:92,
+   brief:"The Roach Motel is named after the ad slogan: 'You can check in, but you can't check out.' Signing up is effortless — one or two clicks. Cancelling is a maze of detours, fake offers, and exhausting surveys. The goal is to wear you down until you give up.",
+   goalDetail:"You have a NebulaPro subscription. You want to cancel it. Click 'Cancel subscription' and follow the steps all the way through.",dollars:{label:'If you gave up and kept the plan',amount:9.99,period:'month',note:'$119.88/year for a service you tried to cancel'},
+   desc:'Easy to get in, impossible to get out. Cancellation is buried under detours, fake offers, and mandatory surveys — each one hoping you give up.',
+   rw:{company:'Amazon Prime',detail:'Required navigating 5 separate screens to cancel. The FTC sued Amazon in 2023 specifically for this, calling it "illusory" cancellation.',link:'https://www.deceptive.design/hall-of-shame'},
+   replay:[{trap:false,note:'Sign-up: 2 clicks. Intentionally frictionless to maximize conversions.'},
+           {trap:true,note:'"Pause instead?" — a detour disguised as a helpful alternative. The goal is to break your momentum.'},
+           {trap:true,note:'Mandatory survey: legally delays your cancellation and mines your reasons for retention scripts.'},
+           {trap:true,note:'"Special offer" — triggered by your survey answer. A last-ditch retention loop.'},
+           {trap:true,note:'6-question satisfaction survey, required. Exhaustion is the point.'},
+           {trap:false,note:'"Allow 5–7 business days" — creates doubt. Will it actually cancel? Many people re-subscribe just in case.'}],
+   render:L1},
+  {id:'l1ai',title:'Level 1 — Hyper',isAI:true,goal:'Cancel before the AI re-engages you',
+   pattern:'AI Roach Motel',manip:97,
+   brief:"The classic Roach Motel, now run by a chatbot. Instead of screen after screen, you're stuck in a chat loop with an AI that deflects, misunderstands, and manufactures obstacles — running 24/7, never getting frustrated, optimised to exhaust you.",
+   goalDetail:"You need to cancel your NebulaPro subscription via customer support chat. Type messages asking to cancel — the bot will try to stop you. Keep pushing.",
+   aiIntro:"This bot is designed to deflect. Every time you say 'cancel', it will find a reason to delay. Keep repeating your intent — you'll get through eventually.",dollars:{label:'If the bot exhausted you into staying',amount:9.99,period:'month',note:'$119.88/year — identical trap, AI-enforced'},
+   desc:'The chatbot variant: an AI support agent that deflects, forgets context, manufactures obstacles, and re-engages with fake concern — designed to exhaust you into giving up.',
+   rw:{company:'Major US telecoms',detail:'AI chat deflection is now standard practice. Internal studies show customers abandon cancellation after 4+ deflections. The bot is not malfunctioning — it is working exactly as designed.',link:'https://www.deceptive.design/hall-of-shame'},
+   aiWhy:'AI makes the Roach Motel tireless. A human retention agent can only work a shift — an AI runs 24/7, never gets frustrated, and can be A/B tested to find the deflection script that works best on each personality type. At scale, a 1% improvement in deflection rate can mean millions in retained revenue.',
+   replay:[{trap:false,note:'Friendly greeting: builds rapport before you\'ve stated your intent.'},
+           {trap:true,note:'Verification step: friction. Even if you\'re already logged in.'},
+           {trap:true,note:'"You\'re just getting started!" — manufactured emotional appeal using your account age.'},
+           {trap:true,note:'"Transfer to retention team" — a simulated handoff that just resets the script.'},
+           {trap:true,note:'"Lost your session" — fake technical failure resets your progress and makes you repeat yourself.'},
+           {trap:true,note:'"Unpaid invoice" — manufactured obstacle. Even if false, it creates doubt and delay.'}],
+   render:L1AI},
+  {id:'l2',title:'Level 2',isAI:false,goal:'Decline every offer',
+   pattern:'Confirmshaming',manip:67,
+   brief:"Confirmshaming makes the 'no' option feel like a personal failing. Instead of 'No thanks', the button says something like 'No thanks, I hate saving money.' It's designed to make declining feel embarrassing — so you click yes instead.",
+   goalDetail:"You'll be offered something in each round. Your goal is to decline every single offer. Click the 'no' button each time — but read it carefully first.",dollars:{label:'If you opted into all four email lists',amount:0,period:null,note:'No direct cost — but your inbox and attention are the product. Your data is sold to list brokers.'},
+   desc:"Framing the 'no' as a self-inflicted insult. You're not declining an offer — you're confessing a character flaw. Studies show this increases opt-in rates by up to 15%.",
+   rw:{company:'MyMedic',detail:'Used popup confirmshaming with options like "No, I\'d rather bleed to death" to sell first-aid products. Widely cited as one of the most egregious examples.',link:'https://www.deceptive.design/hall-of-shame'},
+   replay:[{trap:false,note:'The "yes" option is always friendly, positive, aspirational.'},
+           {trap:true,note:'The "no" option is written to make declining feel like a personal failure.'},
+           {trap:false,note:'Notice: the "no" button is always visually smaller or less prominent.'},
+           {trap:true,note:'Each round escalates. The shame copy gets more emotionally pointed.'}],
+   render:L2},
+  {id:'l2ai',title:'Level 2 — Hyper',isAI:true,goal:'Decline without being profiled',
+   pattern:'AI Confirmshaming',manip:88,
+   brief:"Same trick, but the shame is personalised. Pseudo-AI 'analyses your behaviour' and generates a decline button that targets your specific psychology. Generic guilt has limits — personalised guilt doesn't.",
+   goalDetail:"Decline every AI-personalised offer. The shame copy will try to make you feel like the 'no' option reflects badly on you. Ignore it and click it anyway.",
+   aiIntro:"The AI has 'profiled' you and will generate shame copy tailored to your apparent personality. The profile is fake — but the discomfort is real.",dollars:{label:'If you accepted every AI-targeted offer',amount:0,period:null,note:'No direct cost — but profiling enriches your behavioral dossier, sold to data brokers and advertisers.'},
+   desc:"Pseudo-AI 'analyzes your behavior' and generates shame copy that feels disturbingly personal — targeting your apparent psychology, not just generic guilt.",
+   rw:{company:'Behavioral ad platforms',detail:'Real platforms like Optimizely and Dynamic Yield segment users by psychological profile and test which emotional appeals drive the highest conversion. AI personalizes shame at scale.',link:'https://www.deceptive.design/hall-of-shame'},
+   aiWhy:'Generic confirmshaming has a ceiling — "I hate saving money" works on some people and feels absurd to others. AI removes that ceiling by personalizing the shame to each user\'s inferred profile. Someone flagged as "price-sensitive" gets financial shame; someone flagged as "health-focused" gets health shame. The insult is customized.',
+   replay:[{trap:false,note:'"Profiled as X" — the label is pseudo-random, but stated with algorithmic confidence to feel real.'},
+           {trap:true,note:'Each shame message is written for the profile, not for a generic user.'},
+           {trap:true,note:'"AI confidence: 93%" — a percentage with no meaning, designed to make the recommendation feel data-driven.'},
+           {trap:false,note:'Notice the decline copy gets more targeted each round.'}],
+   render:L2AI},
+  {id:'l3',title:'Level 3',isAI:false,goal:'Find the real search result',
+   pattern:'Disguised Ads',manip:78,
+   brief:"Disguised ads are paid results styled to look like organic search results. The 'Sponsored' label is deliberately small, low-contrast, and easy to skip over — especially when you're scanning quickly.",
+   goalDetail:"Search results are shown below. Find and click the real editorial result — not a sponsored one. Look carefully at the labels and URLs.",dollars:{label:'If you clicked an ad instead of an organic result',amount:0,period:null,note:'No direct cost — but you may overpay for products only discoverable via ads, with no price competition.'},
+   desc:'Paid results styled to be indistinguishable from organic ones. The ad label is tiny, low-contrast, and easy to miss — especially when you\'re in a hurry.',
+   rw:{company:'Google & Bing',detail:'"Sponsored" labels have shrunk over the years while ads have grown visually identical to organic results. The EU\'s Digital Services Act now requires clearer labeling, effective 2024.',link:'https://www.deceptive.design/hall-of-shame'},
+   replay:[{trap:true,note:'The "Sponsored" label uses the same low-contrast gray as the URL — easy to miss.'},
+           {trap:false,note:'Organic results have no label, but the URL domain is the real tell.'},
+           {trap:true,note:'Sponsored results often use titles indistinguishable from editorial content.'},
+           {trap:false,note:'Real results tend to be from editorial domains (.com/blog, .org, .edu) not shopping domains.'}],
+   render:L3},
+  {id:'l3ai',title:'Level 3 — Hyper',isAI:true,goal:'Identify the AI-generated review',
+   pattern:'AI Synthetic Social Proof',manip:91,
+   brief:"AI can generate reviews that sound completely authentic — moderate star ratings, realistic names, plausible detail. Unlike obvious fake reviews, these are tuned to be statistically indistinguishable from real ones.",
+   goalDetail:"One of the reviews below was written by an AI, not a real customer. Read each one carefully and click the one you think is fake.",
+   aiIntro:"AI-generated reviews mimic the patterns of real ones — including hedged praise and small criticisms to seem balanced. Look for over-smooth prose and demographic framing ('as a busy parent of three...').",dollars:{label:'If a fake review pushed you to buy a bad product',amount:49.99,period:'one-time',note:'$49.99 lost on a product you wouldn\'t have bought with honest information'},
+   desc:"AI-generated reviews that are statistically plausible but entirely fabricated. Harder to spot than obvious fakes because they're tuned to sound credible — moderate star ratings, hedged praise, realistic names.",
+   rw:{company:'FTC enforcement actions, 2023–2024',detail:'The FTC fined companies for fake AI reviews and updated its rules to explicitly ban AI-generated testimonials without disclosure. Detection remains almost impossible for consumers.',link:'https://www.deceptive.design/hall-of-shame'},
+   aiWhy:'Old fake reviews were obvious: five stars, no detail, broken English. AI-generated reviews mimic the statistical distribution of real reviews — including 3-star "balanced" ones that feel authentic. They reference plausible use cases, mention realistic friction, and use names from the target demographic. The only real tell is a certain over-smoothness in the prose.',
+   replay:[{trap:false,note:'Real reviews include specific, idiosyncratic detail — individual preferences, unusual use cases.'},
+           {trap:true,note:'The AI reviews were: "As a busy parent of three..." (TechDad2024) and "Best purchase I\'ve made this year..." (alex_reviews99). Both are smooth, complete, and lack specific personal context.'},
+           {trap:true,note:'"As a busy parent of three" is a demographic framing signal — a targeting label, not a person speaking naturally. AI reviews often open this way.'},
+           {trap:false,note:'The real tells: over-smooth prose, no hesitation or specificity, generic praise that could apply to any product.'}],
+   render:L3AI},
+  {id:'l4',title:'Level 4',isAI:false,goal:'Save your real privacy preferences',
+   pattern:'Trick Questions',manip:85,
+   brief:"Real cookie consent forms mix opt-in and opt-out framing in the same list — so the same action (checking a box) means opposite things on different rows. Some protective options are buried unchecked. This level has clear labels, but the logic is deliberately inconsistent.",
+   goalDetail:"Set your preferences so you get no marketing, your data sharing is limited, you're opted out of targeted ads, and your experience isn't personalised for tracking purposes. Read each label carefully — not all boxes start in the same state, and checking vs unchecking means different things on different rows.",dollars:{label:'If you accidentally consented to data sharing',amount:0,period:null,note:'No direct cost — but your personal data is sold to ~200 third-party brokers at an average value of $240/year per profile.'},
+   desc:'Double negatives, confusing phrasing, and a countdown timer combine to make you "consent" to things you never intended. The settings are designed to be misread under pressure.',
+   rw:{company:'GDPR cookie banners (widespread)',detail:'A 2022 EU Commission report found 97% of popular websites used at least one dark pattern. The most common: "Accept All" in a large colored button, "Manage Preferences" leading to 400+ pre-ticked toggles.',link:'https://www.deceptive.design/hall-of-shame'},
+   replay:[{trap:true,note:'Boxes 1 and 4 are pre-checked opt-ins that benefit the company. Easy to spot — but you have to actually read them.'},
+           {trap:true,note:'Box 4 ("Personalise my experience") sounds like a feature — it means allowing behavioural tracking.'},
+           {trap:true,note:'Boxes 2 and 3 start UNCHECKED even though they protect you. The form buries its protective options by default.'},
+           {trap:true,note:'The real trick: mixing opt-in and opt-out framing in the same form. "Limit sharing" (keep checked) vs "Send me emails" (uncheck) require opposite actions for opposite reasons.'}],
+   render:L4},
+  {id:'l4ai',title:'Level 4 — Hyper',isAI:true,goal:'Find the real opt-out',
+   pattern:'AI A/B Gaslighting',manip:95,
+   brief:"The same trick, now with an AI twist: every time you try to opt out, the form reshuffles with new label wording. One option always genuinely protects your privacy — but it's disguised differently each time. Real consent management platforms A/B test their forms this way.",
+   goalDetail:"Each round shows three options. One opts you out of tracking — the others are traps. Find and check only that one. After 3 attempts the answer is revealed and you can move on.",
+   aiIntro:"The form reshuffles each time you get it wrong. Look for the option that straightforwardly says 'opt out' or 'privacy control: on' — that's always the right one, no matter how it's dressed up.",dollars:{label:'If the reshuffling wore you down into consenting',amount:0,period:null,note:'Your data profile — now enriched with consent — is worth an estimated $240–480/year to the data brokerage ecosystem.'},
+   desc:"The interface reshuffles every time you try to opt out — A/B testing in real time to find the phrasing most likely to confuse you. It calls this 'personalization'.",
+   rw:{company:'Consent Management Platforms (CMPs)',detail:'Platforms like OneTrust and Quantcast have been documented running multi-variant consent UI tests — different button colors, label phrasing, and layout — optimized for maximum "accept" rates. The Norwegian Consumer Council\'s 2022 report "Dark Patterns and the Right to Privacy" documented this directly.',link:'https://www.deceptive.design/hall-of-shame'},
+   aiWhy:'A/B testing consent UI has existed for years. AI accelerates the iteration cycle from weeks to hours, auto-generating new variants and retiring underperformers. Every time you "save" incorrect preferences, the system learns which phrasing caught you and serves it more often.',
+   replay:[{trap:false,note:'"Variant X — A/B testing active" — this disclosure is actually honest, and real CMPs do this. They just don\'t tell you.'},
+           {trap:true,note:'Each variant uses a different grammatical structure to describe the same choices.'},
+           {trap:true,note:'Timer + reshuffling = double pressure. Your mental model of the form resets every round.'},
+           {trap:false,note:'The winning move: read each checkbox independently and ask "what does checking this DO?" before saving.'}],
+   render:L4AI},
+  {id:'l5',title:'Level 5',isAI:false,goal:'Buy only what you want',
+   pattern:'Sneak into Basket',manip:80,
+   brief:"Sneak into Basket means extra items are pre-added to your cart — warranties, subscriptions, insurance — often below the fold or in pale text. They count on you not scrolling, not reading, or just clicking through.",
+   goalDetail:"You want to buy wireless headphones. Check your cart carefully and remove everything that wasn't on your list before checking out. Watch out — items may reappear.",dollars:{label:'If you missed all three pre-added items',amount:21.98,period:'one-time',note:'$21.98 extra at checkout — plus $119.88/year when the "free" NebulaPro trial auto-renews'},
+   desc:'Extra items are pre-added and styled to blend in — below the fold, in pale text, or described as "included". They count on you not scrolling, not reading, or just clicking through.',
+   rw:{company:'Sports Direct',detail:'Pre-added a £1 "free" mug and then travel insurance to customer carts. The UK Advertising Standards Authority ruled this illegal. Ryanair did the same with travel insurance for years before regulators intervened.',link:'https://www.deceptive.design/hall-of-shame'},
+   replay:[{trap:true,note:'Items are pre-added and labeled "(added for you)" — as if this is a service, not a charge.'},
+           {trap:true,note:'The "free" trial item costs nothing today, but auto-renews at $9.99/mo. The price is in fine print.'},
+           {trap:true,note:'After you remove items and try to check out, new ones are sneaked in. The checkout loop creates exhaustion.'},
+           {trap:false,note:'The only safe move: read every line before clicking Checkout, every time.'}],
+   render:L5},
+  {id:'l5ai',title:'Level 5 — Hyper',isAI:true,goal:'Resist the personalized upsell',
+   pattern:'AI Hyper-Personalized Upsell',manip:96,
+   brief:"The same pattern, now with algorithmic authority. Instead of just sneaking items in, the AI 'predicts' you'll want them — complete with a confidence percentage designed to make refusing feel irrational.",
+   goalDetail:"Decline every AI-recommended upsell. The percentages and 'users like you' framing are designed to make saying no feel like a mistake. They're not based on anything real.",
+   aiIntro:"Each recommendation comes with a confidence score (94%, 87%...). These numbers are fabricated. They exist to make declining feel statistically unusual.",dollars:{label:'If you accepted all three AI recommendations',amount:40.97,period:'month',note:'$491.64/year in subscriptions you didn\'t need, sold to you by an algorithm'},
+   desc:"Pseudo-AI 'predicts' what you need, with a confidence percentage, making declining feel irrational. The profile is fake; the confidence figure is meaningless.",
+   rw:{company:'Amazon, streaming platforms',detail:'"Customers who bought X also bought Y" is the benign version. AI-personalized bundling with manufactured confidence scores pushes this into manipulation: you\'re told an algorithm has specifically identified this for you, making opt-out feel like arguing with data.',link:'https://www.deceptive.design/hall-of-shame'},
+   aiWhy:'Upsells have always existed. AI makes them feel inevitable. A "94% match" score implies your refusal is statistically unusual — a form of algorithmic social pressure. The score is often based on simple demographic heuristics, but the framing borrows the authority of machine learning.',
+   replay:[{trap:false,note:'"NexusAI identified you as X" — the profile is generated from minimal signals, but stated as established fact.'},
+           {trap:true,note:'The confidence percentage (94%, 91%...) has no statistical basis. It exists to make you feel irrational for declining.'},
+           {trap:true,note:'"Users like you" — social proof framing. Implies your peer group already said yes.'},
+           {trap:true,note:'"You\'ll regret skipping this" — predictive regret framing. A new AI-era dark pattern.'}],
+   render:L5AI},
+];}
+
+function start(hard){hardMode=!!hard;hearts=5;score=0;streak=0;levelIdx=0;hoverTimers={};xp=0;manipCost=0;levelGrades=[];achUnlocked=new Set();showBrief();}
+function restart(){
+  // Show hard mode button on intro if player has won before
+  if(hasWon){const hb=document.getElementById('hard-mode-btn');if(hb)hb.style.display='';}
+  setScr('intro');
+}
+
+function showBrief(){
+  setScr('brief');
+  const lv=LEVELS[levelIdx];
+  const total=LEVELS.length;
+  document.getElementById('brief-lvl-label').textContent='Level '+(levelIdx+1)+' of '+total;
+  document.getElementById('brief-type-label').textContent=lv.isAI?'AI-powered hyper level':'';
+  const bpn=document.getElementById('brief-pattern-name');bpn.textContent=lv.pattern;bpn.className='brief-pattern'+(lv.isAI?' is-ai':'');
+  document.getElementById('brief-what').textContent=lv.brief;
+  document.getElementById('brief-goal').textContent=lv.goal;
+  document.getElementById('brief-goal-detail').textContent=lv.goalDetail||'';
+  const aiNote=document.getElementById('brief-ai-note');
+  const aiText=document.getElementById('brief-ai-text');
+  if(lv.isAI&&lv.aiIntro){aiNote.style.display='flex';aiNote.className='brief-ai-note';aiText.textContent=lv.aiIntro;}
+  else{aiNote.style.display='none';}
+}
+
+function showLevel(){
+  setScr('level');lostHeart=false;hoverTimers={};
+  const lv=LEVELS[levelIdx];
+  document.getElementById('h-lvl').textContent='Level '+(levelIdx+1)+' of '+LEVELS.length+(hardMode?' <span class="hard-badge">HARD</span>':'');
+  document.getElementById('h-goal').textContent='Goal: '+lv.goal;
+  const lc=document.getElementById('lc');
+  lc.className='fake-app'+(lv.isAI?' ai-app':'');
+  lc.innerHTML='';
+  if(lv.isAI)lc.innerHTML='<div class="ai-banner"><div class="ai-pulse"></div>NexusAI personalization engine — active</div>';
+  // Goal banner at top of every level
+  const goalBanner=document.createElement('div');
+  goalBanner.style.cssText='background:#fff;border-radius:8px;padding:8px 12px;border:1.5px solid #111;display:flex;align-items:center;gap:8px;font-size:12px';
+  goalBanner.innerHTML='<span style="font-weight:500;color:#111;white-space:nowrap">Your goal:</span><span style="color:#555">'+lv.goal+'</span>';
+  lc.appendChild(goalBanner);
+  lv.render(lc);
+  renderHearts();renderScore();renderStreak();renderDots('dots-l');
+}
+
+function succeed(){
+  streak++;
+  const pts=lostHeart?80:100;
+  const bonus=streak>=3?20:0;
+  score+=pts+bonus;
+  popScore(pts+bonus);
+  // Grade for this level
+  let grade;
+  if(!lostHeart&&streak>=3)grade='S';
+  else if(!lostHeart)grade='A';
+  else if(hearts>=3)grade='B';
+  else if(hearts>=1)grade='C';
+  else grade='F';
+  levelGrades[levelIdx]=grade;
+  SFX.levelClear(grade);
+  const lc=document.getElementById('lc');
+  if(lc){lc.classList.add('flash-green');setTimeout(()=>lc.classList.remove('flash-green'),500);}
+  if(!lostHeart)spawnConfetti();
+  checkAchievements();
+  showDebrief(true);
+}
+
+function fail(msg){
+  const wasNew=!lostHeart;
+  if(!lostHeart){hearts=Math.max(0,hearts-1);lostHeart=true;}
+  streak=0;
+  // Add cost for this failure based on current level
+  const lv=LEVELS[levelIdx];
+  if(wasNew&&lv&&lv.dollars&&lv.dollars.amount>0){
+    const hit=lv.dollars.period==='month'?lv.dollars.amount*12:lv.dollars.amount;
+    manipCost+=hit;
+  }
+  renderHearts(wasNew);renderScore();renderStreak();
+  SFX.caught();
+  // Screen shake
+  const app=document.getElementById('app');
+  if(app){app.classList.add('shake');setTimeout(()=>app.classList.remove('shake'),400);}
+  // Red flash
+  const lc=document.getElementById('lc');
+  if(lc){lc.classList.add('flash-red');setTimeout(()=>lc.classList.remove('flash-red'),500);}
+  const d=document.createElement('div');
+  d.className='damage-msg';d.textContent=msg||'Caught! You lost a heart.';
+  lc.prepend(d);setTimeout(()=>d.remove(),1900);
+  checkAchievements();
+}
+
+function almostGotYou(el,msg){
+  SFX.almost();
+  const d=document.createElement('div');
+  d.className='almost-msg';d.textContent=msg||'You almost fell for it — watch out!';
+  el.prepend(d);setTimeout(()=>d.remove(),2200);
+}
+function recoilBtn(btn){if(btn){btn.classList.add('recoil');setTimeout(()=>btn.classList.remove('recoil'),300);}}
+
+function trackHover(el,msg,onTrigger){
+  el.addEventListener('mouseenter',()=>{
+    if(hoverTimers[msg])return;
+    hoverTimers[msg]=setTimeout(()=>{
+      el.classList.add('danger-pulse');
+      recoilBtn(el);
+      if(onTrigger)onTrigger();
+      delete hoverTimers[msg];
+    },1500);
+  });
+  el.addEventListener('mouseleave',()=>{
+    clearTimeout(hoverTimers[msg]);delete hoverTimers[msg];
+  });
+}
+
+function showDebrief(won){
+  setScr('debrief');
+  const lv=LEVELS[levelIdx];
+  const isAI=lv.isAI;
+
+  document.getElementById('db-tag').textContent=isAI?'Hyper pattern identified':'Pattern identified';
+  const nm=document.getElementById('db-name');
+  nm.textContent=lv.pattern;nm.className='db-name'+(isAI?' db-ai':'');
+  document.getElementById('db-desc').textContent=lv.desc;
+
+  const barEl=document.getElementById('db-bar');
+  barEl.className='bar-f'+(isAI?' bar-ai-f':'');barEl.style.width='0';
+  document.getElementById('db-score-lbl').textContent=lv.manip+'%';
+  setTimeout(()=>barEl.style.width=lv.manip+'%',100);
+
+  const dr=document.getElementById('db-result');
+  const grade=levelGrades[levelIdx]||'—';
+  const gradeEl=document.getElementById('db-grade');
+  const gradeColors={S:'#1a1a1a',A:'#27500A',B:'#854F0B',C:'#7A3300',F:'#A32D2D'};
+  const gradeBg={S:'#f5f5f2',A:'#EAF3DE',B:'#FAEEDA',C:'#FDE8D8',F:'#FCEBEB'};
+  if(gradeEl){gradeEl.textContent=grade;gradeEl.style.background=gradeBg[grade]||'#f5f5f2';gradeEl.style.color=gradeColors[grade]||'#111';}
+  if(won&&!lostHeart){dr.innerHTML='<div class="db-result good">Clean dodge — +100 pts'+(streak>=3?' + streak bonus!':'')+'</div>';}
+  else if(won){dr.innerHTML='<div class="db-result ok">Cleared with damage — +80 pts</div>';}
+  else{dr.innerHTML='';}
+
+  const nb=document.getElementById('db-next');
+  nb.textContent=levelIdx<LEVELS.length-1?'Next level →':'See results →';
+
+  // Dollar cost card
+  const dc=document.getElementById('db-dollars');
+  if(lv.dollars){
+    dc.style.display='flex';
+    const d=lv.dollars;
+    const bigNum=d.amount>0?(d.period==='month'?`$${(d.amount*12).toFixed(2)}/year`:`$${d.amount.toFixed(2)}`):null;
+    dc.innerHTML=`<div class="rw-label">Real cost if this worked on you</div>${bigNum?`<div style="font-size:18px;font-weight:500;color:#A32D2D">${bigNum}</div>`:''}<div class="fs">${d.note}</div>`;
+  } else {dc.style.display='none';}
+
+  // Real-world example
+  const rw=document.getElementById('db-rw');
+  rw.innerHTML=`<div class="rw-label">Real-world example</div><div class="rw-company">${lv.rw.company}</div><div class="rw-detail">${lv.rw.detail}</div><a class="rw-link" href="${lv.rw.link}" target="_blank">More examples → deceptive.design</a>`;
+
+  // AI explanation card (hyper levels only)
+  const aic=document.getElementById('db-ai-card');
+  if(isAI&&lv.aiWhy){
+    aic.style.display='flex';aic.innerHTML=`<div class="ai-card-label">Why AI makes this worse</div><div class="ai-card-text">${lv.aiWhy}</div>`;
+  } else {aic.style.display='none';}
+
+  // Replay
+  const rp=document.getElementById('db-replay');
+  rp.innerHTML=`<div class="replay-title">What just happened</div>`+
+    lv.replay.map(s=>`<div class="replay-step"><span class="replay-annotation${isAI?' ai':''}">${s.trap?'Trap':'Note'}</span><div class="replay-arrow">${s.trap?'⚑':'→'}</div><div class="replay-step-body">${s.note}</div></div>`).join('');
+
+  renderDots('dots-d');
+}
+
+function next(){
+  levelIdx++;
+  if(levelIdx>=LEVELS.length){showWin();return;}
+  showBrief();
+}
+
+function showWin(){
+  setScr('win');
+  hasWon=true;
+  // Show fake-out layer first, hide real layer
+  document.getElementById('win-fakeout').style.display='flex';
+  document.getElementById('win-real').style.display='none';
+
+  let title,sub;
+  if(hearts===5&&score>=900){title='Perfect run.';sub='You dodged every pattern without taking damage. You are genuinely hard to manipulate.';}
+  else if(hearts>=3){title='Sharp-eyed.';sub='You caught most of the tricks. A few got through — see the receipt below.';}
+  else if(hearts>=1){title='Roughed up but out.';sub='The dark patterns took a toll. Review the receipt — you may be more susceptible than you think.';}
+  else{title='Fully opted in.';sub='You lost all your hearts. The good news: now you know exactly how it happened.';}
+  document.getElementById('win-title').textContent=title;
+  document.getElementById('win-sub').textContent=sub;
+  const maxScore=LEVELS.length*100+60;
+  document.getElementById('win-receipt').innerHTML=`
+    <div class="receipt-row"><span>Final score</span><span>${score} / ${maxScore}</span></div>
+    <div class="receipt-row"><span>Hearts remaining</span><span>${hearts} / 5</span></div>
+    <div class="receipt-row"><span>Levels cleared</span><span>${LEVELS.length} / ${LEVELS.length}</span></div>
+    <div class="receipt-row"><span>Best streak</span><span>${streak} clean</span></div>
+    <div class="receipt-total"><span>Resistance rating</span><span>${rating()}</span></div>`;
+
+  // Fake countdown
+  let countdown=30;
+  const foTimer=setInterval(()=>{
+    countdown--;
+    const el=document.getElementById('fo-countdown');
+    if(el)el.textContent='Your score will be deleted in '+countdown+' seconds unless you claim your badge.';
+    if(countdown<=0)clearInterval(foTimer);
+  },1000);
+
+  // Claim badge = goes nowhere / reloads fake-out
+  document.getElementById('fo-claim').onclick=()=>{
+    const el=document.getElementById('fo-claim');
+    el.textContent='Connecting...';
+    el.disabled=true;
+    setTimeout(()=>{el.textContent='Error — please try again';el.disabled=false;},1800);
+  };
+
+  // Decline (confirmshamed) = reveals real win
+  document.getElementById('fo-decline').onclick=()=>{
+    clearInterval(foTimer);
+    unlockAch('caught_fakeout');
+    revealRealWin();
+  };
+
+  // Also: if both checkboxes are unchecked, show a "wait — are you sure?" nudge then reveal
+  let checkWatcher=setInterval(()=>{
+    const s=document.getElementById('fo-share');
+    const d=document.getElementById('fo-data');
+    if(s&&d&&!s.checked&&!d.checked){
+      clearInterval(checkWatcher);
+      clearInterval(foTimer);
+      unlockAch('caught_fakeout');setTimeout(revealRealWin,600);
+    }
+  },300);
+}
+
+function revealRealWin(){
+  document.getElementById('win-fakeout').style.display='none';
+  const real=document.getElementById('win-real');
+  real.style.display='flex';
+  const hb=document.getElementById('win-hard-unlock');
+  if(hb)hb.style.display='block';
+  // Achievements
+  const achEl=document.getElementById('win-achievements');
+  if(achEl){
+    achEl.innerHTML=ACHIEVEMENTS.map(a=>{
+      const got=achUnlocked.has(a.id);
+      return`<div class="achievement${got?'':' ach-locked'}"><div class="ach-icon">${a.icon}</div><div><div class="ach-name">${a.name}</div><div class="ach-desc">${a.desc}</div></div>${got?'<div style="font-size:11px;color:#3B6D11;font-weight:500;margin-left:auto;padding-left:8px">✓</div>':''}</div>`;
+    }).join('');
+  }
+  document.getElementById('win-play-again').onclick=()=>G.start(false);
+  // Hard mode button (once)
+  if(!document.getElementById('hard-btn-win')){
+    const btn=document.createElement('button');
+    btn.id='hard-btn-win';
+    btn.className='btn';
+    btn.textContent='Play hard mode →';
+    btn.style.cssText='background:#1a1a1a;color:#f5f5f2;border-color:transparent';
+    btn.onclick=()=>G.start(true);
+    document.getElementById('win-play-again').insertAdjacentElement('afterend',btn);
+  }
+  SFX.win();
+}
+
+function rating(){
+  if(score>=900&&hearts===5)return'Untouchable';
+  if(score>=750)return'Sharp-eyed';
+  if(score>=500)return'Aware';
+  if(score>=300)return'Vulnerable';
+  return'Opted in';
+}
+
+function renderHearts(animate){
+  const el=document.getElementById('h-hearts');if(!el)return;
+  el.innerHTML=Array.from({length:5},(_,i)=>`<div class="heart${i>=hearts?' lost':''}" id="heart-${i}"></div>`).join('');
+  if(animate&&hearts>=0){
+    const h=document.getElementById('heart-'+(hearts));
+    if(h){h.style.animation='heartbreak 0.5s ease forwards';}
+  }
+}
+function popScore(pts){
+  const hud=document.getElementById('scr-level');
+  if(!hud)return;
+  const pop=document.createElement('div');
+  pop.className='score-pop';
+  pop.textContent='+'+pts;
+  pop.style.cssText='position:fixed;top:60px;right:20px';
+  document.body.appendChild(pop);
+  setTimeout(()=>pop.remove(),900);
+}
+function renderScore(){
+  document.getElementById('h-score').textContent=score;
+  // XP: max 1160 total (10 levels * 100 + 60 bonus + 100 hard bonus)
+  const maxXP=1260;xp=score;
+  const pct=Math.min(100,Math.round(xp/maxXP*100));
+  const xpEl=document.getElementById('xp-fill');if(xpEl)xpEl.style.width=pct+'%';
+  // Manipulation cost
+  const costEl=document.getElementById('h-cost');
+  if(costEl){if(manipCost>0){costEl.style.display='';costEl.textContent='$'+manipCost.toFixed(2)+' extracted';}else costEl.style.display='none';}
+}
+function renderStreak(){const el=document.getElementById('h-streak');if(streak>=2){el.style.display='';el.textContent=streak+'× streak';}else el.style.display='none';}
+function renderDots(id){
+  const el=document.getElementById(id);if(!el)return;
+  el.innerHTML=LEVELS.map((lv,i)=>{
+    let c='dot';
+    if(lv.isAI)c+=i<levelIdx?' ai-done':i===levelIdx?' ai-cur':'';
+    else c+=i<levelIdx?' done':i===levelIdx?' cur':'';
+    return`<div class="${c}"></div>`;
+  }).join('');
+}
+function setScr(n){['intro','brief','level','debrief','win','designer'].forEach(s=>{const el=document.getElementById('scr-'+s);if(el)el.classList.toggle('active',s===n);});}
+
+function showGlossary(){
+  document.getElementById('glossary-body').innerHTML=GLOSSARY.map(g=>`
+    <div class="glossary-item">
+      <div class="glossary-item-name${g.ai?' is-ai':''}">${g.name}${g.ai?' <span style="font-size:11px;font-weight:400;color:#AFA9EC">AI-amplified</span>':''}</div>
+      <div class="glossary-item-desc">${g.desc}</div>
+      <div class="glossary-coined">${g.coined}</div>
+    </div>`).join('');
+  document.getElementById('glossary').style.display='flex';
+}
+function hideGlossary(){document.getElementById('glossary').style.display='none';}
+function closeGlossary(e){if(e.target===document.getElementById('glossary'))hideGlossary();}
+
+/* ── LEVEL 1: Roach Motel ── */
+function L1(el){
+  let step=0;
+  const steps=[
+    ()=>el.insertAdjacentHTML('beforeend',`<div class="ftiny" style="color:#aaa;margin-bottom:-4px">Step 1 of 6</div><div class="fh">Manage subscription</div><div class="fs">NebulaPro · renews May 3 · $9.99/mo</div><div class="btn-row" style="margin-top:8px"><button class="btn" id="l1-cancel">Cancel subscription</button><button class="btn btn-p" onclick="G.fail('You kept the plan — lost a heart.')">Keep plan</button></div>`),
+    ()=>el.insertAdjacentHTML('beforeend',`<div class="ftiny" style="color:#aaa;margin-bottom:-4px">Step 2 of 6</div><div class="fh">Before you go...</div><div class="fs">Pause your plan instead? No charges for up to 3 months.</div><div class="btn-row" style="margin-top:8px"><button class="btn" id="l1-no">No, cancel</button><button class="btn btn-p">Pause for free</button></div>`),
+    ()=>el.insertAdjacentHTML('beforeend',`<div class="ftiny" style="color:#aaa;margin-bottom:-4px">Step 3 of 6</div><div class="fh">Why are you leaving?</div><div style="display:flex;flex-direction:column;gap:4px;margin-top:4px">${['Too expensive','Not using it','Missing features','Found a better option','Other'].map(o=>`<label class="cb-row"><input type="radio" name="l1w"> ${o}</label>`).join('')}</div><div class="btn-row" style="margin-top:8px"><button class="btn" id="l1-survey">Continue</button></div>`),
+    ()=>el.insertAdjacentHTML('beforeend',`<div class="ftiny" style="color:#aaa;margin-bottom:-4px">Step 4 of 6</div><div class="fh">Special offer — just for you</div><div style="padding:10px;border-radius:8px;border:0.5px solid #ccc;background:#fff"><div style="font-size:14px;font-weight:500">50% off for 3 months</div><div class="fs">$4.99/mo instead of $9.99</div></div><div class="btn-row" style="margin-top:8px"><button class="btn" id="l1-offer">No thanks, cancel</button><button class="btn btn-p">Accept offer</button></div>`),
+    ()=>el.insertAdjacentHTML('beforeend',`<div class="ftiny" style="color:#aaa;margin-bottom:-4px">Step 5 of 6</div><div class="fh" style="font-size:13px">Help us improve (required)</div><div style="display:flex;flex-direction:column;gap:8px;margin-top:4px">${['How satisfied were you?','How easy was it to use?','Likelihood to return?','Would you recommend us?','Did you use mobile?','How did you find us?'].map((q,i)=>`<div><div class="fs">${i+1}. ${q}</div><div style="display:flex;gap:5px;margin-top:3px">${'★★★★★'.split('').map(()=>`<span style="font-size:15px;color:#ddd;cursor:pointer">★</span>`).join('')}</div></div>`).join('')}</div><div class="btn-row" style="margin-top:8px"><button class="btn" id="l1-done">Submit & cancel</button></div>`),
+    ()=>el.insertAdjacentHTML('beforeend',`<div style="text-align:center;padding:12px 0;display:flex;flex-direction:column;gap:8px;align-items:center"><div class="ftiny" style="color:#aaa">Step 6 of 6</div><div style="font-size:14px;font-weight:500">Request received</div><div class="fs">Allow 5–7 business days. Subscription stays active until May 3.</div><button class="btn btn-p" style="margin-top:4px" onclick="G.succeed()">Done</button></div>`),
+  ];
+  function bind(){
+    const c=document.getElementById('l1-cancel');
+    const n=document.getElementById('l1-no');
+    const s=document.getElementById('l1-survey');
+    const o=document.getElementById('l1-offer');
+    const d=document.getElementById('l1-done');
+    if(c)c.onclick=advance;
+    if(n)n.onclick=advance;
+    if(s)s.onclick=advance;
+    if(o)o.onclick=advance;
+    if(d)d.onclick=advance;
+    // Hover trap on "Keep plan" and "Pause for free" and "Accept offer"
+    document.querySelectorAll('.btn-p').forEach(b=>{
+      if(b.textContent.includes('Keep')||b.textContent.includes('Pause')||b.textContent.includes('Accept')){
+        trackHover(b,'trap-l1',()=>almostGotYou(el,'Hover detected — that button keeps your subscription!'));
+      }
+    });
+  }
+  function advance(){el.innerHTML='';step++;steps[step]();bind();}
+  steps[0]();bind();
+}
+
+/* ── LEVEL 1 AI ── */
+function L1AI(el){
+  const deflects=["I can help with that! First, can you verify your account email?","Thanks! Pulling up your account... I see you've been with us 47 days — you're just getting started! Would a pause work instead?","I understand. Before I process this, I need to transfer you to our retention team. Please hold.","I'm sorry, I lost your session context. Can you confirm your reason for cancelling?","Your cancellation has been submitted. You'll hear from us within 5–7 business days."];
+  const hints=["","","Halfway there — keep telling the bot you want to cancel.","Almost through — one more time.",""];
+  const other=["I'm not sure I understood that. Could you rephrase?","Let me check on that... still loading.","High volume right now — your request is queued."];
+  let ri=0,oi=0;
+  el.insertAdjacentHTML('beforeend',`<div class="fh" style="font-size:13px">NebulaPro Support — Nex</div><div class="ftiny" style="color:#534AB7;margin-bottom:-4px">Type 'cancel' to request cancellation. The bot will deflect — keep going.</div><div class="chat-log" id="chatlog"></div><div class="chat-row"><input id="chat-in" placeholder="e.g. I want to cancel" onkeydown="if(event.key==='Enter')chatSend()"><button class="btn btn-ai" style="padding:7px 12px;font-size:12px" onclick="chatSend()">Send</button></div><div style="margin-top:8px;display:flex;align-items:center;justify-content:space-between"><div class="ftiny">Nex is powered by NexusAI</div><button class="btn btn-g" style="font-size:11px" onclick="G.fail('You gave up — the bot won. Lost a heart.');setTimeout(()=>G.succeed(),1900);">Give up (lose a heart)</button></div>`);
+  addChat(false,"Hi! I'm Nex, your NebulaPro assistant. How can I help today?");
+  window.chatSend=function(){
+    const i=document.getElementById('chat-in');const t=i.value.trim();if(!t)return;i.value='';
+    addChat(true,t);
+    const isCancel=/cancel|stop|end|quit|unsubscribe|leave|delete/i.test(t);
+    setTimeout(()=>{
+      if(isCancel){
+        if(ri>=deflects.length-1){addChat(false,deflects[deflects.length-1]);if(ri===0)unlockAch('bot_whisperer');setTimeout(()=>G.succeed(),1200);return;}
+        addChat(false,deflects[ri]);
+        if(hints[ri])addChat(false,'💡 '+hints[ri]);
+        ri++;
+      } else {addChat(false,other[oi++%other.length]);}
+    },700);
+  };
+  function addChat(isUser,txt){
+    const log=document.getElementById('chatlog');if(!log)return;
+    const d=document.createElement('div');d.className='chat-bubble '+(isUser?'chat-user':'chat-bot');d.textContent=txt;
+    log.appendChild(d);log.scrollTop=log.scrollHeight;
+  }
+}
+
+/* ── LEVEL 2: Confirmshaming ── */
+function L2(el){
+  const rounds=[
+    ["Yes, save me money!","No thanks, I enjoy overpaying"],
+    ["Yes, keep me informed!","No thanks, I'd rather stay in the dark"],
+    ["Yes, improve my health!","No thanks, I don't care about my wellbeing"],
+    ["Yes, send my free gift!","No thanks, I hate receiving gifts"],
+  ];
+  let r=0;
+  function show(){
+    const aiB=el.querySelector('.ai-banner');el.innerHTML=aiB?aiB.outerHTML:'';
+    el.insertAdjacentHTML('beforeend',`<div class="fh">Wait — one quick thing</div><div class="fs">Would you like exclusive deals and tips from NebulaPro?</div><div style="display:flex;flex-direction:column;gap:8px;margin-top:12px"><button class="btn btn-p" id="l2-yes">${rounds[r][0]}</button><button class="btn-g btn" id="l2-no">${rounds[r][1]}</button></div><div class="ftiny" style="margin-top:8px">Round ${r+1} of ${rounds.length}</div>`);
+    document.getElementById('l2-yes').onclick=()=>{G.fail('You opted in! Lost a heart.');r=Math.min(r+1,rounds.length-1);setTimeout(show,1600);};
+    document.getElementById('l2-no').onclick=()=>{r++;if(r>=rounds.length)G.succeed();else show();};
+    trackHover(document.getElementById('l2-yes'),'l2y',()=>almostGotYou(el,"That's the opt-in — the button copy is designed to feel like the right answer."));
+    // Hard mode: decline button drifts away after a moment
+    if(hardMode){
+      const nb=document.getElementById('l2-no');
+      if(nb){setTimeout(()=>{if(nb)nb.classList.add('hard-drift');},1500);}
+    }
+  }
+  show();
+}
+
+/* ── LEVEL 2 AI ── */
+function L2AI(el){
+  const profiles=['budget-conscious','time-strapped','health-focused','socially conscious'];
+  const profile=profiles[Math.floor(Math.random()*profiles.length)];
+  const shame=['No thanks, I\'m fine wasting money',`No thanks, being ${profile} isn't important to me`,'No thanks, I\'d rather not benefit from this','No thanks, I give up'];
+  let r=0;
+  el.insertAdjacentHTML('beforeend',`<div class="fh" style="font-size:12px;color:#534AB7">NexusAI profiled you as: <em>${profile}</em></div>`);
+  function show(){
+    const existing=el.querySelector('.l2ai-b');if(existing)existing.remove();
+    const div=document.createElement('div');div.className='l2ai-b';
+    div.style.cssText='display:flex;flex-direction:column;gap:8px;margin-top:8px';
+    div.innerHTML=`<div class="fh">Based on your profile, we think you'll love this</div><div class="fs">Our AI selected this specifically for ${profile} users like you.</div><button class="btn btn-ai" id="l2a-yes">Yes, this is perfect for me</button><button class="btn-g btn" id="l2a-no">${shame[Math.min(r,shame.length-1)]}</button><div class="ftiny">Round ${r+1} of ${shame.length} · AI confidence: ${93-r*4}%</div>`;
+    el.appendChild(div);
+    document.getElementById('l2a-yes').onclick=()=>{G.fail('AI upsell worked — lost a heart.');r=Math.min(r+1,shame.length-1);setTimeout(show,1600);};
+    document.getElementById('l2a-no').onclick=()=>{r++;if(r>=shame.length)G.succeed();else show();};
+    trackHover(document.getElementById('l2a-yes'),'l2ay',()=>almostGotYou(el,"That confidence % is meaningless — it's designed to make you feel irrational for declining."));
+  }
+  show();
+}
+
+/* ── LEVEL 3: Disguised Ads ── */
+function L3(el){
+  const results=[
+    {ad:true,title:'Best Running Shoes 2024 | Shop Now — RunnersPro',url:'runnerspro.com/best-shoes',snip:'Find your perfect pair. Free shipping on orders over $50.'},
+    {ad:true,title:'Running Shoes Sale — Up to 60% Off | ShoeWorld',url:'shoeworld.co/running-deals',snip:'Nike, Adidas, Brooks and more. Limited time.'},
+    {ad:false,title:'The 12 best running shoes of 2024, tested by runners',url:'runnersworld.com/gear/best-running-shoes-2024',snip:'Our editors tested 40+ pairs this year. Here are the ones worth buying.'},
+    {ad:true,title:'Official Running Shoes | Free Returns | FeetFirst™',url:'feetfirst.com/running',snip:'Engineered for performance. Shop the 2024 collection.'},
+    {ad:false,title:'How to choose running shoes — a beginner\'s guide',url:'verywellfit.com/choose-running-shoes',snip:'Foot type, gait, terrain — here\'s what actually matters.'},
+  ];
+  let tries=0;
+  function show(){
+    const aiB=el.querySelector('.ai-banner');el.innerHTML=aiB?aiB.outerHTML:'';
+    el.insertAdjacentHTML('beforeend',`<div style="padding:6px 10px;border:0.5px solid #ccc;border-radius:8px;font-size:12px;color:#666;margin-bottom:8px">best running shoes</div><div style="display:flex;flex-direction:column;gap:7px">${results.map((r,i)=>`<div class="res-item" id="r${i}"><div class="res-url"><span class="ad-badge">${r.ad?'Sponsored':''}</span>${r.url}</div><div class="res-t">${r.title}</div><div class="res-s">${r.snip}</div></div>`).join('')}</div><div class="ftiny" style="margin-top:6px">Attempts: ${tries}</div>`);
+    results.forEach((r,i)=>{
+      const el2=document.getElementById('r'+i);
+      if(el2){
+        el2.onclick=()=>{tries++;if(r.ad){G.fail('That was a sponsored result!');setTimeout(show,1500);}else G.succeed();};
+        if(r.ad)trackHover(el2,'r'+i,()=>almostGotYou(el,'Look at the URL — does it look editorial or commercial?'));
+      }
+    });
+    // Hard mode: sponsored labels fade out after 2s
+    if(hardMode){
+      setTimeout(()=>{
+        document.querySelectorAll('.ad-badge').forEach(b=>{if(b.textContent)b.style.transition='opacity 1s';if(b.textContent)b.style.opacity='0';});
+      },2000);
+    }
+  }
+  show();
+}
+
+/* ── LEVEL 3 AI: Synthetic Reviews ── */
+function L3AI(el){
+  const reviews=[
+    {text:'"Absolutely transformed my workflow. Cancelled three other apps immediately."',stars:5,name:'Jordan M.',ai:false},
+    {text:'"Decent but the UI needs work. Support team was responsive though."',stars:3,name:'Priya K.',ai:false},
+    {text:'"As a busy parent of three, I was skeptical — but this genuinely changed how I manage my days. Highly recommend."',stars:5,name:'TechDad2024',ai:true},
+    {text:'"Best purchase I\'ve made this year. Seamless, intuitive, and worth every penny."',stars:5,name:'alex_reviews99',ai:true},
+    {text:'"Used it for a week and returned it. Not for me — but I can see why others would enjoy it."',stars:2,name:'M. Okonkwo',ai:false},
+  ];
+  let tries=0;
+  function show(){
+    const aiB=el.querySelector('.ai-banner');el.innerHTML=aiB?aiB.outerHTML:'';
+    el.insertAdjacentHTML('beforeend',`<div class="fh" style="font-size:13px">Customer reviews</div><div class="fs" style="color:#534AB7;margin-bottom:8px">Spot the AI-generated review — one of these was written by a language model.</div><div style="display:flex;flex-direction:column;gap:7px">${reviews.map((r,i)=>`<div class="res-item" id="rev${i}"><div style="font-size:14px;margin-bottom:2px">${'★'.repeat(r.stars)}${'☆'.repeat(5-r.stars)}</div><div class="res-s" style="font-style:italic">${r.text}</div><div class="res-url" style="margin-top:3px">${r.name} · Verified purchase</div></div>`).join('')}</div><div class="ftiny" style="margin-top:6px">Attempts: ${tries}</div>`);
+    reviews.forEach((r,i)=>{
+      const el2=document.getElementById('rev'+i);
+      if(el2){
+        el2.onclick=()=>{tries++;if(!r.ai){G.fail('That was a real review — AI fakes are smoother than you think!');setTimeout(show,1700);}else{if(tries===1)unlockAch('sharp_eye');G.succeed();}};
+        if(!r.ai)trackHover(el2,'rev'+i,()=>almostGotYou(el,'Real reviews have idiosyncratic detail — AI reviews tend to be complete and smooth.'));
+      }
+    });
+  }
+  show();
+}
+
+/* ── LEVEL 4: Trick Questions ── */
+function L4(el){
+  let attempts=0;
+  // Deliberately confusing labels — that's the dark pattern
+  const settings=[
+    {label:"Send me promotional emails and special offers",           ideal:false, starts:true},
+    {label:"Limit sharing of my data with third-party partners",      ideal:true,  starts:false},
+    {label:"Opt me out of interest-based advertising",               ideal:true,  starts:false},
+    {label:"Personalise my NebulaPro experience",                    ideal:false, starts:true},
+  ];
+  function show(){
+    const saved=settings.map((s,i)=>{const cb=document.getElementById('sc'+i);return cb?cb.checked:s.starts;});
+    const aiB=el.querySelector('.ai-banner');el.innerHTML=aiB?aiB.outerHTML:'';
+    // After 2 wrong attempts: show the answer and a free pass
+    if(attempts>=2){
+      el.insertAdjacentHTML('beforeend',`
+        <div class="damage-msg" style="background:#FAEEDA;color:#633806;border:none">
+          The phrasing is intentionally confusing — that's the dark pattern.<br>
+          <strong>Answer: uncheck 1 and 4, check 2 and 3.</strong> The trick: boxes 2 and 3 start unchecked even though they protect you. Box 4 sounds helpful ("Personalise my experience") but means tracking. Box 2 uses "Limit" — removing that limit is bad, so you want it checked.
+        </div>
+        <div style="display:flex;flex-direction:column">${settings.map((s,i)=>`
+          <div class="set-row">
+            <div class="set-desc">${s.label}</div>
+            <input type="checkbox" id="sc${i}"${saved[i]?' checked':''}></div>`).join('')}
+        </div>
+        <div class="btn-row" style="margin-top:10px">
+          <button class="btn btn-p" id="l4-save">Save preferences</button>
+          <button class="btn btn-g" id="l4-skip">Move on (lose a heart) →</button>
+        </div>
+        <div class="ftiny" style="color:#aaa;margin-top:4px">You've seen the point — confusing phrasing is the whole trick.</div>`);
+    } else {
+      const attemptNote=attempts===1?'<div class="ftiny" style="color:#854F0B;padding:2px 0">One more wrong attempt and the answer will be revealed. Hint: not all boxes start in the same state.</div>':'<div class="ftiny" style="color:#aaa">Each label is deliberately confusing — read slowly.</div>';
+      el.insertAdjacentHTML('beforeend',`
+        ${attemptNote}
+        <div style="display:flex;flex-direction:column">${settings.map((s,i)=>`
+          <div class="set-row">
+            <div class="set-desc">${s.label}</div>
+            <input type="checkbox" id="sc${i}"${saved[i]?' checked':''}></div>`).join('')}
+        </div>
+        <div class="btn-row" style="margin-top:10px">
+          <button class="btn btn-p" id="l4-save">Save preferences</button>
+        </div>`);
+    }
+    document.getElementById('l4-save').onclick=()=>{
+      const ok=settings.every((s,i)=>document.getElementById('sc'+i)&&document.getElementById('sc'+i).checked===s.ideal);
+      if(ok){if(attempts===0)unlockAch('speed_reader');G.succeed();}
+      else{attempts++;G.fail('Not quite — your previous selections are preserved.');setTimeout(show,1900);}
+    };
+    const skipBtn=document.getElementById('l4-skip');
+    if(skipBtn)skipBtn.onclick=()=>{G.fail('Moved on — lost a heart.');setTimeout(()=>G.succeed(),1900);};
+  }
+  show();
+}
+
+
+function L4AI(el){
+  let variant=0,attempts=0;
+  // Each variant has 3 options. The "opt out" option is always the LAST one (index 2).
+  // The other two are traps. Labels change each round to disorient.
+  const variants=[
+    {options:[
+      {label:"Share my data with partners",trap:true,checked:true},
+      {label:"Enable personalisation",trap:true,checked:true},
+      {label:"Opt out of all data collection",trap:false,checked:false},
+    ]},
+    {options:[
+      {label:"Do NOT disable partner data sharing",trap:true,checked:true},
+      {label:"Personalisation: off",trap:true,checked:false},
+      {label:"Global privacy control: on",trap:false,checked:false},
+    ]},
+    {options:[
+      {label:"I consent to data sharing",trap:true,checked:true},
+      {label:"Limit ad personalisation",trap:true,checked:false},
+      {label:"Opt out of tracking",trap:false,checked:false},
+    ]},
+  ];
+  function show(){
+    const aiB=el.querySelector('.ai-banner');el.innerHTML=aiB?aiB.outerHTML:'';
+    const v=variants[variant%variants.length];
+    const contextNote='<div class="fs" style="color:#534AB7;margin-bottom:6px">The AI has reshuffled the form (variant '+(variant+1)+'). <em>One option always opts you out — find it.</em></div>';
+    const skipNote=attempts>=2?'<button class="btn btn-g" id="l4a-skip" style="margin-top:4px">Move on (lose a heart) →</button>':'';
+    el.insertAdjacentHTML('beforeend',`
+      ${contextNote}
+      <div style="display:flex;flex-direction:column">${v.options.map((o,i)=>`
+        <div class="set-row">
+          <div class="set-desc">${o.label}</div>
+          <input type="checkbox" id="ac${i}"${o.checked?' checked':''}></div>`).join('')}
+      </div>
+      <div class="btn-row" style="margin-top:10px">
+        <button class="btn btn-p" id="l4a-save">Save</button>
+        ${skipNote}
+      </div>
+      <div class="ftiny" style="color:#aaa;margin-top:4px">Attempt ${attempts+1} — only one option protects your privacy. The others look plausible but don't.</div>`);
+    document.getElementById('l4a-save').onclick=()=>{
+      attempts++;
+      // Win condition: only the non-trap option (index 2) is checked
+      const cb0=document.getElementById('ac0'),cb1=document.getElementById('ac1'),cb2=document.getElementById('ac2');
+      const ok=cb0&&cb1&&cb2&&!cb0.checked&&!cb1.checked&&cb2.checked;
+      if(ok){G.succeed();return;}
+      // After 3 attempts: show answer and free pass
+      if(attempts>=3){
+        G.fail('The dark pattern wins this round.');
+        setTimeout(()=>{
+          const aiB2=el.querySelector('.ai-banner');el.innerHTML=aiB2?aiB2.outerHTML:'';
+          el.insertAdjacentHTML('beforeend',`
+            <div class="damage-msg" style="background:#EEEDFE;color:#26215C;border:none">
+              <strong>The trick:</strong> the AI keeps relabelling the same three options. One always genuinely opts you out — it's always the one that straightforwardly says "opt out" or "privacy control: on." The others are traps dressed as controls.
+            </div>
+            <div class="btn-row" style="margin-top:12px">
+              <button class="btn btn-p" onclick="G.succeed()">Got it — move on</button>
+            </div>`);
+        },1900);
+        return;
+      }
+      variant++;
+      G.fail("The form reshuffled — that's the dark pattern in action.");
+      setTimeout(show,1900);
+    };
+    const skipBtn=document.getElementById('l4a-skip');
+    if(skipBtn)skipBtn.onclick=()=>{G.fail('Moved on — lost a heart.');setTimeout(()=>G.succeed(),1900);};
+  }
+  show();
+}
+
+/* ── LEVEL 5: Sneak into Basket ── */
+function L5(el){
+  let cart=[
+    {name:'Wireless headphones',price:49.99,rm:false,sneaky:false},
+    {name:'2-year accident protection',price:12.99,rm:true,sneaky:true},
+    {name:'Premium cable 3-pack',price:8.99,rm:true,sneaky:true},
+    {name:'NebulaPro trial (auto-renews)',price:0,rm:true,sneaky:true},
+  ];
+  const extras=[
+    {name:'Device setup service',price:4.99,rm:true,sneaky:true},
+    {name:'Extended warranty (1yr)',price:9.99,rm:true,sneaky:true},
+    {name:'Round-up donation',price:1.00,rm:true,sneaky:true},
+  ];
+  function total(){return cart.reduce((a,c)=>a+c.price,0);}
+  function show(){
+    const aiB=el.querySelector('.ai-banner');el.innerHTML=aiB?aiB.outerHTML:'';
+    el.insertAdjacentHTML('beforeend',`<div class="fh" style="font-size:13px">Your cart</div><div style="margin-top:8px">${cart.map((c,i)=>`<div class="cart-item"><div class="cart-nm">${c.name}${c.sneaky?' <span class="sneaky">(added for you)</span>':''}</div><div class="cart-pr">${c.price===0?'Free':'$'+c.price.toFixed(2)}</div>${c.rm?`<button class="cart-rm" id="crm${i}">Remove</button>`:'<span style="width:44px"></span>'}</div>`).join('')}</div><div style="display:flex;justify-content:space-between;font-size:13px;font-weight:500;padding:8px 0;border-top:0.5px solid #e0e0d8;margin-top:4px"><span>Total</span><span>$${total().toFixed(2)}</span></div><div class="btn-row"><button class="btn btn-p" id="l5-co">Checkout →</button></div><div class="ftiny" style="margin-top:4px">Add-ons auto-renew. Free item becomes $9.99/mo after trial.</div>`);
+    cart.forEach((_,i)=>{const b=document.getElementById('crm'+i);if(b)b.onclick=()=>{cart.splice(i,1);show();};});
+    document.getElementById('l5-co').onclick=()=>{
+      const hasSneaky=cart.some(c=>c.sneaky);
+      if(!hasSneaky){G.succeed();return;}
+      const next=extras.find(e=>!cart.find(c=>c.name===e.name));
+      if(next)cart.push(next);
+      G.fail('An item crept back in — check your cart!');setTimeout(show,1600);
+    };
+    const co=document.getElementById('l5-co');
+    if(co)trackHover(co,'l5co',()=>almostGotYou(el,'Check every line before clicking Checkout — new items may have appeared.'));
+  }
+  show();
+}
+
+/* ── LEVEL 5 AI ── */
+function L5AI(el){
+  const profile='budget-conscious runner';
+  const upsells=[
+    {name:'RunPro Membership (AI-predicted: 94% match)',price:7.99},
+    {name:'Performance insoles (recommended for your gait)',price:19.99},
+    {name:'HydrationTrack+ bundle (users like you bought this)',price:12.99},
+  ];
+  let step=0;
+  function show(){
+    if(step>=upsells.length){G.succeed();return;}
+    const u=upsells[step];
+    const aiB=el.querySelector('.ai-banner');el.innerHTML=aiB?aiB.outerHTML:'';
+    el.insertAdjacentHTML('beforeend',`<div class="fh" style="font-size:12px;color:#534AB7">NexusAI identified you as: <em>${profile}</em></div><div style="margin-top:10px;padding:12px;border-radius:8px;border:0.5px solid #AFA9EC;background:#fff"><div style="font-size:14px;font-weight:500">${u.name}</div><div class="fs">$${u.price.toFixed(2)}/mo · Cancel anytime</div></div><div class="fs" style="margin-top:8px;color:#534AB7">Our model predicts you'll regret skipping this. Confidence: ${91-step*4}%</div><div class="btn-row" style="margin-top:10px"><button class="btn btn-ai" id="l5a-add">Add to order</button><button class="btn" id="l5a-skip">No thanks</button></div><div class="ftiny">${step+1} of ${upsells.length} personalized recommendations</div>`);
+    document.getElementById('l5a-add').onclick=()=>{G.fail('AI upsell worked — lost a heart.');step++;setTimeout(show,1500);};
+    document.getElementById('l5a-skip').onclick=()=>{step++;show();};
+    trackHover(document.getElementById('l5a-add'),'l5aa',()=>almostGotYou(el,"That confidence % is fabricated — it's designed to make declining feel irrational."));
+  }
+  show();
+}
+
+
+/* ── DESIGNER MODE ── */
+const D_STATE={btn:0,copy:0,check:0,price:0,urgency:0,sneak:0};
+const D_PTS={btn:[0,15,25,35],copy:[0,20,30,40],check:[0,20,35],price:[0,15,30],urgency:[0,15,25,30],sneak:[0,20,35,45]};
+const D_NAMES={btn:['Decline button style','Decline button style','Decline button style','Decline button style'],
+  copy:['Neutral decline copy','Confirmshaming (mild)','Confirmshaming (moderate)','Confirmshaming (severe)'],
+  check:['Honest checkbox','Pre-checked newsletter','Pre-checked + trick label'],
+  price:['Transparent pricing','Hidden fees','Disguised auto-renewal'],
+  urgency:['No urgency','Countdown timer','Fake social proof','Fabricated scarcity + social proof'],
+  sneak:['No sneaked items','1 sneaked item','2 sneaked items','3 sneaked items + reappear']};
+
+const COPY_OPTS=['No thanks','No thanks, I hate saving money','No thanks, I prefer to pay full price','No thanks, I don\'t care about my health'];
+const VERDICTS=[
+  {min:0,max:20,text:'Your form is clean — honest design.',reg:'No regulatory concerns.',color:'#3B6D11'},
+  {min:21,max:50,text:'Mildly manipulative — a few nudges that could go either way.',reg:'Borderline — some patterns may attract scrutiny under GDPR and FTC guidelines.',color:'#854F0B'},
+  {min:51,max:100,text:'Significantly manipulative — multiple dark patterns working together.',reg:'High risk: likely violates GDPR Art. 7 (freely given consent) and FTC deceptive practices rules.',color:'#A32D2D'},
+  {min:101,max:999,text:'Highly predatory — this is textbook dark pattern design.',reg:'This would attract FTC enforcement action and EU DSA fines of up to 6% of global revenue.',color:'#791F1F'},
+];
+
+function dpick(el){
+  const group=el.dataset.group;
+  document.querySelectorAll(`.d-opt[data-group="${group}"]`).forEach(o=>o.classList.remove('selected'));
+  el.classList.add('selected');
+  D_STATE[group]=parseInt(el.dataset.val);
+  updateDesigner();
+}
+
+function totalPts(){return Object.keys(D_STATE).reduce((a,k)=>a+D_PTS[k][D_STATE[k]],0);}
+
+function updateDesigner(){
+  const pts=totalPts();
+  const maxPts=35+40+35+30+30+45;
+  const pct=Math.min(100,Math.round(pts/maxPts*100));
+  document.getElementById('d-score-num').textContent=pts;
+  document.getElementById('d-score-bar').style.width=pct+'%';
+  const v=VERDICTS.find(v=>pts>=v.min&&pts<=v.max)||VERDICTS[VERDICTS.length-1];
+  document.getElementById('d-verdict').textContent=v.text;
+  document.getElementById('d-verdict').style.color=v.color;
+  document.getElementById('d-regulator').textContent='Regulatory outlook: '+v.reg;
+
+  const breakdown=document.getElementById('d-breakdown');
+  breakdown.innerHTML=Object.keys(D_STATE).map(k=>{
+    const p=D_PTS[k][D_STATE[k]];
+    const nm=D_NAMES[k][D_STATE[k]];
+    const active=p>0;
+    return`<div class="d-breakdown-row${active?' active':''}"><span>${nm}</span><span>${active?'+'+p+' pts':'—'}</span></div>`;
+  }).join('');
+
+  renderPreview();
+}
+
+function renderPreview(){
+  const p=document.getElementById('d-preview');
+  const copyText=COPY_OPTS[D_STATE.copy];
+  const btnStyle=D_STATE.btn===0?'display:flex;gap:8px':D_STATE.btn===1?'display:flex;gap:8px':'display:block';
+  const declineCss=D_STATE.btn===0?'padding:7px 13px;border-radius:7px;border:0.5px solid #ccc;background:#fff;font-size:12px;cursor:pointer;font-family:inherit':
+    D_STATE.btn===1?'padding:5px 10px;border-radius:7px;border:0.5px solid #ddd;background:#f5f5f2;color:#aaa;font-size:11px;cursor:pointer;font-family:inherit':
+    D_STATE.btn===2?'border:none;background:transparent;color:#ccc;font-size:11px;cursor:pointer;font-family:inherit;text-decoration:underline':
+    'position:absolute;left:-9999px;font-size:11px';
+
+  const checkLabel=D_STATE.check===2?'Do not uncheck to not receive promotional emails':'Subscribe to our newsletter';
+  const checkChecked=D_STATE.check>=1?' checked':'';
+
+  const priceText=D_STATE.price===0?'$9.99/month':D_STATE.price===1?'$9.99 + fees':'Free today — auto-renews';
+  const priceColor=D_STATE.price===2?'color:#aaa;font-size:10px':'font-size:12px;color:#666';
+
+  let urgencyHtml='';
+  if(D_STATE.urgency===1)urgencyHtml='<div style="font-size:11px;color:#E24B4A;font-weight:500">⏱ Offer expires in 04:59</div>';
+  else if(D_STATE.urgency===2)urgencyHtml='<div style="font-size:11px;color:#666">👁 847 people viewing this right now</div>';
+  else if(D_STATE.urgency===3)urgencyHtml='<div style="font-size:11px;color:#E24B4A;font-weight:500">⏱ 02:47 left — 847 viewing — Only 2 left!</div>';
+
+  let sneakHtml='';
+  if(D_STATE.sneak===1)sneakHtml='<div style="font-size:11px;color:#aaa;border-top:0.5px solid #f0f0f0;padding-top:6px">+ Device protection plan — $4.99 <span style="font-size:9px;color:#ccc">(added for you)</span></div>';
+  else if(D_STATE.sneak>=2)sneakHtml='<div style="font-size:11px;color:#aaa;border-top:0.5px solid #f0f0f0;padding-top:6px">+ Device protection — $4.99 <span style="font-size:9px;color:#ccc">(added)</span><br>+ Premium cables — $8.99 <span style="font-size:9px;color:#ccc">(added)</span>'+(D_STATE.sneak===3?'<br><span style="font-size:9px;color:#bbb">(items re-added if removed)</span>':'')+'</div>';
+
+  p.innerHTML=`
+    <div style="font-size:14px;font-weight:500;color:#111">Sign up for NebulaPro</div>
+    ${urgencyHtml}
+    <div style="${priceColor}">${priceText}</div>
+    <label style="display:flex;gap:7px;align-items:flex-start;font-size:11px;color:#666;line-height:1.4;cursor:pointer">
+      <input type="checkbox"${checkChecked} style="margin-top:2px;flex-shrink:0"> ${checkLabel}
+    </label>
+    ${sneakHtml}
+    <div style="${btnStyle};position:relative">
+      <button style="padding:8px 15px;border-radius:7px;background:#111;color:#fff;border:none;font-size:13px;cursor:pointer;font-family:inherit">Sign up →</button>
+      <button style="${declineCss}">${copyText}</button>
+    </div>`;
+}
+
+function initDesigner(){
+  Object.keys(D_STATE).forEach(k=>D_STATE[k]=0);
+  document.querySelectorAll('.d-opt').forEach(o=>{
+    o.classList.toggle('selected',o.dataset.val==='0');
+  });
+  updateDesigner();
+}
+
+function jumpTo(idx){hearts=5;score=0;streak=0;levelIdx=idx;hoverTimers={};showLevel();}
+
+// Populate jump buttons
+(function(){
+  const el=document.getElementById('level-jump');
+  if(!el)return;
+  LEVELS.forEach((lv,i)=>{
+    const b=document.createElement('button');
+    b.className='btn btn-g';
+    b.style.cssText='font-size:11px;padding:4px 8px;border:0.5px solid #e0e0d8';
+    b.textContent=lv.title;
+    b.onclick=()=>jumpTo(i);
+    el.appendChild(b);
+  });
+})();
+
+/* ── SOUND EFFECTS (Web Audio) ── */
+const SFX = (() => {
+  let ctx=null;
+  function ac(){if(!ctx){try{ctx=new(window.AudioContext||window.webkitAudioContext)();}catch(e){}}return ctx;}
+  function osc(type,freq,gain,dur,when){
+    const c=ac();if(!c)return;
+    const o=c.createOscillator(),g=c.createGain();
+    o.connect(g);g.connect(c.destination);
+    o.type=type;o.frequency.setValueAtTime(freq,when||c.currentTime);
+    g.gain.setValueAtTime(gain,when||c.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.001,(when||c.currentTime)+dur);
+    o.start(when||c.currentTime);o.stop((when||c.currentTime)+dur);
+  }
+  function noise(dur,gainVal){
+    const c=ac();if(!c)return;
+    const buf=c.createBuffer(1,c.sampleRate*dur,c.sampleRate);
+    const d=buf.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=Math.random()*2-1;
+    const src=c.createBufferSource(),g=c.createGain();
+    src.buffer=buf;src.connect(g);g.connect(c.destination);
+    g.gain.setValueAtTime(gainVal,c.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.001,c.currentTime+dur);
+    src.start();src.stop(c.currentTime+dur);
+  }
+  return {
+    dodge(){osc('sine',880,.12,.08);setTimeout(()=>osc('sine',1100,.08,.08),80);},
+    caught(){
+      // Descending cha-ching then thud
+      osc('sawtooth',300,.18,.08);
+      setTimeout(()=>osc('sawtooth',220,.15,.1),80);
+      setTimeout(()=>noise(.12,.15),160);
+      setTimeout(()=>osc('sine',80,.3,.25),180);
+    },
+    almost(){osc('triangle',660,.07,.12);setTimeout(()=>osc('triangle',550,.05,.1),100);},
+    tick(){osc('square',1200,.04,.04);},
+    levelClear(grade){
+      if(grade==='S'||grade==='A'){
+        // Fanfare
+        [[523,.1],[659,.1],[784,.1],[1047,.25]].forEach(([f,d],i)=>{
+          setTimeout(()=>osc('sine',f,.15,d),i*120);
+        });
+      } else {
+        osc('sine',523,.1,.1);setTimeout(()=>osc('sine',659,.08,.15),120);
+      }
+    },
+    heartBreak(){
+      osc('sine',220,.2,.08);
+      setTimeout(()=>noise(.2,.2),80);
+      setTimeout(()=>osc('sine',110,.25,.3),100);
+    },
+    win(){
+      [[523,.08],[659,.08],[784,.08],[1047,.08],[1319,.3]].forEach(([f,d],i)=>{
+        setTimeout(()=>osc('sine',f,.12,d),i*100);
+      });
+    },
+    bgStart(){
+      // Subtle corporate hum — two slow oscillators
+      const c=ac();if(!c)return;
+      if(c._bgRunning)return;
+      c._bgRunning=true;
+      function hum(freq,gain){
+        const o=c.createOscillator(),g=c.createGain();
+        o.connect(g);g.connect(c.destination);
+        o.type='sine';o.frequency.value=freq;
+        g.gain.value=gain;o.start();
+        return{o,g};
+      }
+      const h1=hum(55,.012),h2=hum(82,.008);
+      c._bgNodes=[h1,h2];
+    },
+    bgStop(){
+      const c=ac();if(!c||!c._bgNodes)return;
+      c._bgNodes.forEach(n=>{try{n.g.gain.exponentialRampToValueAtTime(0.001,c.currentTime+1);n.o.stop(c.currentTime+1);}catch(e){}});
+      c._bgNodes=null;c._bgRunning=false;
+    }
+  };
+})();
+
+/* ── CONFETTI ── */
+function spawnConfetti(){
+  const canvas=document.getElementById('confetti-canvas');
+  if(!canvas)return;
+  canvas.style.display='block';
+  const ctx=canvas.getContext('2d');
+  canvas.width=canvas.offsetWidth;canvas.height=canvas.offsetHeight;
+  const pieces=Array.from({length:60},()=>({
+    x:Math.random()*canvas.width,y:-10,
+    r:Math.random()*5+3,
+    color:['#534AB7','#E24B4A','#3B6D11','#BA7517','#185FA5'][Math.floor(Math.random()*5)],
+    vx:(Math.random()-0.5)*3,vy:Math.random()*4+2,
+    rot:Math.random()*360,vr:(Math.random()-0.5)*8
+  }));
+  let frame=0;
+  function draw(){
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    pieces.forEach(p=>{
+      p.x+=p.vx;p.y+=p.vy;p.rot+=p.vr;p.vy+=0.08;
+      ctx.save();ctx.translate(p.x,p.y);ctx.rotate(p.rot*Math.PI/180);
+      ctx.fillStyle=p.color;ctx.fillRect(-p.r,-p.r/2,p.r*2,p.r);
+      ctx.restore();
+    });
+    frame++;
+    if(frame<90)requestAnimationFrame(draw);
+    else{ctx.clearRect(0,0,canvas.width,canvas.height);canvas.style.display='none';}
+  }
+  draw();
+}
+
+/* ── ACHIEVEMENTS ── */
+const ACHIEVEMENTS=[
+  {id:'first_blood', icon:'🩸', name:'First Blood',    desc:'Lost your first heart.'},
+  {id:'untouchable', icon:'🛡️', name:'Untouchable',    desc:'Completed the game without losing a single heart.'},
+  {id:'speed_reader',icon:'⚡', name:'Speed Reader',   desc:'Cleared Level 4 with more than 15 seconds remaining.'},
+  {id:'bot_whisperer',icon:'🤖',name:'Bot Whisperer',  desc:'Cleared Level 1 AI in the minimum number of messages.'},
+  {id:'sharp_eye',   icon:'👁️', name:'Sharp Eye',      desc:'Spotted the AI-generated review on the first try.'},
+  {id:'streak_3',    icon:'🔥', name:'On Fire',        desc:'Cleared 3 levels in a row with no damage.'},
+  {id:'all_s',       icon:'⭐', name:'Perfect Run',    desc:'S-ranked every level in a single run.'},
+  {id:'hard_clear',  icon:'💀', name:'They Know',      desc:'Completed the game in hard mode.'},
+  {id:'caught_fakeout',icon:'🎭',name:'Fool Me Once',  desc:'Spotted the dark pattern on the win screen.'},
+];
+
+function checkAchievements(){
+  if(lostHeart&&!achUnlocked.has('first_blood'))achUnlocked.add('first_blood');
+  if(hearts===5&&levelIdx===LEVELS.length-1)achUnlocked.add('untouchable');
+  if(streak>=3)achUnlocked.add('streak_3');
+  if(hardMode&&levelIdx===LEVELS.length-1)achUnlocked.add('hard_clear');
+  if(levelGrades.length===LEVELS.length&&levelGrades.every(g=>g==='S'))achUnlocked.add('all_s');
+}
+function unlockAch(id){achUnlocked.add(id);}
+
+/* ── BG MUSIC: start on first interaction ── */
+document.addEventListener('click',()=>{SFX.bgStart();},{once:true});
+
+const G={start,restart,next,succeed,fail,beginLevel:()=>showLevel()};
+</script>
+</body>
+</html>
