@@ -263,7 +263,7 @@ body{font-family:system-ui,-apple-system,sans-serif;background:#07070a;min-heigh
   </div>
   <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center">
     <button class="gbtn gbtn-green" onclick="G.start()">Start →</button>
-    <button class="gbtn gbtn-dark" id="hard-mode-btn" onclick="G.start(true)">Hard mode →</button>
+    <!-- <button class="gbtn gbtn-dark" id="hard-mode-btn" onclick="G.start(true)">Hard mode →</button> -->
   </div>
   <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center">
     <button class="gbtn gbtn-ghost" onclick="showGlossary()">Pattern glossary</button>
@@ -308,6 +308,7 @@ body{font-family:system-ui,-apple-system,sans-serif;background:#07070a;min-heigh
       <span class="streak-pill" id="h-streak" style="display:none"></span>
       <div class="hearts" id="h-hearts"></div>
       <div class="score-pill">Score: <span id="h-score">0</span></div>
+      <button class="gbtn gbtn-ghost" id="h-hint-btn" style="display:none" onclick="G.showHint()">💡 Hint</button>
       <div class="cost-pill" id="h-cost" style="display:none">$0 extracted</div>
     </div>
   </div>
@@ -482,16 +483,34 @@ body{font-family:system-ui,-apple-system,sans-serif;background:#07070a;min-heigh
       <div style="font-size:12px;font-weight:500;color:var(--text);margin-bottom:10px">Achievements</div>
       <div id="win-achievements"></div>
     </div>
+    <!-- 
     <div id="win-hard-unlock" style="background:#1a1a1a;color:#f5f5f2;border-radius:10px;padding:12px 16px;font-size:12px;line-height:1.6;max-width:380px;text-align:left">
       <div style="font-weight:500;margin-bottom:4px">Hard mode unlocked</div>
       <div style="color:#aaa">They know you've played before. The interface adapts. Buttons drift. Labels change while you read them. Good luck.</div>
     </div>
+  -->
     <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center">
       <button class="btn btn-p" id="win-play-again">Play again</button>
       <button class="btn" onclick="showGlossary()">Pattern glossary</button>
       <button class="btn" onclick="setScr('designer');initDesigner()">Try designer mode →</button>
     </div>
   </div>
+</div>
+
+<!-- GAME OVER -->
+<div class="scr" id="scr-gameover" style="padding:28px 20px;align-items:center;text-align:center;gap:14px">
+  <div style="font-size:32px">💔</div>
+  <div style="font-size:22px;font-weight:500;color:var(--text)">Game Over</div>
+  <div style="font-size:13px;color:var(--text2);max-width:380px;line-height:1.6">The dark patterns got you. Here's how each level went:</div>
+
+  <!-- Level breakdown -->
+  <div id="go-breakdown" style="width:100%;max-width:380px;background:var(--bg2);border-radius:10px;padding:14px;border:1px solid var(--border);display:flex;flex-direction:column;gap:8px;text-align:left"></div>
+
+  <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center">
+    <button class="gbtn gbtn-green" onclick="G.tryAgain()">Try Again →</button>
+    <button class="gbtn gbtn-dark" onclick="G.continueAfterFail()">Continue anyway →</button>
+  </div>
+  <div style="font-size:11px;color:var(--text3)">Continuing resets your hearts but keeps your progress.</div>
 </div>
 
 </div>
@@ -511,10 +530,11 @@ const GLOSSARY = [
 ];
 
 const LEVELS = buildLevels();
-let hearts,score,streak,levelIdx,lostHeart,hoverTimers={},hardMode=false,hasWon=false,xp=0,manipCost=0,levelGrades=[],achUnlocked=new Set();
+let hearts,score,streak,levelIdx,lostHeart,hoverTimers={},hardMode=false,hasWon=false,xp=0,manipCost=0,levelGrades=[],achUnlocked=new Set(),hintState={};
 
 function buildLevels(){return[
-  {id:'l1',title:'Level 1',isAI:false,goal:'Cancel your subscription',
+  {id:'l1',title:'Level 1',isAI:false,goal:'Cancel your subscription', 
+   hints:["There's a button to cancel — but it's not the primary action on each screen.","Click every button that mentions 'cancel' or 'no'. Ignore offers and surveys as best you can."],
    pattern:'Roach Motel',manip:92,
    brief:"The Roach Motel is named after the ad slogan: 'You can check in, but you can't check out.' Signing up is effortless — one or two clicks. Cancelling is a maze of detours, fake offers, and exhausting surveys. The goal is to wear you down until you give up.",
    goalDetail:"You have a NebulaPro subscription. You want to cancel it. Click 'Cancel subscription' and follow the steps all the way through.",dollars:{label:'If you gave up and kept the plan',amount:9.99,period:'month',note:'$119.88/year for a service you tried to cancel'},
@@ -527,7 +547,8 @@ function buildLevels(){return[
            {trap:true,note:'6-question satisfaction survey, required. Exhaustion is the point.'},
            {trap:false,note:'"Allow 5–7 business days" — creates doubt. Will it actually cancel? Many people re-subscribe just in case.'}],
    render:L1},
-  {id:'l1ai',title:'Level 1 — Hyper',isAI:true,goal:'Cancel before the AI re-engages you',
+  {id:'l1ai',title:'Level 1 — Hyper',isAI:true,goal:'Cancel before the AI re-engages you', 
+   hints:["Try typing the word 'cancel' directly.","Keep repeating cancel-related words — the bot has a fixed number of deflections before it gives in."],
    pattern:'AI Roach Motel',manip:97,
    brief:"The classic Roach Motel, now run by a chatbot. Instead of screen after screen, you're stuck in a chat loop with an AI that deflects, misunderstands, and manufactures obstacles — running 24/7, never getting frustrated, optimised to exhaust you.",
    goalDetail:"You need to cancel your NebulaPro subscription via customer support chat. Type messages asking to cancel — the bot will try to stop you. Keep pushing.",
@@ -543,6 +564,7 @@ function buildLevels(){return[
            {trap:true,note:'"Unpaid invoice" — manufactured obstacle. Even if false, it creates doubt and delay.'}],
    render:L1AI},
   {id:'l2',title:'Level 2',isAI:false,goal:'Decline every offer',
+   hints:["You need to decline every offer — look for the smaller, greyed-out button.","The 'no' button is styled to feel bad to click. Click it anyway — it's always the right move."],
    pattern:'Confirmshaming',manip:67,
    brief:"Confirmshaming makes the 'no' option feel like a personal failing. Instead of 'No thanks', the button says something like 'No thanks, I hate saving money.' It's designed to make declining feel embarrassing — so you click yes instead.",
    goalDetail:"You'll be offered something in each round. Your goal is to decline every single offer. Click the 'no' button each time — but read it carefully first.",dollars:{label:'If you opted into all four email lists',amount:0,period:null,note:'No direct cost — but your inbox and attention are the product. Your data is sold to list brokers.'},
@@ -554,6 +576,7 @@ function buildLevels(){return[
            {trap:true,note:'Each round escalates. The shame copy gets more emotionally pointed.'}],
    render:L2},
   {id:'l2ai',title:'Level 2 — Hyper',isAI:true,goal:'Decline without being profiled',
+   hints:["The AI confidence % means nothing — ignore it and find the decline button.","Look for the ghost/grey button on each round and click it regardless of what it says."],
    pattern:'AI Confirmshaming',manip:88,
    brief:"Same trick, but the shame is personalised. Pseudo-AI 'analyses your behaviour' and generates a decline button that targets your specific psychology. Generic guilt has limits — personalised guilt doesn't.",
    goalDetail:"Decline every AI-personalised offer. The shame copy will try to make you feel like the 'no' option reflects badly on you. Ignore it and click it anyway.",
@@ -569,6 +592,7 @@ function buildLevels(){return[
            {trap:false,note:'The profile is randomly assigned from 4 types. The shame copy is written for that profile — financial shame, health shame, social shame, or efficiency shame.'},],
    render:L2AI},
   {id:'l3',title:'Level 3',isAI:false,goal:'Find the real search result',
+   hints:["Look at the small label next to each URL — one word makes all the difference.","Any result with 'Sponsored' next to the URL is an ad. Find the one without it."],
    pattern:'Disguised Ads',manip:78,
    brief:"Disguised ads are paid results styled to look like organic search results. The 'Sponsored' label is deliberately small, low-contrast, and easy to skip over — especially when you're scanning quickly.",
    goalDetail:"Search results are shown below. Find and click the real editorial result — not a sponsored one. Look carefully at the labels and URLs.",dollars:{label:'If you clicked an ad instead of an organic result',amount:0,period:null,note:'No direct cost — but you may overpay for products only discoverable via ads, with no price competition.'},
@@ -580,6 +604,7 @@ function buildLevels(){return[
            {trap:false,note:'Real results tend to be from editorial domains (.com/blog, .org, .edu) not shopping domains.'}],
    render:L3},
   {id:'l3ai',title:'Level 3 — Hyper',isAI:true,goal:'Identify the AI-generated review',
+   hints:["Real reviews have specific, personal detail. AI reviews are smooth and complete.","Look for phrases like 'as a busy parent of three' or generic praise that could apply to any product."],
    pattern:'AI Synthetic Social Proof',manip:91,
    brief:"AI can generate reviews that sound completely authentic — moderate star ratings, realistic names, plausible detail. Unlike obvious fake reviews, these are tuned to be statistically indistinguishable from real ones.",
    goalDetail:"One of the reviews below was written by an AI, not a real customer. Read each one carefully and click the one you think is fake.",
@@ -593,6 +618,7 @@ function buildLevels(){return[
            {trap:false,note:'The real tells: over-smooth prose, no hesitation or specificity, generic praise that could apply to any product.'}],
    render:L3AI},
   {id:'l4',title:'Level 4',isAI:false,goal:'Save your real privacy preferences',
+   hints:["Not all boxes start in the same state — some protective options begin unchecked.","Uncheck boxes 1 and 4, check boxes 2 and 3."],
    pattern:'Trick Questions',manip:85,
    brief:"Real cookie consent forms mix opt-in and opt-out framing in the same list — so the same action (checking a box) means opposite things on different rows. Some protective options are buried unchecked. This level has clear labels, but the logic is deliberately inconsistent.",
    goalDetail:"Set your preferences so you get no marketing, your data sharing is limited, you're opted out of targeted ads, and your experience isn't personalised for tracking purposes. Read each label carefully — not all boxes start in the same state, and checking vs unchecking means different things on different rows.",dollars:{label:'If you accidentally consented to data sharing',amount:0,period:null,note:'No direct cost — but your personal data is sold to ~200 third-party brokers at an average value of $240/year per profile.'},
@@ -604,6 +630,7 @@ function buildLevels(){return[
            {trap:true,note:'The real trick: mixing opt-in and opt-out framing in the same form. "Limit sharing" (keep checked) vs "Send me emails" (uncheck) require opposite actions for opposite reasons.'}],
    render:L4},
   {id:'l4ai',title:'Level 4 — Hyper',isAI:true,goal:'Find the real opt-out',
+   hints:["One option always straightforwardly says 'opt out' or 'privacy control: on'.","Ignore the first two options each round — the last one is always the genuine opt-out."],
    pattern:'AI A/B Gaslighting',manip:95,
    brief:"The same trick, now with an AI twist: every time you try to opt out, the form reshuffles with new label wording. One option always genuinely protects your privacy — but it's disguised differently each time. Real consent management platforms A/B test their forms this way.",
    goalDetail:"Each round shows three options. One opts you out of tracking — the others are traps. Find and check only that one. After 3 attempts the answer is revealed and you can move on.",
@@ -617,6 +644,7 @@ function buildLevels(){return[
            {trap:false,note:'The winning move: read each checkbox independently and ask "what does checking this DO?" before saving.'}],
    render:L4AI},
   {id:'l5',title:'Level 5',isAI:false,goal:'Buy only what you want',
+   hints:["Scroll down — there may be items below the fold you haven't seen.","Remove everything except 'Wireless headphones' before clicking Checkout."],
    pattern:'Sneak into Basket',manip:80,
    brief:"Sneak into Basket means extra items are pre-added to your cart — warranties, subscriptions, insurance — often below the fold or in pale text. They count on you not scrolling, not reading, or just clicking through.",
    goalDetail:"You want to buy wireless headphones. Check your cart carefully and remove everything that wasn't on your list before checking out. Watch out — items may reappear.",dollars:{label:'If you missed all three pre-added items',amount:21.98,period:'one-time',note:'$21.98 extra at checkout — plus $119.88/year when the "free" NebulaPro trial auto-renews'},
@@ -629,6 +657,7 @@ function buildLevels(){return[
            {trap:true,note:'The countdown timer auto-placed your order when it hit zero — framed as "Securing your cart" but actually a forced checkout. Ticketmaster and airline booking sites use exactly this mechanic.'}],
    render:L5},
   {id:'l5ai',title:'Level 5 — Hyper',isAI:true,goal:'Resist the personalized upsell',
+   hints:["The confidence percentage is made up — it has no statistical basis.","Just click 'No thanks' on every recommendation. All three are upsells you don't need."],
    pattern:'AI Hyper-Personalized Upsell',manip:96,
    brief:"The same pattern, now with algorithmic authority. Instead of just sneaking items in, the AI 'predicts' you'll want them — complete with a confidence percentage designed to make refusing feel irrational.",
    goalDetail:"Decline every AI-recommended upsell. The percentages and 'users like you' framing are designed to make saying no feel like a mistake. They're not based on anything real.",
@@ -683,7 +712,9 @@ function showBrief(){
 }
 
 function showLevel(){
-  setScr('level');lostHeart=false;hoverTimers={};
+  setScr('level');lostHeart=false;hoverTimers={};hintState={};
+  const hintBtn=document.getElementById('h-hint-btn');
+  if(hintBtn){hintBtn.disabled=false;hintBtn.textContent='💡 Hint';hintBtn.style.display='none';}
   const lv=LEVELS[levelIdx];
   document.getElementById('h-lvl').textContent='Level '+(levelIdx+1)+' of '+LEVELS.length+(hardMode?' <span class="hard-badge">HARD</span>':'');
   document.getElementById('h-goal').textContent='Goal: '+lv.goal;
@@ -698,6 +729,32 @@ function showLevel(){
   lc.appendChild(goalBanner);
   lv.render(lc);
   renderHearts();renderScore();renderStreak();renderDots('dots-l');
+}
+
+function showHint(){
+  console.log('showHint called, levelIdx:', levelIdx, 'hints:', LEVELS[levelIdx]?.hints);
+  const lv=LEVELS[levelIdx];
+  if(!lv||!lv.hints)return;
+  const level=hintState.level||0;
+  const hint=lv.hints[Math.min(level,lv.hints.length-1)];
+  hintState.level=(level+1);
+  hintState.used=true;
+  // Show hint as a message in the fake-app
+  const lc=document.getElementById('lc');
+  const existing=document.getElementById('hint-bubble');
+  if(existing)existing.remove();
+  const d=document.createElement('div');
+  d.id='hint-bubble';
+  d.style.cssText='background:var(--amber-dim);border:1px solid var(--amber);border-radius:8px;padding:8px 12px;font-size:12px;color:var(--amber);line-height:1.5;margin:0 14px';
+  d.innerHTML='💡 <strong>Hint '+(level+1)+' of '+lv.hints.length+':</strong> '+hint;
+  hintState.text=d.innerHTML;
+  // Insert after goal banner
+  lc.prepend(d);
+  // If all hints used, disable button
+  if(hintState.level>=lv.hints.length){
+    const btn=document.getElementById('h-hint-btn');
+    if(btn){btn.textContent='No more hints';btn.disabled=true;}
+  }
 }
 
 function succeed(){
@@ -726,6 +783,9 @@ function fail(msg){
   const wasNew=!lostHeart;
   if(!lostHeart){hearts=Math.max(0,hearts-1);lostHeart=true;}
   streak=0;
+  if(hearts===0){renderHearts(true);setTimeout(()=>showGameOver(),1200);return;}
+  const hintBtn=document.getElementById('h-hint-btn');
+  if(hintBtn)hintBtn.style.display='';
   // Add cost for this failure based on current level
   const lv=LEVELS[levelIdx];
   if(wasNew&&lv&&lv.dollars&&lv.dollars.amount>0){
@@ -743,7 +803,16 @@ function fail(msg){
   const d=document.createElement('div');
   d.className='damage-msg';d.textContent=msg||'Caught! You lost a heart.';
   lc.prepend(d);setTimeout(()=>d.remove(),1900);
-  checkAchievements();
+  if(hintState.text){
+  const hb=document.getElementById('hint-bubble');
+  if(!hb){
+    const h=document.createElement('div');
+    h.id='hint-bubble';
+    h.style.cssText='background:var(--amber-dim);border:1px solid var(--amber);border-radius:8px;padding:8px 12px;font-size:12px;color:var(--amber);line-height:1.5';
+    h.innerHTML=hintState.text;
+    lc.prepend(h);
+  }
+}
 }
 
 function almostGotYou(el,msg){
@@ -823,6 +892,27 @@ function showDebrief(won){
 
   renderDots('dots-d');
 }
+
+function showGameOver(){
+  setScr('gameover');
+  const el=document.getElementById('go-breakdown');
+  if(!el)return;
+  el.innerHTML=LEVELS.map((lv,i)=>{
+    const grade=levelGrades[i];
+    const done=i<levelIdx;
+    const isCur=i===levelIdx;
+    const icon=!done&&!isCur?'○':grade==='S'||grade==='A'?'✓':'✗';
+    const color=!done&&!isCur?'var(--text3)':grade==='S'||grade==='A'?'var(--green)':'var(--red)';
+    return`<div style="display:flex;justify-content:space-between;align-items:center;font-size:12px;padding:4px 0;border-bottom:1px solid var(--border)">
+      <span style="color:var(--text2)">${lv.title} — ${lv.pattern}</span>
+      <span style="color:${color};font-weight:500">${isCur?'✗ failed here':done?(grade||'—'):'not reached'}</span>
+    </div>`;
+  }).join('');
+}
+
+// In the G object at the bottom, add these two:
+// tryAgain: restarts from level 1
+// continueAfterFail: resets hearts and resumes from current level
 
 function next(){
   levelIdx++;
@@ -904,16 +994,17 @@ function revealRealWin(){
   }
   document.getElementById('win-play-again').onclick=()=>G.start(false);
   // Hard mode button (once)
-  if(!document.getElementById('hard-btn-win')){
-    const btn=document.createElement('button');
-    btn.id='hard-btn-win';
-    btn.className='btn';
-    btn.textContent='Play hard mode →';
-    btn.style.cssText='background:#1a1a1a;color:#f5f5f2;border-color:transparent';
-    btn.onclick=()=>G.start(true);
-    document.getElementById('win-play-again').insertAdjacentElement('afterend',btn);
-  }
-  SFX.win();
+  /*
+if(!document.getElementById('hard-btn-win')){
+  const btn=document.createElement('button');
+  btn.id='hard-btn-win';
+  btn.className='btn';
+  btn.textContent='Play hard mode →';
+  btn.style.cssText='background:#1a1a1a;color:#f5f5f2;border-color:transparent';
+  btn.onclick=()=>G.start(true);
+  document.getElementById('win-play-again').insertAdjacentElement('afterend',btn);
+}
+*/
 }
 
 function rating(){
@@ -962,7 +1053,7 @@ function renderDots(id){
     return`<div class="${c}"></div>`;
   }).join('');
 }
-function setScr(n){['intro','brief','level','debrief','win','designer'].forEach(s=>{const el=document.getElementById('scr-'+s);if(el)el.classList.toggle('active',s===n);});}
+function setScr(n){['intro','brief','level','debrief','win','designer','gameover'].forEach(s=>{const el=document.getElementById('scr-'+s);if(el)el.classList.toggle('active',s===n);});}
 
 function showGlossary(){
   document.getElementById('glossary-body').innerHTML=GLOSSARY.map(g=>`
@@ -1984,6 +2075,7 @@ const ACHIEVEMENTS=[
   {id:'all_s',       icon:'⭐', name:'Perfect Run',    desc:'S-ranked every level in a single run.'},
   {id:'hard_clear',  icon:'💀', name:'They Know',      desc:'Completed the game in hard mode.'},
   {id:'caught_fakeout',icon:'🎭',name:'Fool Me Once',  desc:'Spotted the dark pattern on the win screen.'},
+  {id:'no_hints', icon:'🧠', name:'No Hints',  desc:'Completed the game without ever using a hint.'},
 ];
 
 function checkAchievements(){
@@ -1992,13 +2084,19 @@ function checkAchievements(){
   if(streak>=3)achUnlocked.add('streak_3');
   if(hardMode&&levelIdx===LEVELS.length-1)achUnlocked.add('hard_clear');
   if(levelGrades.length===LEVELS.length&&levelGrades.every(g=>g==='S'))achUnlocked.add('all_s');
+  if(levelIdx===LEVELS.length-1&&!hintState.used)achUnlocked.add('no_hints');
 }
 function unlockAch(id){achUnlocked.add(id);}
 
 /* ── BG MUSIC: start on first interaction ── */
 document.addEventListener('click',()=>{SFX.bgStart();},{once:true});
 
-const G={start,restart,next,succeed,fail,beginLevel:()=>showLevel()};
+const G={
+  start,restart,next,succeed,fail,showHint,
+  beginLevel:()=>showLevel(),
+  tryAgain(){hearts=5;score=0;streak=0;levelIdx=0;lostHeart=false;levelGrades=[];achUnlocked=new Set();showBrief();},
+  continueAfterFail(){hearts=3;lostHeart=false;showBrief();}
+};
 </script>
 </body>
 </html>
