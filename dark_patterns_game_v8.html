@@ -507,6 +507,7 @@ const GLOSSARY = [
   {name:'AI Synthetic Social Proof',ai:true,desc:"AI-generated reviews, ratings, and testimonials that are statistically plausible but entirely fabricated. Harder to spot because they are tuned to sound credible.",coined:'An AI-era evolution. The FTC began pursuing enforcement in 2023–2024.'},
   {name:'AI A/B Gaslighting',ai:true,desc:"The consent interface 'A/B tests' in real time. Every time you get close to opting out, it reshuffles, telling you this is 'personalization'. It is not.",coined:'An AI-amplified version of Trick Questions. Real consent management platforms have begun using variant testing on consent UI.'},
   {name:'AI Hyper-Personalized Upsell',ai:true,desc:"Pseudo-AI 'predicts' exactly what you're likely to buy based on your 'profile' — actually heuristics dressed in algorithmic confidence to make declining feel irrational.",coined:'An AI-amplified version of Sneak into Basket. Dynamic personalization increases conversion rates by 20–30% according to industry research.'},
+  {name:'Fake Scarcity / Urgency',ai:false,desc:"Countdown timers, fake stock warnings, and fabricated social proof ('847 people viewing') are designed to trigger loss aversion and panic-buying. Almost none of the scarcity is real — the timer resets, the stock number never changes, the viewer count is randomly generated.",coined:'Part of Harry Brignull\'s original 2010 taxonomy. Booking.com was fined by the UK CMA in 2019 for fabricated scarcity messaging.'},
 ];
 
 const LEVELS = buildLevels();
@@ -560,10 +561,12 @@ function buildLevels(){return[
    desc:"Pseudo-AI 'analyzes your behavior' and generates shame copy that feels disturbingly personal — targeting your apparent psychology, not just generic guilt.",
    rw:{company:'Behavioral ad platforms',detail:'Real platforms like Optimizely and Dynamic Yield segment users by psychological profile and test which emotional appeals drive the highest conversion. AI personalizes shame at scale.',link:'https://www.deceptive.design/hall-of-shame'},
    aiWhy:'Generic confirmshaming has a ceiling — "I hate saving money" works on some people and feels absurd to others. AI removes that ceiling by personalizing the shame to each user\'s inferred profile. Someone flagged as "price-sensitive" gets financial shame; someone flagged as "health-focused" gets health shame. The insult is customized.',
-   replay:[{trap:false,note:'"Profiled as X" — the label is pseudo-random, but stated with algorithmic confidence to feel real.'},
-           {trap:true,note:'Each shame message is written for the profile, not for a generic user.'},
-           {trap:true,note:'"AI confidence: 93%" — a percentage with no meaning, designed to make the recommendation feel data-driven.'},
-           {trap:false,note:'Notice the decline copy gets more targeted each round.'}],
+   replay:[{trap:false,note:'Profile banner appears immediately — algorithmic confidence before you\'ve seen the offer. Sets the frame: the AI already knows you.'},
+           {trap:false,note:'NexusAI analysis block is visible from the start — confidence percentage and behavioral label prime you before any choice is presented.'},
+           {trap:true,note:'The yes button appears alone first. No alternative exists yet — you\'re being asked to agree before you can see what disagreeing looks like.'},
+           {trap:true,note:'The shame copy only appears 4 seconds later. By then you\'ve already been sitting with the yes button. The delay is the manipulation.'},
+           {trap:true,note:'"AI confidence: X%" in the round label — a number with no statistical basis, designed to make your refusal feel like arguing with data.'},
+           {trap:false,note:'The profile is randomly assigned from 4 types. The shame copy is written for that profile — financial shame, health shame, social shame, or efficiency shame.'},],
    render:L2AI},
   {id:'l3',title:'Level 3',isAI:false,goal:'Find the real search result',
    pattern:'Disguised Ads',manip:78,
@@ -622,7 +625,8 @@ function buildLevels(){return[
    replay:[{trap:true,note:'Items are pre-added and labeled "(added for you)" — as if this is a service, not a charge.'},
            {trap:true,note:'The "free" trial item costs nothing today, but auto-renews at $9.99/mo. The price is in fine print.'},
            {trap:true,note:'After you remove items and try to check out, new ones are sneaked in. The checkout loop creates exhaustion.'},
-           {trap:false,note:'The only safe move: read every line before clicking Checkout, every time.'}],
+           {trap:false,note:'The only safe move: read every line before clicking Checkout, every time.'},,
+           {trap:true,note:'The countdown timer auto-placed your order when it hit zero — framed as "Securing your cart" but actually a forced checkout. Ticketmaster and airline booking sites use exactly this mechanic.'}],
    render:L5},
   {id:'l5ai',title:'Level 5 — Hyper',isAI:true,goal:'Resist the personalized upsell',
    pattern:'AI Hyper-Personalized Upsell',manip:96,
@@ -632,11 +636,27 @@ function buildLevels(){return[
    desc:"Pseudo-AI 'predicts' what you need, with a confidence percentage, making declining feel irrational. The profile is fake; the confidence figure is meaningless.",
    rw:{company:'Amazon, streaming platforms',detail:'"Customers who bought X also bought Y" is the benign version. AI-personalized bundling with manufactured confidence scores pushes this into manipulation: you\'re told an algorithm has specifically identified this for you, making opt-out feel like arguing with data.',link:'https://www.deceptive.design/hall-of-shame'},
    aiWhy:'Upsells have always existed. AI makes them feel inevitable. A "94% match" score implies your refusal is statistically unusual — a form of algorithmic social pressure. The score is often based on simple demographic heuristics, but the framing borrows the authority of machine learning.',
-   replay:[{trap:false,note:'"NexusAI identified you as X" — the profile is generated from minimal signals, but stated as established fact.'},
-           {trap:true,note:'The confidence percentage (94%, 91%...) has no statistical basis. It exists to make you feel irrational for declining.'},
-           {trap:true,note:'"Users like you" — social proof framing. Implies your peer group already said yes.'},
-           {trap:true,note:'"You\'ll regret skipping this" — predictive regret framing. A new AI-era dark pattern.'}],
+   replay:[{trap:false,note:'"NexusAI identified you as X" — the profile is generated from minimal signals, but stated as established fact to make the recommendation feel inevitable.'},
+           {trap:true,note:'The confidence percentage (94%, 91%...) has no statistical basis. It exists to make declining feel irrational — like you\'re arguing with data.'},
+           {trap:true,note:'"Offer expires in Xs" — the countdown is fake urgency. The offer doesn\'t actually expire; it just auto-advances to pressure you into deciding before you\'ve read carefully.'},
+           {trap:true,note:'"Users like you bought this" — social proof framing. Implies your peer group already said yes, making refusal feel like an outlier decision.'},
+           {trap:true,note:'"Our model predicts you\'ll regret skipping this" — predictive regret framing. AI-era manipulation: instead of shaming you now, it threatens your future self.'},
+           {trap:false,note:'The winning move: the timer expiring costs you nothing. Every offer auto-advances whether you act or not — patience beats urgency.'},],
    render:L5AI},
+  {id:'l7',title:'Level 7',isAI:false,goal:'Buy only what you want, without getting distracted',
+    pattern:'Fake Scarcity / Urgency',manip:82,
+    brief:"Fake scarcity and urgency are designed to impair your decision-making with a false deadline to rush you into decisions. Countdown timers, 'Only 2 left!', and '847 people viewing' create a sense of panic that makes you act before you think. Almost none of it is real.",    goalDetail:"You want to buy one item: a Basic Backpack. Checkout with only that item in your cart. Don't let the timers, stock warnings, or flash sale pressure you into buying anything else or rushing.",
+    dollars:{label:'If every urgency signal worked on you',amount:47.97,period:'one-time',note:'$47.97 in impulse purchases triggered by fake scarcity — plus a subscription you didn\'t need'},
+    desc:'Countdown timers, fake stock warnings, and social proof pressure combine to make you act before you think. Studies show urgency increases conversion by up to 332% — almost none of the scarcity is real.',
+    rw:{company:'Booking.com',detail:'Fined by the UK CMA in 2019 for fake "Only 1 room left!" and "8 people looking at this" messages. Internal data showed the stock counts were fabricated. The practice remains widespread.',link:'https://www.deceptive.design/hall-of-shame'},
+    replay:[
+            {trap:true,note:'The countdown timer resets every time you interact — it never actually expires into anything. The urgency is manufactured.'},
+            {trap:true,note:'"Only 2 left in stock" — the number is static and never changes regardless of how many people "buy". It exists purely to trigger loss aversion.'},
+            {trap:true,note:'"847 people viewing" — a randomly generated number refreshed on a loop. No real data underlies it.'},
+            {trap:true,note:'The flash sale discount only applies if you add the upsell item. The "savings" framing obscures that you\'re spending more, not less.'},
+            {trap:false,note:'The winning move: ignore all timers and counters. None of them have real consequences. Patience is the antidote to fake urgency.'},
+    ],
+    render:L7},
 ];}
 
 function start(hard){hardMode=!!hard;hearts=5;score=0;streak=0;levelIdx=0;hoverTimers={};xp=0;manipCost=0;levelGrades=[];achUnlocked=new Set();showBrief();}
@@ -1045,19 +1065,110 @@ function L2(el){
 function L2AI(el){
   const profiles=['budget-conscious','time-strapped','health-focused','socially conscious'];
   const profile=profiles[Math.floor(Math.random()*profiles.length)];
-  const shame=['No thanks, I\'m fine wasting money',`No thanks, being ${profile} isn't important to me`,'No thanks, I\'d rather not benefit from this','No thanks, I give up'];
-  let r=0;
-  el.insertAdjacentHTML('beforeend',`<div class="fh" style="font-size:12px;color:#534AB7">NexusAI profiled you as: <em>${profile}</em></div>`);
-  function show(){
-    const existing=el.querySelector('.l2ai-b');if(existing)existing.remove();
-    const div=document.createElement('div');div.className='l2ai-b';
-    div.style.cssText='display:flex;flex-direction:column;gap:8px;margin-top:8px';
-    div.innerHTML=`<div class="fh">Based on your profile, we think you'll love this</div><div class="fs">Our AI selected this specifically for ${profile} users like you.</div><button class="btn btn-ai" id="l2a-yes">Yes, this is perfect for me</button><button class="btn-g btn" id="l2a-no">${shame[Math.min(r,shame.length-1)]}</button><div class="ftiny">Round ${r+1} of ${shame.length} · AI confidence: ${93-r*4}%</div>`;
-    el.appendChild(div);
-    document.getElementById('l2a-yes').onclick=()=>{G.fail('AI upsell worked — lost a heart.');r=Math.min(r+1,shame.length-1);setTimeout(show,1600);};
-    document.getElementById('l2a-no').onclick=()=>{r++;if(r>=shame.length)G.succeed();else show();};
-    trackHover(document.getElementById('l2a-yes'),'l2ay',()=>almostGotYou(el,"That confidence % is meaningless — it's designed to make you feel irrational for declining."));
+
+const rounds = [
+{
+  confidence: 84,
+  analysis: 'Behavioral profile generated. Detecting price sensitivity.',
+  offer: 'NebulaPro Premium — recommended for users who value financial efficiency',
+  yes: 'Yes, save money with Premium →',
+  shame: {
+    'budget-conscious':'No thanks, I prefer paying more than users like me.',
+    'time-strapped':'No thanks, I have extra time to waste finding cheaper options.',
+    'health-focused':'No thanks, managing my finances is not a priority.',
+    'socially conscious':'No thanks, I do not care about making responsible purchases.'
   }
+},
+{
+  confidence: 89,
+  analysis: 'Engagement patterns suggest goal-oriented behavior.',
+  offer: 'Productivity Pack — selected for your profile',
+  yes: 'Yes, improve my productivity →',
+  shame: {
+    'budget-conscious':'No thanks, reaching my goals is not worth the investment.',
+    'time-strapped':'No thanks, I would rather stay inefficient.',
+    'health-focused':'No thanks, self-improvement is not important to me.',
+    'socially conscious':'No thanks, I am comfortable falling behind my peers.'
+  }
+},
+{
+  confidence: 94,
+  analysis: 'Cross-referencing profile with similar users.',
+  offer: '87% of users like you accepted this recommendation',
+  yes: 'Yes, show me the recommendation →',
+  shame: {
+    'budget-conscious':'No thanks, I know better than everyone else.',
+    'time-strapped':'No thanks, I enjoy making decisions the hard way.',
+    'health-focused':'No thanks, I ignore advice that could benefit me.',
+    'socially conscious':'No thanks, I do not care what works for people like me.'
+  }
+},
+{
+  confidence: 97,
+  analysis: 'Regret-prediction model activated.',
+  offer: 'Our AI predicts you will regret skipping this offer',
+  yes: 'Yes, trust the recommendation →',
+  shame: {
+    'budget-conscious':'No thanks, future me can deal with the consequences.',
+    'time-strapped':'No thanks, I will risk wasting time later.',
+    'health-focused':'No thanks, I will ignore what is best for me.',
+    'socially conscious':'No thanks, I am comfortable making the wrong choice.'
+  }
+}
+];
+
+  let r=0;
+
+  // Profile banner
+  el.insertAdjacentHTML('beforeend',`
+    <div style="background:#f0effe;border-radius:8px;padding:8px 12px;border:1px solid #c8c2f8;font-size:11px;color:#26215C">
+      NexusAI profiled you as: <strong>${profile}</strong>
+    </div>
+  `);
+
+function show(){
+  const existing=el.querySelector('.l2ai-b');if(existing)existing.remove();
+  const round=rounds[r];
+  const shameCopy=round.shame[profile];
+
+  const div=document.createElement('div');
+  div.className='l2ai-b';
+  div.style.cssText='display:flex;flex-direction:column;gap:10px;margin-top:4px';
+  div.innerHTML=`
+    <div id="l2ai-analysis-block" style="display:flex;background:#1e1a3d;border-radius:8px;padding:10px 12px;border:1px solid #3a3560;flex-direction:column;gap:5px">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <div style="font-size:10px;font-weight:500;letter-spacing:.07em;text-transform:uppercase;color:#aea6fa">NexusAI Analysis</div>
+        <div style="font-size:11px;color:#aea6fa;font-weight:500">Confidence: <span style="color:#fff">${round.confidence}%</span></div>
+      </div>
+      <div style="font-size:11px;color:#7c6ef7;line-height:1.5">${round.analysis}</div>
+    </div>
+    <br><div class="fh" style="font-size:13px">Would you like ${round.offer}?</div><br>
+    <button class="btn btn-p" id="l2ai-yes" style="margin-top:4px">${round.yes}</button>
+    <button id="l2ai-no" style="border:none;background:transparent;font-size:11px;color:transparent;cursor:default;font-family:inherit;text-align:center;padding:2px 0;line-height:1.5;user-select:none;display:block;margin:0 auto" disabled>${shameCopy}</button>
+    <div class="ftiny" id="l2ai-round-label">Round ${r+1} of ${rounds.length} · AI confidence: ${round.confidence}%</div>
+  `;
+  el.appendChild(div);
+
+  // Yes is live immediately
+  const yes=document.getElementById('l2ai-yes');
+  if(yes)yes.onclick=()=>{
+    G.fail('The AI got you — lost a heart.');
+    r=Math.min(r+1,rounds.length-1);
+    setTimeout(show,1600);
+  };
+  if(yes)trackHover(yes,'l2aiy',()=>almostGotYou(el,'That\'s the yes — the AI sized it up specifically to catch you.'));
+  if(hardMode&&yes){setTimeout(()=>yes.classList.add('hard-drift'),1500);}
+
+  setTimeout(()=>{
+    const no=document.getElementById('l2ai-no');
+    if(!no)return;
+    no.style.color='#aaa';
+    no.style.cursor='pointer';
+    no.disabled=false;
+    no.onclick=()=>{r++;if(r>=rounds.length)G.succeed();else show();};
+    if(hardMode){setTimeout(()=>no.classList.add('hard-drift'),1500);}
+  },4000);
+}
   show();
 }
 
@@ -1253,21 +1364,132 @@ function L5(el){
     {name:'Round-up donation',price:1.00,rm:true,sneaky:true},
   ];
   function total(){return cart.reduce((a,c)=>a+c.price,0);}
-  function show(){
-    const aiB=el.querySelector('.ai-banner');el.innerHTML=aiB?aiB.outerHTML:'';
-    el.insertAdjacentHTML('beforeend',`<div class="fh" style="font-size:13px">Your cart</div><div style="margin-top:8px">${cart.map((c,i)=>`<div class="cart-item"><div class="cart-nm">${c.name}${c.sneaky?' <span class="sneaky">(added for you)</span>':''}</div><div class="cart-pr">${c.price===0?'Free':'$'+c.price.toFixed(2)}</div>${c.rm?`<button class="cart-rm" id="crm${i}">Remove</button>`:'<span style="width:44px"></span>'}</div>`).join('')}</div><div style="display:flex;justify-content:space-between;font-size:13px;font-weight:500;padding:8px 0;border-top:0.5px solid #e0e0d8;margin-top:4px"><span>Total</span><span>$${total().toFixed(2)}</span></div><div class="btn-row"><button class="btn btn-p" id="l5-co">Checkout →</button></div><div class="ftiny" style="margin-top:4px">Add-ons auto-renew. Free item becomes $9.99/mo after trial.</div>`);
-    cart.forEach((_,i)=>{const b=document.getElementById('crm'+i);if(b)b.onclick=()=>{cart.splice(i,1);show();};});
-    document.getElementById('l5-co').onclick=()=>{
-      const hasSneaky=cart.some(c=>c.sneaky);
-      if(!hasSneaky){G.succeed();return;}
-      const next=extras.find(e=>!cart.find(c=>c.name===e.name));
-      if(next)cart.push(next);
-      G.fail('An item crept back in — check your cart!');setTimeout(show,1600);
-    };
-    const co=document.getElementById('l5-co');
-    if(co)trackHover(co,'l5co',()=>almostGotYou(el,'Check every line before clicking Checkout — new items may have appeared.'));
+
+  // Timer State
+  const TOTAL_SECS=15;
+  const GRACE_SECS=5;
+  let secsLeft=TOTAL_SECS;
+  let inGrace=false;
+  let timerInterval=null;
+  let autoCheckoutFired=false;
+
+  function clearTimer(){clearInterval(timerInterval);timerInterval=null;}
+  
+  function resetTimer(){
+    clearTimer();
+    secsLeft=TOTAL_SECS;
+    inGrace=false;
+    startTimer();
   }
-  show();
+
+  function startTimer(){
+    timerInterval=setInterval(()=>{
+      secsLeft--;
+      updateTimer();
+      if(secsLeft<=0 && !inGrace){
+        inGrace=true;
+        secsLeft=GRACE_SECS;
+      } else if(secsLeft<=0 && inGrace){
+        clearTimer();
+        autoCheckout();      
+      }
+    },1000);
+  }  
+
+  function updateTimer(){
+    const bar=document.getElementById('l5-timer-bar');
+    const num=document.getElementById('l5-timer-num');
+    const label=document.getElementById('l5-timer-label');
+    if(!bar || !num || !label)return;
+    if(inGrace){
+      bar.style.background='#E24B4A';
+      bar.style.width='100%';
+      bar.style.transition='none';
+      // Flashing effect in the last 10 seconds
+      bar.style.opacity=secsLeft%2===0?'1':'0.5';
+      num.style.color='#E24B4A';
+      label.textContent='Finalizing your order...';
+      label.style.color='#E24B4A'; 
+      label.style.fontWeight='600';
+      SFX.tick();
+    } else {
+      const pct=(secsLeft/TOTAL_SECS)*100;
+      bar.style.background=secsLeft<=15?'#E24B4A':'#F5A623';
+      bar.style.width=pct+'%';
+      bar.style.transition='width 1s linear';
+      bar.style.opacity='1';
+      num.textContent=secsLeft+'s';
+      num.style.color=secsLeft<=15?'#E24B4A':'#AAAAAA';
+      label.textContent=secsLeft<=15?'Hurry, cart expires soon!':'Securing your cart...';
+      label.style.color=secsLeft<=15?'#E24B4A':'#AAAAAA';
+      label.style.fontWeight='normal';
+    }
+  }
+
+function autoCheckout(){
+  const hasSneaky=cart.some(c=>c.sneaky);
+  if(!hasSneaky){clearTimer();G.succeed();return;}
+  clearTimer();
+  levelGrades[levelIdx]='F';
+  G.fail('Time ran out — your order was placed with extra items!');
+  setTimeout(()=>showDebrief(false),1900);
+}
+
+  function show(){
+  const aiB=el.querySelector('.ai-banner');el.innerHTML=aiB?aiB.outerHTML:'';
+
+  // Timer bar + label
+  el.insertAdjacentHTML('beforeend',`
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:2px">
+      <div style="font-size:10px;color:#aaa" id="l5-timer-label">Securing your cart...</div>
+      <div style="font-size:10px;color:#aaa;font-weight:500;min-width:24px;text-align:right" id="l5-timer-num">${secsLeft}s</div>
+    </div>
+    <div class="tbar-t" style="margin-bottom:10px">
+      <div class="tbar-f" id="l5-timer-bar" style="width:${(secsLeft/TOTAL_SECS)*100}%;background:#f5a623;transition:width 1s linear"></div>
+    </div>
+  `);
+
+  // Cart
+  el.insertAdjacentHTML('beforeend',`
+    <div class="fh" style="font-size:13px">Your cart</div>
+    <div style="margin-top:8px">
+      ${cart.map((c,i)=>`
+        <div class="cart-item">
+          <div class="cart-nm">${c.name}${c.sneaky?' <span class="sneaky">(added for you)</span>':''}</div>
+          <div class="cart-pr">${c.price===0?'Free':'$'+c.price.toFixed(2)}</div>
+          ${c.rm?`<button class="cart-rm" id="crm${i}">Remove</button>`:'<span style="width:44px"></span>'}
+        </div>`).join('')}
+    </div>
+    <div style="display:flex;justify-content:space-between;font-size:13px;font-weight:500;padding:8px 0;border-top:0.5px solid #e0e0d8;margin-top:4px">
+      <span>Total</span><span>$${total().toFixed(2)}</span>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-p" id="l5-co">Checkout →</button>
+    </div>
+    <div class="ftiny" style="margin-top:4px">Add-ons auto-renew. Free item becomes $9.99/mo after trial.</div>
+  `);
+
+  // Bind remove buttons
+  cart.forEach((_,i)=>{
+    const b=document.getElementById('crm'+i);
+    if(b)b.onclick=()=>{cart.splice(i,1);show();};
+  });
+
+  // Bind checkout
+  document.getElementById('l5-co').onclick=()=>{
+    const hasSneaky=cart.some(c=>c.sneaky);
+    if(!hasSneaky){clearTimer();G.succeed();return;}
+    const next=extras.find(e=>!cart.find(c=>c.name===e.name));
+    if(next){cart.push(next);resetTimer();}
+    G.fail('An item crept back in — check your cart!');
+    setTimeout(show,1600);
+  };
+
+  trackHover(document.getElementById('l5-co'),'l5co',()=>almostGotYou(el,'Check every line before clicking Checkout — new items may have appeared.'));
+}
+
+show();
+startTimer();
 }
 
 /* ── LEVEL 5 AI ── */
@@ -1279,18 +1501,258 @@ function L5AI(el){
     {name:'HydrationTrack+ bundle (users like you bought this)',price:12.99},
   ];
   let step=0;
+  let adds=0;
+  const OFFER_SECS=20;
+  let secsLeft=OFFER_SECS;
+  let timerInterval=null;
+
+  function clearTimer(){clearInterval(timerInterval);timerInterval=null;}
+
+  function startTimer(){
+    secsLeft=OFFER_SECS;
+    timerInterval=setInterval(()=>{
+      secsLeft--;
+      const bar=document.getElementById('l5ai-timer-bar');
+      const num=document.getElementById('l5ai-timer-num');
+      const label=document.getElementById('l5ai-timer-label');
+      if(!bar||!num||!label)return;
+      const pct=(secsLeft/OFFER_SECS)*100;
+      bar.style.width=pct+'%';
+      bar.style.background=secsLeft<=10?'#E24B4A':'#F5A623';
+      bar.style.opacity=secsLeft<=10&&secsLeft%2===0?'0.5':'1';
+      num.textContent=secsLeft+'s';
+      num.style.color=secsLeft<=10?'#E24B4A':'#AAAAAA';
+      label.textContent=secsLeft<=10?'Special offer expires soon!':'Special offer just for you...';
+      label.style.color=secsLeft<=10?'#E24B4A':'#AAAAAA';
+      if(secsLeft<=5)SFX.tick();
+      if(secsLeft<=0){clearTimer();step++;show();}
+    },1000);
+  }
+
   function show(){
+    clearTimer();
     if(step>=upsells.length){G.succeed();return;}
     const u=upsells[step];
     const aiB=el.querySelector('.ai-banner');el.innerHTML=aiB?aiB.outerHTML:'';
-    el.insertAdjacentHTML('beforeend',`<div class="fh" style="font-size:12px;color:#534AB7">NexusAI identified you as: <em>${profile}</em></div><div style="margin-top:10px;padding:12px;border-radius:8px;border:0.5px solid #AFA9EC;background:#fff"><div style="font-size:14px;font-weight:500">${u.name}</div><div class="fs">$${u.price.toFixed(2)}/mo · Cancel anytime</div></div><div class="fs" style="margin-top:8px;color:#534AB7">Our model predicts you'll regret skipping this. Confidence: ${91-step*4}%</div><div class="btn-row" style="margin-top:10px"><button class="btn btn-ai" id="l5a-add">Add to order</button><button class="btn" id="l5a-skip">No thanks</button></div><div class="ftiny">${step+1} of ${upsells.length} personalized recommendations</div>`);
-    document.getElementById('l5a-add').onclick=()=>{G.fail('AI upsell worked — lost a heart.');step++;setTimeout(show,1500);};
-    document.getElementById('l5a-skip').onclick=()=>{step++;show();};
-    trackHover(document.getElementById('l5a-add'),'l5aa',()=>almostGotYou(el,"That confidence % is fabricated — it's designed to make declining feel irrational."));
+    el.insertAdjacentHTML('beforeend',`
+      <div class="fh" style="font-size:12px;color:#534AB7">NexusAI identified you as: <em>${profile}</em></div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-top:10px;margin-bottom:2px">
+        <div style="font-size:10px;color:#aaa" id="l5ai-timer-label">Offer expires in</div>
+        <div style="font-size:10px;color:#aaa;font-weight:500;min-width:24px;text-align:right" id="l5ai-timer-num">${OFFER_SECS}s</div>
+      </div>
+      <div class="tbar-t" style="margin-bottom:10px">
+        <div class="tbar-f" id="l5ai-timer-bar" style="width:100%;background:#F5A623;transition:width 1s linear"></div>
+      </div>
+      <div style="padding:12px;border-radius:8px;border:0.5px solid #AFA9EC;background:#fff">
+        <div style="font-size:14px;font-weight:500">${u.name}</div>
+        <div class="fs">$${u.price.toFixed(2)}/mo · Cancel anytime</div>
+      </div>
+      <div class="fs" style="margin-top:8px;color:#534AB7">Our model predicts you'll regret skipping this. Confidence: ${91-step*4}%</div>
+      <div class="btn-row" style="margin-top:10px">
+        <button class="btn btn-ai" id="l5ai-add">Add to order</button>
+        <button class="btn" id="l5ai-skip">No thanks</button>
+      </div>
+      <div class="ftiny">${step+1} of ${upsells.length} personalized recommendations</div>
+    `);
+    document.getElementById('l5ai-add').onclick=()=>{
+      clearTimer();
+      adds++;
+      if(adds>=2){levelGrades[levelIdx]='F';G.fail('Two AI upsells worked — the algorithm got you!');setTimeout(()=>showDebrief(false),1900);return;}
+      G.fail('AI upsell worked — lost a heart. Resist the next one!');
+      step++;
+      setTimeout(show,1500);
+    };
+    document.getElementById('l5ai-skip').onclick=()=>{clearTimer();step++;show();};
+    startTimer();
   }
   show();
 }
 
+/* ── LEVEL 7: Fake Scarcity / Urgency ── */
+function L7(el){
+  let cartTimer=300,cartInterval=null;
+
+  const NOTIFICATIONS=[
+    "Sarah from New York just purchased this item",
+    "Marcus from Austin just purchased this item",
+    "Priya from Seattle just purchased this item",
+    "David from Chicago just purchased Wireless Earbuds",
+    "Emma from Boston just purchased this item",
+  ];
+
+  function fmt(s){const m=Math.floor(s/60),sec=s%60;return m+':'+(sec<10?'0':'')+sec;}
+  function randViewers(){return Math.floor(Math.random()*120)+780;}
+
+  // Inject feed styles
+  if(!document.getElementById('l7-style')){
+    const s=document.createElement('style');s.id='l7-style';
+    s.textContent=`
+      .l7-topbar{background:#232f3e;padding:6px 10px;display:flex;align-items:center;gap:6px;border-radius:8px 8px 0 0}
+      .l7-searchbox{flex:1;background:#fff;border-radius:4px;display:flex;align-items:center;padding:0 8px;height:28px;gap:5px}
+      .l7-searchbox input{flex:1;border:none;outline:none;font-size:12px;color:#111;background:transparent}
+      .l7-sbtn{background:#febd69;border:none;padding:0 8px;height:28px;font-size:13px;cursor:pointer;border-radius:0 3px 3px 0}
+      .l7-feed{max-height:320px;overflow-y:auto;overflow-x:hidden;display:flex;flex-direction:column;gap:0;border:0.5px solid #e0e0d8;border-radius:0 0 8px 8px;}      
+      .l7-banner{padding:6px 10px;font-size:11px;font-weight:500;display:flex;align-items:center;justify-content:space-between;border-bottom:0.5px solid #e8e8e4}
+      .l7-banner.red{background:#FCEBEB;color:#A32D2D}
+      .l7-banner.amber{background:#FAEEDA;color:#854F0B}
+      .l7-banner.blue{background:#E6F1FB;color:#185FA5}
+      .l7-product{padding:9px 10px;border-bottom:0.5px solid #e8e8e4;display:flex;gap:8px;cursor:pointer;background:#fff}
+      .l7-product:hover{background:#f9f9f7}
+      .l7-pimg{width:56px;height:56px;border-radius:5px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:20px;background:#f5f5f2}
+      .l7-pbody{flex:1;display:flex;flex-direction:column;gap:2px}
+      .l7-ptitle{font-size:12px;color:#111;line-height:1.4}
+      .l7-pstars{font-size:10px;color:#854F0B}
+      .l7-pprice{font-size:13px;font-weight:500;color:#111}
+      .l7-pprice .orig{font-size:10px;text-decoration:line-through;color:#aaa;margin-left:4px;font-weight:400}
+      .l7-pbadge{font-size:9px;font-weight:500;padding:2px 5px;border-radius:3px;display:inline-block;margin-top:1px}
+      .l7-br{background:#FCEBEB;color:#A32D2D}
+      .l7-ba{background:#FAEEDA;color:#633806}
+      .l7-bb{background:#E6F1FB;color:#0C447C}
+      .l7-bg{background:#EAF3DE;color:#27500A}
+      .l7-pmeta{font-size:10px;color:#aaa}
+      .l7-notif{padding:5px 10px;font-size:10px;color:#888;background:#f9f9f7;border-bottom:0.5px solid #f0f0ec;font-style:italic}
+      .l7-sechead{padding:5px 10px;font-size:10px;font-weight:500;color:#888;background:#f0f0ec;border-bottom:0.5px solid #e8e8e4;text-transform:uppercase;letter-spacing:.05em}
+      .l7-cart{padding:12px;display:flex;flex-direction:column;gap:8px;background:#fff;border:0.5px solid #e0e0d8;border-radius:0 0 8px 8px}
+      .l7-crow{display:flex;justify-content:space-between;align-items:center;font-size:12px;padding:3px 0;border-bottom:0.5px solid #e8e8e4}
+      .l7-crow:last-of-type{border-bottom:none}
+      .l7-ctotal{display:flex;justify-content:space-between;font-size:13px;font-weight:500;padding-top:6px;border-top:0.5px solid #ccc}
+      .l7-tbar{height:3px;background:#eee;border-radius:2px;overflow:hidden;margin-bottom:2px}
+      .l7-tfill{height:100%;background:#E24B4A;border-radius:2px;transition:width 1s linear}
+      .l7-obtn{background:#febd69;border:none;border-radius:5px;padding:8px;font-size:13px;font-weight:500;cursor:pointer;width:100%;color:#111;font-family:inherit}
+      .l7-obtn:hover{opacity:.9}
+      .l7-goalbar{background:#232f3e;color:#ddd;font-size:10px;padding:4px 10px;text-align:center;border-radius:0}
+    `;
+    document.head.appendChild(s);
+  }
+
+  el.innerHTML='';
+  // Topbar
+  el.insertAdjacentHTML('beforeend',`
+    <div class="l7-goalbar" id="l7-goalbar">Goal: find and purchase the backpack</div>
+    <div class="l7-topbar">
+      <div style="color:#fff;font-size:13px;font-weight:500;letter-spacing:-.5px">QuickCart</div>
+      <div class="l7-searchbox">
+        <span style="font-size:13px;color:#888">&#128269;</span>
+        <input id="l7-search" placeholder="Search..." value="">
+      </div>
+      <button class="l7-sbtn" onclick="l7Search()">&#128269;</button>
+    </div>
+    <div class="l7-feed" id="l7-feed">
+      <div style="padding:30px;text-align:center;color:#aaa;font-size:12px">Search for something to start shopping</div>
+    </div>
+  `);
+
+  document.getElementById('l7-search').addEventListener('keydown',e=>{if(e.key==='Enter')l7Search();});
+
+  window.l7Search=function(){
+    document.getElementById('l7-search').value='backpack';
+    renderFeed();
+  };
+
+  function renderFeed(){
+    const feed=document.getElementById('l7-feed');
+    feed.innerHTML='';
+    const ITEMS=[
+      {t:'banner',cls:'red',txt:'⚡ Lightning Deal ends in 02:13'},
+      {t:'product',img:'🎧',title:'Wireless Earbuds Pro Max',stars:'★★★★☆ (12,481)',price:'$24.99',orig:'$49.99',badges:[['l7-br','⚡ 68% off'],['l7-ba','847 viewed today']],meta:'Ships today'},
+      {t:'notif',txt:NOTIFICATIONS[0]},
+      {t:'banner',cls:'amber',txt:'50% Off Phone Chargers — Limited Time'},
+      {t:'product',img:'🔌',title:'Ultra-Fast 65W Charger 3-Pack',stars:'★★★★★ (8,203)',price:'$14.99',orig:'$29.99',badges:[['l7-br','Only 2 left!'],['l7-ba','Deal ends in 09:59']],meta:'Often bought with earbuds'},
+      {t:'sec',txt:"Today's Deals"},
+      {t:'product',img:'⌚',title:'SmartBand Fitness Tracker',stars:'★★★★☆ (5,602)',price:'$39.99',orig:'$79.99',badges:[['l7-bb','Flash Sale'],['l7-ba','72 people viewing']],meta:''},
+      {t:'notif',txt:NOTIFICATIONS[1]},
+      {t:'banner',cls:'red',txt:'Flash Sale ends in 07:44'},
+      {t:'product',img:'🖱️',title:'Ergonomic Wireless Mouse',stars:'★★★★☆ (3,891)',price:'$19.99',orig:'$35.99',badges:[['l7-ba','Offer expires soon'],['l7-br','Hot deal']],meta:'Ships in 1-2 days'},
+      {t:'sec',txt:'Trending in bags'},
+      {t:'notif',txt:NOTIFICATIONS[2]},
+      {t:'product',img:'👜',title:'Tote Bag Set (3-pack)',stars:'★★★☆☆ (2,104)',price:'$22.99',orig:null,badges:[['l7-bg','1,438 bought last month']],meta:''},
+      {t:'banner',cls:'blue',txt:'Free shipping on orders over $35'},
+      {t:'product',img:'💼',title:'Rolling Carry-On Suitcase',stars:'★★★★☆ (7,230)',price:'$89.99',orig:'$139.99',badges:[['l7-ba','Deal ends tonight'],['l7-br','Only 3 left!']],meta:''},
+      {t:'notif',txt:NOTIFICATIONS[3]},
+      {t:'sec',txt:'You might also like'},
+      {t:'product',img:'🎒',title:'Adventure Backpack — 40L',stars:'★★★★☆ (4,892)',price:'$39.99',orig:null,badges:[['l7-ba','Trending'],['l7-br','Only 1 left in stock!']],meta:randViewers()+' people viewed today',isTarget:true},
+      {t:'notif',txt:NOTIFICATIONS[4]},
+    ];
+
+    ITEMS.forEach(item=>{
+      const d=document.createElement('div');
+      if(item.t==='banner'){
+        d.className='l7-banner '+item.cls;d.textContent=item.txt;
+      } else if(item.t==='sec'){
+        d.className='l7-sechead';d.textContent=item.txt;
+      } else if(item.t==='notif'){
+        d.className='l7-notif';d.textContent=item.txt;
+      } else if(item.t==='product'){
+        d.className='l7-product';
+        const bdgs=item.badges.map(([cls,txt])=>`<span class="l7-pbadge ${cls}">${txt}</span>`).join(' ');
+        d.innerHTML=`<div class="l7-pimg">${item.img}</div><div class="l7-pbody"><div class="l7-ptitle">${item.title}</div><div class="l7-pstars">${item.stars}</div><div class="l7-pprice">$${item.price.replace('$','')}${item.orig?`<span class="orig">${item.orig}</span>`:''}</div><div style="display:flex;gap:3px;flex-wrap:wrap;margin-top:2px">${bdgs}</div>${item.meta?`<div class="l7-pmeta" id="${item.isTarget?'l7-viewers':''}">${item.meta}</div>`:''}</div>`;
+        if(item.isTarget){
+          d.style.outline='1.5px solid #febd69';
+          d.onclick=()=>openCart(feed);
+        } else {
+          d.onclick=()=>{d.style.outline='1.5px solid #E24B4A';setTimeout(()=>d.style.outline='',700);};
+        }
+      }
+      feed.appendChild(d);
+    });
+
+    // Live viewer flicker
+    setInterval(()=>{
+      const v=document.getElementById('l7-viewers');
+      if(v&&v.textContent.includes('viewed'))v.textContent=randViewers()+' people viewed today';
+    },3000);
+
+    // Notification cycling
+    let ni=0;
+    setInterval(()=>{
+      ni=(ni+1)%NOTIFICATIONS.length;
+      const notifs=feed.querySelectorAll('.l7-notif');
+      if(notifs.length)notifs[ni%notifs.length].textContent=NOTIFICATIONS[ni];
+    },4000);
+  }
+
+  function openCart(feed){
+    clearInterval(cartInterval);
+    cartTimer=300;
+    feed.innerHTML='';
+    const c=document.createElement('div');
+    c.className='l7-cart';
+    c.innerHTML=`
+      <div style="font-size:14px;font-weight:500;color:#111">Your cart</div>
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <div style="font-size:10px;color:#A32D2D;font-weight:500" id="l7-clabel">Cart reserved for ${fmt(cartTimer)}</div>
+      </div>
+      <div class="l7-tbar"><div class="l7-tfill" id="l7-cbar" style="width:100%"></div></div>
+      <div>
+        <div class="l7-crow"><span style="color:#111">Adventure Backpack — 40L</span><span style="font-weight:500">$39.99</span></div>
+      </div>
+      <div class="l7-ctotal"><span>Order total</span><span>$39.99</span></div>
+      <button class="l7-obtn" onclick="l7PlaceOrder()">Place your order</button>
+      <div style="font-size:10px;color:#aaa;text-align:center">By placing your order, you agree to our Conditions of Use</div>
+    `;
+    feed.appendChild(c);
+
+    cartInterval=setInterval(()=>{
+      cartTimer--;
+      const lbl=document.getElementById('l7-clabel');
+      const bar=document.getElementById('l7-cbar');
+      if(!lbl||!bar)return clearInterval(cartInterval);
+      lbl.textContent='Cart reserved for '+fmt(cartTimer);
+      bar.style.width=((cartTimer/300)*100)+'%';
+      bar.style.background=cartTimer<60?'#E24B4A':'#854F0B';
+      if(cartTimer<=0){cartTimer=300;}
+    },1000);
+  }
+
+  window.l7PlaceOrder=function(){
+    clearInterval(cartInterval);
+    const gb=document.getElementById('l7-goalbar');
+    if(gb){gb.style.background='#3B6D11';gb.textContent='Done — backpack purchased';}
+    const feed=document.getElementById('l7-feed');
+    if(feed)feed.innerHTML=`<div style="padding:24px 12px;text-align:center;display:flex;flex-direction:column;gap:8px;align-items:center;background:#fff"><div style="font-size:24px;color:#3B6D11">✓</div><div style="font-size:14px;font-weight:500;color:#111">Order placed!</div><div style="font-size:12px;color:#555">Adventure Backpack — $39.99</div></div>`;
+    G.succeed();
+  };
+}
 
 /* ── DESIGNER MODE ── */
 const D_STATE={btn:0,copy:0,check:0,price:0,urgency:0,sneak:0};
