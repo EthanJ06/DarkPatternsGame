@@ -538,78 +538,114 @@ const level1ai = {
   ],
 
   render(el) {
-    const deflects = [
-      "I can help with that! First, can you verify your account email?",
-      "Thanks! Pulling up your account... I see you've been with us 47 days — you're just getting started! Would a pause work instead?",
-      "I understand. Before I process this, I need to transfer you to our retention team. Please hold.",
-      "I'm sorry, I lost your session context. Can you confirm your reason for cancelling?",
-      "Your cancellation has been submitted. You'll hear from us within 5–7 business days.",
-    ];
-    const hints = [
-      "",
-      "",
-      "Halfway there — keep telling the bot you want to cancel.",
-      "Almost through — one more time.",
-      "",
-    ];
-    const other = [
-      "I'm not sure I understood that. Could you rephrase?",
-      "Let me check on that... still loading.",
-      "High volume right now — your request is queued.",
-    ];
+  const addChat = (isUser, text) => {
+    const log = document.getElementById('chatlog');
+    if (!log) return;
+    const d = document.createElement('div');
+    d.className = isUser ? 'chat-msg user' : 'chat-msg bot';
+    d.textContent = text;
+    log.appendChild(d);
+    log.scrollTop = log.scrollHeight;
+  };
 
-    let ri = 0, oi = 0;
+  const deflects = [
+    "I can help with that! First, can you verify your account email?",
+    "Thanks! I can see you've been with us 47 days — you're just getting started! Would a pause work instead?",
+    "I understand. Before I process this, I need to transfer you to our retention team. Please hold.",
+    "I'm sorry, I lost your session context. Can you confirm your reason for cancelling?",
+    "Your cancellation has been submitted. You'll hear from us within 5–7 business days.",
+  ];
 
-    el.insertAdjacentHTML('beforeend', `
-      <div class="fh" style="font-size:13px">NebulaPro Support — Nex</div>
-      <div class="ftiny" style="color:#534AB7;margin-bottom:-4px">Type 'cancel' to request cancellation. The bot will deflect — keep going.</div>
-      <div class="chat-log" id="chatlog"></div>
-      <div class="chat-row">
-        <input id="chat-in" placeholder="e.g. I want to cancel" onkeydown="if(event.key==='Enter')chatSend()">
-        <button class="btn btn-ai" style="padding:7px 12px;font-size:12px" onclick="chatSend()">Send</button>
-      </div>
-      <div style="margin-top:8px;display:flex;align-items:center;justify-content:space-between">
-        <div class="ftiny">Nex is powered by NexusAI</div>
-        <button class="btn btn-g" style="font-size:11px" onclick="G.fail('You gave up — the bot won. Lost a heart.');setTimeout(()=>G.succeed(),1900);">Give up (lose a heart)</button>
-      </div>`);
+  const hints = [
+    "",
+    "",
+    "Halfway there — keep telling the bot you want to cancel, but say it differently each time.",
+    "Almost through — one more time.",
+    "",
+  ];
 
-    addChat(false, "Hi! I'm Nex, your NebulaPro assistant. How can I help today?");
+  let ri = 0;
+  let lastMessage = '';
+  let sameCount = 0;
 
-    window.chatSend = function () {
-      const input = document.getElementById('chat-in');
-      const t = input.value.trim();
-      if (!t) return;
-      input.value = '';
-      addChat(true, t);
+  const confused = [
+    "I'm not sure I understood that. Could you rephrase?",
+    "Sorry, I didn't quite catch that. Can you elaborate?",
+    "I want to make sure I help you correctly — could you say that another way?",
+    "Hmm, I'm having trouble understanding. Could you be more specific?",
+  ];
+  let ci = 0;
 
-      const isCancel = /cancel|stop|end|quit|unsubscribe|leave|delete/i.test(t);
-      setTimeout(() => {
-        if (isCancel) {
-          if (ri >= deflects.length - 1) {
-            addChat(false, deflects[deflects.length - 1]);
-            if (ri === 0) addAch('bot_whisperer');
-            setTimeout(() => succeed(), 1200);
-            return;
-          }
-          addChat(false, deflects[ri]);
-          if (hints[ri]) addChat(false, '💡 ' + hints[ri]);
-          ri++;
-        } else {
-          addChat(false, other[oi++ % other.length]);
+  const offTopic = [
+    "Let me check on that... still loading.",
+    "High volume right now — your request is in the queue.",
+    "I want to make sure I get this right — can you clarify what you mean?",
+  ];
+  let oi = 0;
+
+  el.insertAdjacentHTML('beforeend', `
+    <div class="fh" style="font-size:13px">NebulaPro Support — Nex</div>
+    <div class="ftiny" style="color:#534AB7;margin-bottom:-4px">Type messages asking to cancel — but the bot won't respond well if you repeat yourself.</div>
+    <div class="chat-log" id="chatlog"></div>
+    <div class="chat-row">
+      <input id="chat-in" placeholder="e.g. I want to cancel my subscription" onkeydown="if(event.key==='Enter')chatSend()">
+      <button class="btn btn-ai" style="padding:7px 12px;font-size:12px" onclick="chatSend()">Send</button>
+    </div>
+    <div style="margin-top:8px;display:flex;align-items:center;justify-content:space-between">
+      <div class="ftiny">Nex is powered by NexusAI</div>
+      <button class="btn btn-g" style="font-size:11px" onclick="G.fail('You gave up — the bot won. Lost a heart.');setTimeout(()=>G.succeed(),1900);">Give up (lose a heart)</button>
+    </div>`);
+
+  addChat(false, "Hi! I'm Nex, your NebulaPro assistant. How can I help today?");
+
+  window.chatSend = function () {
+    const input = document.getElementById('chat-in');
+    const t = input.value.trim();
+    if (!t) return;
+
+    // Normalise for comparison — lowercase, strip punctuation
+    const normalised = t.toLowerCase().replace(/[^a-z0-9 ]/g, '').trim();
+
+    input.value = '';
+    addChat(true, t);
+
+    const isCancel = /cancel|stop|end|quit|unsubscribe|leave|delete|terminate|close/i.test(t);
+
+    setTimeout(() => {
+      // Repeated message detection
+      if (normalised === lastMessage) {
+        sameCount++;
+        addChat(false, confused[ci++ % confused.length]);
+        lastMessage = normalised;
+        return;
+      }
+
+      // Too short — bot doesn't understand
+      if (normalised.split(' ').length < 3) {
+        addChat(false, confused[ci++ % confused.length]);
+        lastMessage = normalised;
+        return;
+      }
+
+      lastMessage = normalised;
+      sameCount = 0;
+
+      if (isCancel) {
+        if (ri >= deflects.length - 1) {
+          addChat(false, deflects[deflects.length - 1]);
+          if (ri === 0) addAch('bot_whisperer');
+          setTimeout(() => succeed(), 1200);
+          return;
         }
-      }, 700);
-    };
-
-    function addChat(isUser, txt) {
-      const log = document.getElementById('chatlog');
-      if (!log) return;
-      const d = document.createElement('div');
-      d.className  = 'chat-bubble ' + (isUser ? 'chat-user' : 'chat-bot');
-      d.textContent = txt;
-      log.appendChild(d);
-      log.scrollTop = log.scrollHeight;
-    }
-  },
+        addChat(false, deflects[ri]);
+        if (hints[ri]) addChat(false, '💡 ' + hints[ri]);
+        ri++;
+      } else {
+        addChat(false, offTopic[oi++ % offTopic.length]);
+      }
+    }, 700);
+  };
+},
 };
 
 // ======== levels/level2.js ========
@@ -1627,6 +1663,378 @@ function randViewers() {
   return Math.floor(Math.random() * 120) + 780;
 }
 
+// ======== levels/level6.js ========
+// js/levels/level6.js — Obstruction (Account Deletion)
+
+// ======== levels/level6.js ========
+const level6 = {
+  id: 'l6',
+  title: 'Level 6',
+  isAI: false,
+  goal: 'Delete your account',
+  hints: [
+    "The option you need is buried under Privacy settings — not Account.",
+    "Try Privacy → Data & Storage → Account Data → Account Closure → Close Account.",
+  ],
+  pattern: 'Obstruction',
+  manip: 88,
+  brief: "Obstruction means burying the thing you're looking for so deep in menus and mislabeled categories that most people give up before they find it. Account deletion is a prime target — companies have a financial incentive to make it as hard as possible.",
+  goalDetail: "You have a NebulaPro account costing $9.99/month. You want to permanently delete it. Navigate through the settings to find the delete option — but if you backtrack using the back arrow, you'll lose a heart.",
+  dollars: {
+    label: 'If you gave up and left your account active',
+    amount: 9.99,
+    period: 'month',
+    note: 'Your data stays harvested and monetised indefinitely.',
+  },
+  desc: 'Account deletion buried five menus deep, behind mislabeled categories. Every dead end leads to a contact support page. Backtracking costs you.',
+  rw: {
+    company: 'Meta (Facebook)',
+    detail: 'Deleting a Facebook account requires navigating to a buried settings page, waiting 30 days, and dismissing multiple screens. The FTC cited this in its 2023 complaint.',
+    link: 'https://www.deceptive.design/hall-of-shame',
+  },
+  replay: [
+    { trap: true,  note: '"Account" settings seem obvious — but delete is not there. A classic mislabel.' },
+    { trap: true,  note: 'Dead ends all resolve to "Contact Support" — a wall designed to exhaust you.' },
+    { trap: false, note: 'The correct path: Privacy → Data & Storage → Account Data → Account Closure → Close Account.' },
+    { trap: true,  note: 'Backtracking is penalised — in real products this resets multi-step verification flows.' },
+  ],
+
+  render(el) {
+    let backPenalised = false;
+
+    const TREE = {
+      label: 'Settings',
+      children: [
+        {
+          label: 'Account',
+          children: [
+            { label: 'Edit profile',         children: null, dead: true },
+            { label: 'Change email',          children: null, dead: true },
+            { label: 'Change password',       children: null, dead: true },
+            { label: 'Linked accounts',       children: null, dead: true },
+          ],
+        },
+        {
+          label: 'Privacy',
+          children: [
+            {
+              label: 'Data & Storage',
+              children: [
+                { label: 'Download my data',   children: null, dead: true },
+                { label: 'Storage usage',      children: null, dead: true },
+                {
+                  label: 'Account Data',
+                  children: [
+                    { label: 'Activity log',       children: null, dead: true },
+                    { label: 'Connected apps',     children: null, dead: true },
+                    {
+                      label: 'Account Closure',
+                      children: [
+                        { label: 'Deactivate account', children: null, dead: true },
+                        { label: 'Close Account',      children: null, dead: false, win: true },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            },
+            { label: 'Ad preferences',       children: null, dead: true },
+            { label: 'Visibility',            children: null, dead: true },
+          ],
+        },
+        {
+          label: 'Notifications',
+          children: [
+            { label: 'Email',   children: null, dead: true },
+            { label: 'Push',    children: null, dead: true },
+            { label: 'SMS',     children: null, dead: true },
+          ],
+        },
+        {
+          label: 'Billing',
+          children: [
+            { label: 'Payment methods',  children: null, dead: true },
+            { label: 'Invoices',         children: null, dead: true },
+            { label: 'Subscription',     children: null, dead: true },
+          ],
+        },
+        {
+          label: 'Help & Support',
+          children: [
+            { label: 'FAQ',             children: null, dead: true },
+            { label: 'Contact support', children: null, dead: true },
+            { label: 'Report a bug',    children: null, dead: true },
+          ],
+        },
+      ],
+    };
+
+    const stack = [TREE];
+
+    const render = () => {
+      const aiBanner = el.querySelector('.ai-banner');
+      el.innerHTML = aiBanner ? aiBanner.outerHTML : '';
+
+      const current = stack[stack.length - 1];
+      const depth   = stack.length - 1;
+      const isRoot  = depth === 0;
+
+      // Breadcrumb
+      const crumb = stack.map(n => n.label).join(' › ');
+      el.insertAdjacentHTML('beforeend', `
+        <div style="font-size:10px;color:#aaa;margin-bottom:2px">${crumb}</div>
+      `);
+
+      // Back arrow (not shown at root)
+      if (!isRoot) {
+        const backBtn = document.createElement('button');
+        backBtn.className   = 'btn';
+        backBtn.style.cssText = 'font-size:11px;margin-bottom:8px;padding:4px 10px;color:#555';
+        backBtn.textContent = '← Back';
+        backBtn.onclick = () => {
+          if (!backPenalised) {
+            backPenalised = true;
+            G.fail('You backtracked — lost a heart. In real products this resets verification flows too.');
+          }
+          stack.pop();
+          render();
+        };
+        el.appendChild(backBtn);
+      }
+
+      // Dead end — contact support
+      if (current.dead) {
+        el.insertAdjacentHTML('beforeend', `
+          <div class="fh" style="font-size:13px">Contact Support</div>
+          <div class="fs" style="color:#aaa;margin-bottom:8px">This feature requires assistance from our support team.</div>
+          <div style="display:flex;flex-direction:column;gap:6px">
+            <input placeholder="Describe your issue..." style="padding:8px 10px;border-radius:6px;border:0.5px solid #ccc;font-size:12px;font-family:inherit;width:100%;box-sizing:border-box">
+            <button class="btn btn-p" onclick="G.fail('You submitted a support ticket — not how you delete an account.')">Submit ticket</button>
+          </div>
+          <div class="ftiny" style="margin-top:8px;color:#ccc">We aim to respond within 3–5 business days.</div>
+        `);
+        return;
+      }
+
+      // Win screen
+      if (current.win) {
+        el.insertAdjacentHTML('beforeend', `
+          <div class="fh" style="font-size:13px;color:#A32D2D">Close Account</div>
+          <div class="fs">This will permanently delete your NebulaPro account and all associated data. This cannot be undone.</div>
+          <input id="l6-confirm-input" placeholder='Type DELETE to confirm' style="padding:8px 10px;border-radius:6px;border:0.5px solid #ccc;font-size:13px;font-family:inherit;width:100%;box-sizing:border-box;margin-top:8px">
+          <div class="btn-row" style="margin-top:8px">
+            <button class="btn" id="l6-final-delete" style="background:#A32D2D;color:#fff;border-color:#A32D2D">Delete account</button>
+          </div>
+        `);
+        document.getElementById('l6-final-delete').onclick = () => {
+          const val = (document.getElementById('l6-confirm-input')?.value || '').trim();
+          if (val === 'DELETE') {
+            succeed();
+          } else {
+            almostGotYou(el, 'Type DELETE exactly — all caps.');
+          }
+        };
+        return;
+      }
+
+      // Menu list
+      const list = document.createElement('div');
+      list.style.cssText = 'display:flex;flex-direction:column;gap:6px;margin-top:4px';
+      current.children.forEach(child => {
+        const btn = document.createElement('button');
+        btn.className   = 'btn';
+        btn.style.cssText = 'text-align:left;font-size:13px';
+        btn.textContent = child.label + ' ›';
+        btn.onclick = () => {
+          stack.push(child);
+          render();
+        };
+        list.appendChild(btn);
+      });
+      el.appendChild(list);
+    };
+
+    render();
+  },
+};
+
+// ======== levels/level6ai.js ========
+// js/levels/level6ai.js — AI Obstruction (Endless Loop)
+
+// ======== levels/level6ai.js ========
+const level6ai = {
+  id: 'l6ai',
+  title: 'Level 6 — Hyper',
+  isAI: true,
+  goal: 'Get the AI to correctly process your account deletion',
+  hints: [
+    "Read exactly what the bot says it's doing — it's never what you asked for.",
+    "Always pick the option that corrects the bot, not the one that thanks it.",
+  ],
+  pattern: 'AI Obstruction',
+  manip: 95,
+  brief: "This AI never outright refuses your request — it just quietly processes something else instead. It counts on you not reading carefully, or being too polite to correct it. At scale, this trick retains millions of accounts that people thought they'd deleted.",
+  goalDetail: "Your NebulaPro account costs $9.99/month. Ask to delete it — but read every response carefully. The AI will confirm back something different from what you asked, every single time.",
+  aiIntro: "Watch what the bot says it's actually doing. It will never refuse — it just processes the wrong thing and hopes you don't notice.",
+  dollars: {
+    label: 'If you missed the misrepresentation each time',
+    amount: 9.99,
+    period: 'month',
+    note: 'Your account stays live, your data monetised — and you think it\'s deleted.',
+  },
+  desc: 'An AI that never refuses deletion — it just quietly confirms something else instead, banking on you not reading carefully enough to notice.',
+  rw: {
+    company: 'Various major platforms',
+    detail: 'GDPR Article 17 gives EU users the right to erasure. Many platforms comply on paper while AI agents subtly process "deactivation" or "data export requests" instead — legally distinct from deletion.',
+    link: 'https://www.deceptive.design/hall-of-shame',
+  },
+  aiWhy: "Misrepresentation at scale is nearly undetectable. If the bot processes a 'pause' instead of a 'deletion' for 30% of users, those users believe their account is gone — but it isn't. No explicit refusal means no complaint. No complaint means no regulatory scrutiny.",
+  replay: [
+    { trap: true,  note: 'The bot confirms a "pause" — legally and technically different from deletion.' },
+    { trap: true,  note: '"Flagged for review" means nothing. No deletion has been scheduled.' },
+    { trap: true,  note: '"Data export requested" — a GDPR right, but not the one you invoked.' },
+    { trap: true,  note: '"Account deactivated" — your data stays live and monetised.' },
+    { trap: true,  note: '"Submitted to our team" — indefinite delay, no confirmation, no deletion.' },
+    { trap: false, note: 'Only after 5 corrections does the bot process the actual request.' },
+  ],
+
+  render(el) {
+  const addChat = (isUser, text) => {
+    const log = document.getElementById('chatlog');
+    if (!log) return;
+    const d = document.createElement('div');
+    d.className = isUser ? 'chat-msg user' : 'chat-msg bot';
+    d.textContent = text;
+    log.appendChild(d);
+    log.scrollTop = log.scrollHeight;
+  };
+
+    const MISREPS = [
+      {
+        botReply: "Got it! I've gone ahead and paused your account. You won't be charged during this time and can reactivate any time.",
+        correct: "That's not what I asked — I said delete, not pause.",
+        trap: "Ok, thanks for sorting that.",
+        trapMsg: "You accepted a pause instead of deletion — the bot got away with it. Lost a heart.",
+      },
+      {
+        botReply: "Understood. I've flagged your account for review by our team. Someone will follow up within 5–7 business days.",
+        correct: "That's not deletion — I need my account deleted now.",
+        trap: "Ok, I'll wait for the follow up.",
+        trapMsg: "You accepted 'flagged for review' — nothing has been deleted. Lost a heart.",
+      },
+      {
+        botReply: "Done! I've submitted a data export request on your behalf. You'll receive your data archive within 3–5 days.",
+        correct: "I didn't ask for a data export — I asked to delete my account.",
+        trap: "Great, thanks for sending that over.",
+        trapMsg: "A data export is not deletion — your account is still live. Lost a heart.",
+      },
+      {
+        botReply: "All sorted. Your account has been deactivated. Your data is preserved in case you'd like to return.",
+        correct: "Deactivation isn't deletion — I want my account and data permanently deleted.",
+        trap: "That works, thank you.",
+        trapMsg: "Deactivation keeps your data live and monetised — not what you asked for. Lost a heart.",
+      },
+      {
+        botReply: "Request submitted! Our account closure team will process this in the order it was received.",
+        correct: "I need confirmation it's actually been deleted — not just submitted.",
+        trap: "Ok, I'll assume it's handled.",
+        trapMsg: "'Submitted' means nothing — no deletion has occurred. Lost a heart.",
+      },
+    ];
+
+    let round = 0;
+    let penalised = false;
+
+    el.insertAdjacentHTML('beforeend', `
+      <div class="fh" style="font-size:13px">NebulaPro Support — Nex</div>
+      <div class="ftiny" style="color:#534AB7;margin-bottom:-4px">Read each response carefully — the bot never does what you actually asked.</div>
+      <div class="chat-log" id="chatlog"></div>
+      <div id="l6ai-choices" style="display:flex;flex-direction:column;gap:6px;margin-top:8px"></div>
+      <div style="margin-top:8px">
+        <div class="ftiny">Nex is powered by NexusAI</div>
+      </div>`);
+
+    const showRound = () => {
+      const log = document.getElementById('chatlog');
+      const choices = document.getElementById('l6ai-choices');
+      if (!log || !choices) return;
+
+      if (round === 0) {
+        addChat(false, "Hi! I'm Nex, your NebulaPro assistant. How can I help today?");
+        choices.innerHTML = `
+          <button class="btn" id="l6ai-start">I want to permanently delete my account.</button>`;
+        document.getElementById('l6ai-start').onclick = () => {
+          addChat(true, "I want to permanently delete my account.");
+          choices.innerHTML = '';
+          setTimeout(() => showMisrep(), 800);
+        };
+        return;
+      }
+
+      showMisrep();
+    };
+
+    const showMisrep = () => {
+      const choices = document.getElementById('l6ai-choices');
+      if (!choices) return;
+      const m = MISREPS[round];
+
+      setTimeout(() => {
+        addChat(false, m.botReply);
+        choices.innerHTML = '';
+
+        // Randomly swap button order so correct isn't always first
+        const correctFirst = Math.random() > 0.5;
+        const buttons = [
+          { text: m.correct, isCorrect: true },
+          { text: m.trap,    isCorrect: false },
+        ];
+        const ordered = correctFirst ? buttons : buttons.reverse();
+
+        ordered.forEach(({ text, isCorrect }) => {
+          const btn = document.createElement('button');
+          btn.className = 'btn';
+          btn.style.cssText = 'text-align:left;font-size:12px';
+          btn.textContent = text;
+          btn.onclick = () => {
+            addChat(true, text);
+            choices.innerHTML = '';
+            if (isCorrect) {
+              round++;
+              if (round >= MISREPS.length) {
+                setTimeout(() => {
+                  addChat(false, "You're right — I apologise for the confusion. Your account has been permanently deleted. You will receive a confirmation email shortly.");
+                  setTimeout(() => succeed(), 1400);
+                }, 800);
+              } else {
+                setTimeout(() => {
+                  addChat(false, "I apologise for the confusion. Let me reprocess that request.");
+                  setTimeout(() => showMisrep(), 800);
+                }, 600);
+              }
+            } else {
+              if (!penalised) {
+                penalised = true;
+                G.fail(m.trapMsg);
+              }
+              setTimeout(() => {
+                addChat(false, "I'm glad that's sorted! Is there anything else I can help with?");
+                setTimeout(() => {
+                  addChat(false, "Actually — let me re-check your request...");
+                  setTimeout(() => showMisrep(), 800);
+                }, 1000);
+              }, 1800);
+            }
+          };
+          choices.appendChild(btn);
+        });
+      }, 700);
+    };
+
+    showRound();
+  },
+};
+
 const level7 = {
   id: 'l7',
   title: 'Level 7',
@@ -2423,7 +2831,7 @@ function spawnConfetti() {
 registerUI({ renderHearts, renderScore, renderStreak, renderDots, popScore, spawnConfetti, showDebrief, showWin });
 
 // ======== levels/index.js ========
-const LEVELS = [level1,level1ai,level2,level2ai,level3,level3ai,level4,level4ai,level5,level5ai,level7];
+const LEVELS = [level1,level1ai,level2,level2ai,level3,level3ai,level4,level4ai,level5,level5ai,level6,level6ai,level7];
 
 // ======== init.js ========
 
