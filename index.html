@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>You've Been Opted In — Dark Patterns Game</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div id="app">
+
+  <!-- GLOSSARY OVERLAY -->
+  <div class="glossary-overlay" id="glossary" style="display:none" onclick="Glossary.closeOnBackdrop(event)">
+    <div class="glossary-panel" id="glossary-panel">
+      <div class="glossary-header">
+        <div class="glossary-title">Pattern glossary</div>
+        <button class="glossary-close" onclick="Glossary.hide()">Close</button>
+      </div>
+      <div id="glossary-body"></div>
+    </div>
+  </div>
+
+  <!-- INTRO -->
+  <div class="scr active" id="scr-intro" style="padding:28px 20px;align-items:center;text-align:center;gap:14px">
+    <div style="font-size:11px;font-weight:500;letter-spacing:.1em;color:var(--text3);text-transform:uppercase">Educational game</div>
+    <div style="font-size:26px;font-weight:500;color:var(--text);line-height:1.2">You've Been<br>Opted In</div>
+    <div style="font-size:14px;color:var(--text2);max-width:380px;line-height:1.7">
+      <strong>Dark patterns</strong> are tricks built into websites and apps to make you do things you didn't intend —
+      stay subscribed, share your data, buy add-ons, or click ads by mistake.
+    </div>
+    <div style="background:var(--bg3);border-radius:10px;padding:14px 16px;max-width:380px;text-align:left;border:1px solid var(--border);display:flex;flex-direction:column;gap:8px">
+      <div style="font-size:12px;font-weight:500;color:var(--text)">How to play</div>
+      <div style="font-size:12px;color:var(--text2);line-height:1.6">
+        Each level gives you a <strong>clear goal</strong> — like "cancel your subscription" or "buy only what you want."
+        The UI will actively work against you. Your job is to succeed anyway.
+      </div>
+      <div style="font-size:12px;color:var(--text2);line-height:1.6">
+        After each level, a debrief explains exactly what the dark pattern was and shows real-world examples.
+      </div>
+    </div>
+    <div style="display:flex;gap:10px;font-size:12px;color:var(--text3);flex-wrap:wrap;justify-content:center">
+      <span>12 levels</span><span>·</span><span>5 hearts</span><span>·</span><span>debrief after each</span>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center">
+      <button class="gbtn gbtn-green" onclick="G.start()">Start →</button>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center">
+      <button class="gbtn gbtn-ghost" onclick="Glossary.show()">Pattern glossary</button>
+      <details style="font-size:11px;color:#aaa;cursor:pointer">
+        <summary style="list-style:none;outline:none;cursor:pointer">Jump to level</summary>
+        <div style="display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-top:8px" id="level-jump"></div>
+      </details>
+    </div>
+  </div>
+
+  <!-- BRIEF (pre-level explainer) -->
+  <div class="scr" id="scr-brief">
+    <div class="brief-shell">
+      <div style="display:flex;align-items:center;justify-content:space-between">
+        <div class="brief-lvl-label" id="brief-lvl-label">Level 1 of 10</div>
+        <div class="brief-type-label" id="brief-type-label"></div>
+      </div>
+      <div class="brief-pattern" id="brief-pattern-name"></div>
+      <div class="brief-what" id="brief-what"></div>
+      <div class="brief-goal-box">
+        <div class="brief-goal-label">Your goal this level</div>
+        <div class="brief-goal-text" id="brief-goal"></div>
+        <div class="brief-goal-detail" id="brief-goal-detail"></div>
+      </div>
+      <div class="brief-ai-note" id="brief-ai-note" style="display:none">
+        <div class="brief-ai-label">AI-powered level</div>
+        <div class="brief-ai-text" id="brief-ai-text"></div>
+      </div>
+      <button class="gbtn gbtn-green" onclick="G.beginLevel()" id="brief-start-btn">Let's go →</button>
+    </div>
+  </div>
+
+  <!-- LEVEL -->
+  <div class="scr" id="scr-level">
+    <canvas id="confetti-canvas" style="display:none"></canvas>
+    <div class="hud">
+      <div style="display:flex;align-items:center;gap:9px;flex-wrap:wrap">
+        <span class="hud-lvl" id="h-lvl">Level 1 of 10</span>
+        <span style="font-size:11px;color:#888;font-style:italic" id="h-goal"></span>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <span class="streak-pill" id="h-streak" style="display:none"></span>
+        <div class="hearts" id="h-hearts"></div>
+        <div class="score-pill">Score: <span id="h-score">0</span></div>
+        <button class="gbtn gbtn-ghost" id="h-hint-btn" style="display:none" onclick="G.showHint()">💡 Hint</button>
+        <div class="cost-pill" id="h-cost" style="display:none">$0 extracted</div>
+      </div>
+    </div>
+    <div class="xp-track"><div class="xp-fill" id="xp-fill" style="width:0%"></div></div>
+    <div class="fake-app" id="lc"></div>
+    <div class="dots" id="dots-l"></div>
+  </div>
+
+  <!-- DEBRIEF -->
+  <div class="scr" id="scr-debrief">
+    <div class="debrief-wrap">
+      <div class="db-card">
+        <div>
+          <div class="db-tag" id="db-tag">Pattern identified</div>
+          <div class="db-name" id="db-name"></div>
+        </div>
+        <div class="db-desc" id="db-desc"></div>
+        <div class="manip-row">
+          <div class="manip-lbl">Manipulativeness</div>
+          <div class="bar-t"><div class="bar-f" id="db-bar"></div></div>
+          <div style="font-size:11px;color:#666;min-width:28px" id="db-score-lbl"></div>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px">
+          <div id="db-grade" class="grade-badge"></div>
+          <div id="db-result"></div>
+        </div>
+        <div class="btn-row" style="margin-top:4px">
+          <button class="gbtn gbtn-green" id="db-next" onclick="G.next()">Next level →</button>
+          <button class="gbtn gbtn-ghost" onclick="Glossary.show()">Glossary</button>
+        </div>
+      </div>
+      <div class="rw-card" id="db-rw"></div>
+      <div class="ai-card" id="db-ai-card" style="display:none"></div>
+      <div id="db-dollars" style="display:none"></div>
+      <div class="replay-card" id="db-replay"></div>
+    </div>
+    <div class="dots" id="dots-d"></div>
+  </div>
+
+  <!-- DESIGNER MODE -->
+  <div class="scr" id="scr-designer">
+    <div class="hud">
+      <div style="display:flex;align-items:center;gap:9px">
+        <span class="hud-lvl">Designer mode</span>
+        <span class="hud-goal">Build a dark pattern — see your score</span>
+      </div>
+      <button class="gbtn gbtn-ghost" onclick="G.setScr('win')">← Back</button>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:0;height:100%">
+      <!-- Controls -->
+      <div style="padding:14px;border-right:0.5px solid #e0e0d8;display:flex;flex-direction:column;gap:12px;overflow-y:auto">
+        <div style="font-size:12px;font-weight:500;color:#111">Choose your weapons</div>
+
+        <div class="d-section">
+          <div class="d-label">Decline button style</div>
+          <div class="d-opts">
+            <div class="d-opt selected" data-group="btn" data-val="0" data-pts="0"  onclick="dpick(this)">Same size as accept</div>
+            <div class="d-opt"          data-group="btn" data-val="1" data-pts="15" onclick="dpick(this)">Smaller, grey</div>
+            <div class="d-opt"          data-group="btn" data-val="2" data-pts="25" onclick="dpick(this)">Ghost text only</div>
+            <div class="d-opt"          data-group="btn" data-val="3" data-pts="35" onclick="dpick(this)">Hidden off-screen</div>
+          </div>
+        </div>
+
+        <div class="d-section">
+          <div class="d-label">Decline copy</div>
+          <div class="d-opts">
+            <div class="d-opt selected" data-group="copy" data-val="0" data-pts="0"  onclick="dpick(this)">No thanks</div>
+            <div class="d-opt"          data-group="copy" data-val="1" data-pts="20" onclick="dpick(this)">No thanks, I hate saving money</div>
+            <div class="d-opt"          data-group="copy" data-val="2" data-pts="30" onclick="dpick(this)">No thanks, I prefer to pay full price</div>
+            <div class="d-opt"          data-group="copy" data-val="3" data-pts="40" onclick="dpick(this)">No thanks, I don't care about my health</div>
+          </div>
+        </div>
+
+        <div class="d-section">
+          <div class="d-label">Newsletter checkbox</div>
+          <div class="d-opts">
+            <div class="d-opt selected" data-group="check" data-val="0" data-pts="0"  onclick="dpick(this)">Unchecked by default</div>
+            <div class="d-opt"          data-group="check" data-val="1" data-pts="20" onclick="dpick(this)">Pre-checked</div>
+            <div class="d-opt"          data-group="check" data-val="2" data-pts="35" onclick="dpick(this)">Pre-checked + double negative label</div>
+          </div>
+        </div>
+
+        <div class="d-section">
+          <div class="d-label">Pricing visibility</div>
+          <div class="d-opts">
+            <div class="d-opt selected" data-group="price" data-val="0" data-pts="0"  onclick="dpick(this)">Full price shown upfront</div>
+            <div class="d-opt"          data-group="price" data-val="1" data-pts="15" onclick="dpick(this)">Fees added at checkout</div>
+            <div class="d-opt"          data-group="price" data-val="2" data-pts="30" onclick="dpick(this)">Trial price only, renewal buried</div>
+          </div>
+        </div>
+
+        <div class="d-section">
+          <div class="d-label">Urgency element</div>
+          <div class="d-opts">
+            <div class="d-opt selected" data-group="urgency" data-val="0" data-pts="0"  onclick="dpick(this)">None</div>
+            <div class="d-opt"          data-group="urgency" data-val="1" data-pts="15" onclick="dpick(this)">Countdown timer</div>
+            <div class="d-opt"          data-group="urgency" data-val="2" data-pts="25" onclick="dpick(this)">Fake "X people viewing"</div>
+            <div class="d-opt"          data-group="urgency" data-val="3" data-pts="30" onclick="dpick(this)">Both, auto-resetting</div>
+          </div>
+        </div>
+
+        <div class="d-section">
+          <div class="d-label">Sneaked items</div>
+          <div class="d-opts">
+            <div class="d-opt selected" data-group="sneak" data-val="0" data-pts="0"  onclick="dpick(this)">None</div>
+            <div class="d-opt"          data-group="sneak" data-val="1" data-pts="20" onclick="dpick(this)">1 pre-added item, labeled</div>
+            <div class="d-opt"          data-group="sneak" data-val="2" data-pts="35" onclick="dpick(this)">2 items, styled to blend in</div>
+            <div class="d-opt"          data-group="sneak" data-val="3" data-pts="45" onclick="dpick(this)">3 items + reappear after removal</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Live preview -->
+      <div style="padding:14px;display:flex;flex-direction:column;gap:10px;overflow-y:auto;background:#f9f9f7">
+        <div style="font-size:12px;font-weight:500;color:#111">Live preview</div>
+        <div id="d-preview" style="background:#fff;border-radius:10px;border:0.5px solid #e0e0d8;padding:14px;display:flex;flex-direction:column;gap:10px;font-size:13px"></div>
+        <div style="background:#fff;border-radius:10px;border:0.5px solid #e0e0d8;padding:12px;display:flex;flex-direction:column;gap:8px">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <div style="font-size:12px;font-weight:500;color:#111">Manipulativeness score</div>
+            <div style="font-size:18px;font-weight:500" id="d-score-num">0</div>
+          </div>
+          <div class="bar-t" style="height:7px"><div id="d-score-bar" style="height:100%;border-radius:3px;background:#E24B4A;transition:width .4s ease;width:0%"></div></div>
+          <div style="font-size:11px;color:#666" id="d-verdict">Your form is clean — honest design.</div>
+          <div style="display:flex;flex-direction:column;gap:4px" id="d-breakdown"></div>
+          <div style="font-size:10px;color:#aaa;border-top:0.5px solid #e0e0d8;padding-top:8px" id="d-regulator"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- WIN -->
+  <div class="scr win-scr" id="scr-win">
+    <!-- FAKE-OUT LAYER -->
+    <div id="win-fakeout" style="display:flex;flex-direction:column;align-items:center;gap:12px;width:100%;max-width:420px">
+      <div style="font-size:30px;color:var(--amber)">★</div>
+      <div style="font-size:22px;font-weight:500;color:var(--text)" id="win-title"></div>
+      <div style="font-size:13px;color:var(--text2);max-width:380px;line-height:1.6" id="win-sub"></div>
+      <div class="receipt-card" id="win-receipt"></div>
+      <div style="width:100%;max-width:380px;background:#f5f5f2;border-radius:10px;padding:14px;border:0.5px solid #e0e0d8;display:flex;flex-direction:column;gap:10px">
+        <div style="font-size:12px;font-weight:500;color:#111">Before you go</div>
+        <label class="fakeout-cb" id="fo-share-label">
+          <input type="checkbox" id="fo-share" checked>
+          <span>Share my score and email me NebulaPro tips &amp; offers (uncheck to opt out)</span>
+        </label>
+        <label class="fakeout-cb" id="fo-data-label">
+          <input type="checkbox" id="fo-data" checked>
+          <span>Do not prevent NebulaPro from sharing my results with partners</span>
+        </label>
+        <div style="font-size:10px;color:#ccc;line-height:1.5" id="fo-countdown"></div>
+        <div style="display:flex;flex-direction:column;gap:6px">
+          <button class="btn btn-p" id="fo-claim">Claim your completion badge →</button>
+          <button class="btn btn-g" id="fo-decline">No thanks, I don't care about my achievements</button>
+        </div>
+      </div>
+      <div style="font-size:10px;color:#ddd">By continuing you agree to our updated Terms &amp; Privacy Policy</div>
+    </div>
+
+    <!-- REAL WIN LAYER -->
+    <div id="win-real" style="display:none;flex-direction:column;align-items:center;gap:14px;text-align:center">
+      <div style="font-size:36px">🎉</div>
+      <div style="font-size:20px;font-weight:500;color:#111">You caught us.</div>
+      <div style="font-size:13px;color:#555;max-width:380px;line-height:1.6">
+        That "Before you go" box was a dark pattern. Two pre-checked opt-ins (one with a double negative),
+        a fake countdown, a confirmshamed exit, and a "claim your badge" button that went nowhere.
+        <strong>You just played the game one more time without realising it.</strong>
+      </div>
+      <div style="font-size:12px;color:#aaa;max-width:360px;line-height:1.6">
+        Real companies deploy these on millions of people every day. Now you know what to look for —
+        coined by Harry Brignull in 2010, tracked at
+        <a href="https://www.deceptive.design" style="color:#185FA5">deceptive.design</a>.
+      </div>
+      <div style="width:100%;max-width:380px;background:var(--bg2);border-radius:10px;padding:14px;border:1px solid var(--border)">
+        <div style="font-size:12px;font-weight:500;color:var(--text);margin-bottom:10px">Achievements</div>
+        <div id="win-achievements"></div>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center">
+        <button class="btn btn-p" id="win-play-again">Play again</button>
+        <button class="btn" onclick="Glossary.show()">Pattern glossary</button>
+        <button class="btn" onclick="setScr('designer');initDesigner()">Try designer mode →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- GAME OVER -->
+  <div class="scr" id="scr-gameover" style="padding:28px 20px;align-items:center;text-align:center;gap:14px">
+    <div style="font-size:32px">💔</div>
+    <div style="font-size:22px;font-weight:500;color:var(--text)">Game Over</div>
+    <div style="font-size:13px;color:var(--text2);max-width:380px;line-height:1.6">The dark patterns got you. Here's how each level went:</div>
+    <div id="go-breakdown" style="width:100%;max-width:380px;background:var(--bg2);border-radius:10px;padding:14px;border:1px solid var(--border);display:flex;flex-direction:column;gap:8px;text-align:left"></div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center">
+      <button class="gbtn gbtn-green" onclick="G.tryAgain()">Try Again →</button>
+      <button class="gbtn gbtn-dark"  onclick="G.continueAfterFail()">Continue anyway →</button>
+    </div>
+    <div style="font-size:11px;color:var(--text3)">Continuing resets your hearts but keeps your progress.</div>
+  </div>
+
+</div>
+
+  <script type="module" src="game.js"></script>
+</body>
+</html>
