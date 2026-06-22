@@ -25,10 +25,10 @@ const level1 = {
   },
   replay: [
     { trap: false, note: 'Sign-up: 2 clicks. Intentionally frictionless to maximize conversions.' },
-    { trap: true, note: '"Pause instead?" — a detour disguised as a helpful alternative. The goal is to break your momentum.' },
-    { trap: true, note: 'Mandatory survey: legally delays your cancellation and mines your reasons for retention scripts.' },
-    { trap: true, note: '"Special offer" — triggered by your survey answer. A last-ditch retention loop.' },
-    { trap: true, note: '6-question satisfaction survey, required. Exhaustion is the point.' },
+    { trap: true,  note: '"Pause instead?" — a detour disguised as a helpful alternative. The goal is to break your momentum.' },
+    { trap: true,  note: 'Mandatory survey: legally delays your cancellation and mines your reasons for retention scripts.' },
+    { trap: true,  note: '"Special offer" — triggered by your survey answer. A last-ditch retention loop.' },
+    { trap: true,  note: '6-question satisfaction survey, required. Exhaustion is the point.' },
     { trap: false, note: '"Allow 5–7 business days" — creates doubt. Will it actually cancel? Many people re-subscribe just in case.' },
   ],
 
@@ -86,7 +86,7 @@ const level1 = {
               <div>
                 <div class="fs">${i + 1}. ${q}</div>
                 <div class="star-row" style="display:flex;gap:5px;margin-top:3px">
-                 ${'12345'.split('').map((_, si) => `<span class="star" data-i="${si}" style="font-size:15px;cursor:pointer">★</span>`).join('')}
+                  ${'12345'.split('').map((_, si) => `<span class="star" data-i="${si}" style="font-size:15px;cursor:pointer">★</span>`).join('')}
                 </div>
               </div>`).join('')}
         </div>
@@ -115,19 +115,19 @@ const level1 = {
         const selected = document.querySelector('input[name="l1w"]:checked');
         if (!selected) {
           almostGotYou(el, 'You must select a reason before continuing.');
-        return;
+          return;
         }
-      advance();
+        advance();
       };
 
       const doneBtn = document.getElementById('l1-done');
       if (doneBtn) doneBtn.onclick = () => {
         const allRated = Array.from(document.querySelectorAll('.star-row')).every(row =>
-        row.querySelector('.star.selected')
+          row.querySelector('.star.selected')
         );
         if (!allRated) {
           almostGotYou(el, 'You must answer all questions before submitting.');
-        return;
+          return;
         }
         advance();
       };
