@@ -179,6 +179,18 @@ const GLOSSARY = [
     coined: "Part of Harry Brignull's original 2010 taxonomy. Ryanair and Sports Direct were famous practitioners."
   },
   {
+  name: 'Obstruction',
+  ai: false,
+  desc: "Companies are legally required to make certain actions available — like deleting your account or redeeming an advertised discount. Obstruction means burying those actions so deep behind mislabeled menus, fake fields, and dead ends that most people give up before they find them.",
+  coined: "Part of Harry Brignull's original 2010 taxonomy. The FTC and EU DSA have both begun targeting obstruction patterns specifically in account deletion and consent withdrawal flows."
+  },
+  {
+    name: 'Fake Scarcity / Urgency',
+    ai: false,
+    desc: "Countdown timers, fake stock warnings, and fabricated social proof ('847 people viewing') are designed to trigger loss aversion and panic-buying. Almost none of the scarcity is real — the timer resets, the stock number never changes, the viewer count is randomly generated.",
+    coined: "Part of Harry Brignull's original 2010 taxonomy. Booking.com was fined by the UK CMA in 2019 for fabricated scarcity messaging."
+  },
+  {
     name: 'AI Roach Motel',
     ai: true,
     desc: "A chatbot that endlessly deflects, forgets context, misunderstands requests, and manufactures obstacles — designed to exhaust you into staying subscribed.",
@@ -207,12 +219,6 @@ const GLOSSARY = [
     ai: true,
     desc: "Pseudo-AI 'predicts' exactly what you're likely to buy based on your 'profile' — actually heuristics dressed in algorithmic confidence to make declining feel irrational.",
     coined: "An AI-amplified version of Sneak into Basket. Dynamic personalization increases conversion rates by 20–30% according to industry research."
-  },
-  {
-    name: 'Fake Scarcity / Urgency',
-    ai: false,
-    desc: "Countdown timers, fake stock warnings, and fabricated social proof ('847 people viewing') are designed to trigger loss aversion and panic-buying. Almost none of the scarcity is real — the timer resets, the stock number never changes, the viewer count is randomly generated.",
-    coined: "Part of Harry Brignull's original 2010 taxonomy. Booking.com was fined by the UK CMA in 2019 for fabricated scarcity messaging."
   },
 ];
 
@@ -2830,8 +2836,27 @@ function spawnConfetti() {
 // ── Register with game.js (breaks the circular dependency) ─────────────────
 registerUI({ renderHearts, renderScore, renderStreak, renderDots, popScore, spawnConfetti, showDebrief, showWin });
 
+<<<<<<< Updated upstream
 // ======== levels/index.js ========
 const LEVELS = [level1,level1ai,level2,level2ai,level3,level3ai,level4,level4ai,level5,level5ai,level6,level6ai,level7];
+=======
+
+// ======== levels ========
+import level1    from './levels/level1.js';
+import level1ai  from './levels/level1ai.js';
+import level2    from './levels/level2.js';
+import level2ai  from './levels/level2ai.js';
+import level3    from './levels/level3.js';
+import level3ai  from './levels/level3ai.js';
+import level4    from './levels/level4.js';
+import level4ai  from './levels/level4ai.js';
+import level5    from './levels/level5.js';
+import level5ai  from './levels/level5ai.js';
+import level6    from './levels/level6.js';
+import level7    from './levels/level7.js';
+
+const LEVELS = [level1, level1ai, level2, level2ai, level3, level3ai, level4, level4ai, level5, level5ai, level6, level7];
+>>>>>>> Stashed changes
 
 // ======== init.js ========
 
