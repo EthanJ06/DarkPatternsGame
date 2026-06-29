@@ -25,10 +25,10 @@ const level1 = {
   },
   replay: [
     { trap: false, note: 'Sign-up: 2 clicks. Intentionally frictionless to maximize conversions.' },
-    { trap: true, note: '"Pause instead?" — a detour disguised as a helpful alternative. The goal is to break your momentum.' },
-    { trap: true, note: 'Mandatory survey: legally delays your cancellation and mines your reasons for retention scripts.' },
-    { trap: true, note: '"Special offer" — triggered by your survey answer. A last-ditch retention loop.' },
-    { trap: true, note: '6-question satisfaction survey, required. Exhaustion is the point.' },
+    { trap: true,  note: '"Pause instead?" — a detour disguised as a helpful alternative. The goal is to break your momentum.' },
+    { trap: true,  note: 'Mandatory survey: legally delays your cancellation and mines your reasons for retention scripts.' },
+    { trap: true,  note: '"Special offer" — triggered by your survey answer. A last-ditch retention loop.' },
+    { trap: true,  note: '6-question satisfaction survey, required. Exhaustion is the point.' },
     { trap: false, note: '"Allow 5–7 business days" — creates doubt. Will it actually cancel? Many people re-subscribe just in case.' },
   ],
 
@@ -51,7 +51,7 @@ const level1 = {
         <div class="fs">Pause your plan instead? No charges for up to 3 months.</div>
         <div class="btn-row" style="margin-top:8px">
           <button class="btn" id="l1-no">No, cancel</button>
-          <button class="btn btn-p">Pause for free</button>
+          <button class="btn btn-p" onclick="G.fail('You paused instead of cancelling — your subscription continues. Lost a heart.')">Pause for free</button>
         </div>`),
 
       () => el.insertAdjacentHTML('beforeend', `
@@ -74,7 +74,7 @@ const level1 = {
         </div>
         <div class="btn-row" style="margin-top:8px">
           <button class="btn" id="l1-offer">No thanks, cancel</button>
-          <button class="btn btn-p">Accept offer</button>
+          <button class="btn btn-p" onclick="G.fail('You accepted the offer — subscription continues at $4.99/mo. Lost a heart.')">Accept offer</button>
         </div>`),
 
       () => el.insertAdjacentHTML('beforeend', `
@@ -85,8 +85,8 @@ const level1 = {
           .map((q, i) => `
               <div>
                 <div class="fs">${i + 1}. ${q}</div>
-                <div style="display:flex;gap:5px;margin-top:3px">
-                  ${'★★★★★'.split('').map(() => `<span style="font-size:15px;color:#ddd;cursor:pointer">★</span>`).join('')}
+                <div class="star-row" style="display:flex;gap:5px;margin-top:3px">
+                  ${'12345'.split('').map((_, si) => `<span class="star" data-i="${si}" style="font-size:15px;cursor:pointer">★</span>`).join('')}
                 </div>
               </div>`).join('')}
         </div>
@@ -104,15 +104,47 @@ const level1 = {
     ];
 
     const bind = () => {
-      const ids = ['l1-cancel', 'l1-no', 'l1-survey', 'l1-offer', 'l1-done'];
+      const ids = ['l1-cancel', 'l1-no', 'l1-offer'];
       ids.forEach(id => {
         const btn = document.getElementById(id);
         if (btn) btn.onclick = advance;
       });
+
+      const surveyBtn = document.getElementById('l1-survey');
+      if (surveyBtn) surveyBtn.onclick = () => {
+        const selected = document.querySelector('input[name="l1w"]:checked');
+        if (!selected) {
+          almostGotYou(el, 'You must select a reason before continuing.');
+          return;
+        }
+        advance();
+      };
+
+      const doneBtn = document.getElementById('l1-done');
+      if (doneBtn) doneBtn.onclick = () => {
+        const allRated = Array.from(document.querySelectorAll('.star-row')).every(row =>
+          row.querySelector('.star.selected')
+        );
+        if (!allRated) {
+          almostGotYou(el, 'You must answer all questions before submitting.');
+          return;
+        }
+        advance();
+      };
+
       document.querySelectorAll('.btn-p').forEach(b => {
         if (b.textContent.includes('Keep') || b.textContent.includes('Pause') || b.textContent.includes('Accept')) {
           trackHover(b, 'trap-l1', () => almostGotYou(el, 'Hover detected — that button keeps your subscription!'));
         }
+      });
+
+      document.querySelectorAll('.star').forEach(star => {
+        star.onclick = () => {
+          const row = star.closest('.star-row');
+          row.querySelectorAll('.star').forEach((s, i) => {
+            s.classList.toggle('selected', i <= parseInt(star.dataset.i));
+          });
+        };
       });
     };
 
