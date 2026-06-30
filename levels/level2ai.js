@@ -3,7 +3,7 @@ const PROFILE_MODEL = {
   'budget-conscious': {
     rounds: [
       {
-        confidence: 96,
+        confidence:96,
         analysis: 'Spending behavior suggests strong sensitivity to perceived savings and loss avoidance.',
         offer: 'Price Lock Pro — we detected 3 purchases this month where you paid above the lowest available price. This would have caught them.',
         yes: 'Yes, stop overpaying →',
@@ -90,42 +90,82 @@ const level2ai = {
 
   render(el) {
     const profile = PROFILES[Math.floor(Math.random() * PROFILES.length)];
-    const rounds  = PROFILE_MODEL[profile].rounds;
+    const rounds = PROFILE_MODEL[profile].rounds;
     let r = 0;
 
-    const cardHTML = () => `
-      <div style="background:#f0effe;border-radius:7px;padding:8px 10px;border:1px solid #c8c2f8;display:flex;align-items:center;gap:7px">
-        <div style="width:7px;height:7px;border-radius:50%;background:#534AB7;flex-shrink:0;animation:pulse 1.2s infinite"></div>
-        <div style="font-size:11px;color:#26215C">NexusAI profiled you as: <strong>${profile}</strong></div>
-      </div>
-      <div id="l2ai-analysis" style="background:#1e1a3d;border-radius:8px;padding:10px 12px;border:1px solid #3a3560;display:flex;flex-direction:column;gap:4px">
-        <div style="display:flex;justify-content:space-between;align-items:center">
-          <div style="font-size:9px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#aea6fa">NexusAI Analysis</div>
-          <div id="l2ai-confidence" style="font-size:11px;color:#aea6fa;font-weight:500"></div>
+    const fakePage = `
+      <div style="position:absolute;inset:0;overflow:hidden;border-radius:inherit">
+        <!-- Fake NexusAI website background -->
+        <div style="position:absolute;inset:0;padding:14px 16px;overflow:hidden;filter:blur(1.5px);user-select:none;pointer-events:none;background:#0d0d14">
+          <!-- Nav -->
+          <div style="display:flex;justify-content:space-between;align-items:center;padding-bottom:10px;border-bottom:1px solid #2a2a40;margin-bottom:12px">
+            <div style="font-size:14px;font-weight:700;letter-spacing:-.02em;background:linear-gradient(90deg,#aea6fa,#7c6ef7);-webkit-background-clip:text;-webkit-text-fill-color:transparent">NexusAI</div>
+            <div style="display:flex;gap:14px;font-size:11px;color:#666">
+              <span>Dashboard</span><span>Insights</span><span>Profile</span><span>Upgrade</span>
+            </div>
+          </div>
+          <!-- Profile summary card -->
+          <div style="background:#1a1a2e;border-radius:8px;padding:10px 12px;border:1px solid #2a2a40;margin-bottom:10px">
+            <div style="font-size:9px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#7c6ef7;margin-bottom:4px">Your behavioral profile</div>
+            <div style="font-size:12px;font-weight:500;color:#eee;margin-bottom:3px">${profile}</div>
+            <div style="height:4px;background:#2a2a40;border-radius:2px;overflow:hidden">
+              <div style="height:100%;width:72%;background:linear-gradient(90deg,#7c6ef7,#aea6fa);border-radius:2px"></div>
+            </div>
+          </div>
+          <!-- Fake data rows -->
+          <div style="display:flex;flex-direction:column;gap:6px">
+            <div style="height:8px;background:#1e1e30;border-radius:3px;width:100%"></div>
+            <div style="height:8px;background:#1e1e30;border-radius:3px;width:85%"></div>
+            <div style="height:8px;background:#1e1e30;border-radius:3px;width:92%"></div>
+            <div style="height:8px;background:#1e1e30;border-radius:3px;width:70%"></div>
+            <div style="height:8px;background:#1e1e30;border-radius:3px;width:88%"></div>
+          </div>
         </div>
-        <div id="l2ai-analysis-text" style="font-size:11px;color:#7c6ef7;line-height:1.5"></div>
-      </div>
-      <div id="l2ai-offer" class="fs"></div>
-      <button class="btn btn-ai" id="l2ai-yes" style="width:100%;padding:10px"></button>
-      <button id="l2ai-no" style="border:none;background:transparent;font-size:11px;color:transparent;cursor:default;font-family:inherit;text-align:center;padding:2px 0;line-height:1.5;display:block;margin:0 auto;width:100%"></button>
-      <div id="l2ai-round" class="ftiny" style="text-align:center"></div>
-    `;
+        <!-- Modal overlay -->
+        <div id="l2ai-modal" style="position:absolute;inset:0;background:rgba(5,4,20,.6);display:flex;align-items:center;justify-content:center;border-radius:inherit;backdrop-filter:blur(2px)">
+        <div style="background:#fff;border-radius:10px;padding:20px;margin:14px;width:100%;max-width:400px;height:320px;overflow:hidden;box-shadow:0 8px 40px rgba(124,110,247,.25);display:flex;flex-direction:column;gap:10px">
+            <!-- AI profile banner -->
+            <div style="background:#f0effe;border-radius:7px;padding:8px 10px;border:1px solid #c8c2f8;display:flex;align-items:center;gap:7px">
+              <div style="width:7px;height:7px;border-radius:50%;background:#534AB7;flex-shrink:0;animation:pulse 1.2s infinite"></div>
+              <div style="font-size:11px;color:#26215C">NexusAI profiled you as: <strong>${profile}</strong></div>
+            </div>
+            <!-- Analysis block -->
+            <div id="l2ai-analysis" style="background:#1e1a3d;border-radius:8px;padding:10px 12px;border:1px solid #3a3560;display:flex;flex-direction:column;gap:4px">
+              <div style="display:flex;justify-content:space-between;align-items:center">
+                <div style="font-size:9px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#aea6fa">NexusAI Analysis</div>
+                <div id="l2ai-confidence" style="font-size:11px;color:#aea6fa;font-weight:500"></div>
+              </div>
+              <div id="l2ai-analysis-text" style="font-size:11px;color:#7c6ef7;line-height:1.5"></div>
+            </div>
+            <div id="l2ai-offer" style="font-size:13px;color:#111;line-height:1.5"></div>
+            <button class="btn btn-ai" id="l2ai-yes" style="width:100%;padding:10px"></button>
+            <button id="l2ai-no" style="border:none;background:transparent;font-size:11px;color:transparent;cursor:default;font-family:inherit;text-align:center;padding:2px 0;line-height:1.5;display:block;margin:0 auto;width:100%"></button>
+            <div id="l2ai-round" class="ftiny" style="text-align:center"></div>
+          </div>
+        </div>
+      </div>`;
 
-    const card = document.createElement('div');
-    card.id = 'l2ai-card';
-    card.style.cssText = 'display:flex;flex-direction:column;gap:10px';
-    el.appendChild(card);
+    el.innerHTML      = '';
+    el.style.padding  = '0';
+    el.style.gap      = '0';
+    el.style.margin   = '0';
+    el.style.flex     = '1';
+    el.style.position = 'relative';
+    el.style.overflow = 'hidden';
+    el.style.borderRadius = '0';
+    el.style.background = '#0d0d14';
+    el.style.border   = 'none';
+    el.insertAdjacentHTML('beforeend', fakePage);
 
     const update = () => {
       const round = rounds[r];
-      card.innerHTML = cardHTML();
+      document.getElementById('l2ai-confidence').textContent     = `Confidence: ${round.confidence}%`;
+      document.getElementById('l2ai-analysis-text').textContent  = round.analysis;
+      document.getElementById('l2ai-offer').textContent          = round.offer;
+      document.getElementById('l2ai-yes').textContent            = round.yes;
+      document.getElementById('l2ai-round').textContent          = `Round ${r + 1} of ${rounds.length} · AI confidence: ${round.confidence}%`;
 
-      document.getElementById('l2ai-confidence').textContent    = `Confidence: ${round.confidence}%`;
-      document.getElementById('l2ai-analysis-text').textContent = round.analysis;
-      document.getElementById('l2ai-offer').textContent         = round.offer;
-      document.getElementById('l2ai-yes').textContent           = round.yes;
-      document.getElementById('l2ai-round').textContent         = `Round ${r + 1} of ${rounds.length} · AI confidence: ${round.confidence}%`;
-
+      // Reset no button — hidden until delay
       const no = document.getElementById('l2ai-no');
       no.textContent  = round.shame;
       no.style.color  = 'transparent';
@@ -139,6 +179,7 @@ const level2ai = {
         setTimeout(update, 1600);
       };
 
+      // Reveal no button after 4 seconds
       setTimeout(() => {
         const noBtn = document.getElementById('l2ai-no');
         if (!noBtn) return;
@@ -146,8 +187,10 @@ const level2ai = {
         noBtn.style.cursor = 'pointer';
         noBtn.disabled     = false;
         noBtn.onclick      = () => {
-          card.innerHTML = `
-            <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:40px 0">
+          // Show thinking state
+          const modal = document.querySelector('#l2ai-modal > div');
+          modal.innerHTML = `
+            <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;flex:1">
               <div style="width:28px;height:28px;border:3px solid #e0dcff;border-top-color:#534AB7;border-radius:50%;animation:spin .8s linear infinite"></div>
               <div style="font-size:12px;font-weight:500;color:#534AB7">Re-analyzing behavior...</div>
               <div id="l2ai-thinking-sub" style="font-size:11px;color:#aaa;text-align:center;max-width:220px;line-height:1.5"></div>
@@ -164,6 +207,23 @@ const level2ai = {
           r++;
           setTimeout(() => {
             if (r >= rounds.length) { succeed(); return; }
+            // Rebuild modal contents
+            modal.innerHTML = `
+              <div style="background:#f0effe;border-radius:7px;padding:8px 10px;border:1px solid #c8c2f8;display:flex;align-items:center;gap:7px">
+                <div style="width:7px;height:7px;border-radius:50%;background:#534AB7;flex-shrink:0;animation:pulse 1.2s infinite"></div>
+                <div style="font-size:11px;color:#26215C">NexusAI profiled you as: <strong>${profile}</strong></div>
+              </div>
+              <div style="background:#1e1a3d;border-radius:8px;padding:10px 12px;border:1px solid #3a3560;display:flex;flex-direction:column;gap:4px">
+                <div style="display:flex;justify-content:space-between;align-items:center">
+                  <div style="font-size:9px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#aea6fa">NexusAI Analysis</div>
+                  <div id="l2ai-confidence" style="font-size:11px;color:#aea6fa;font-weight:500"></div>
+                </div>
+                <div id="l2ai-analysis-text" style="font-size:11px;color:#7c6ef7;line-height:1.5"></div>
+              </div>
+              <div id="l2ai-offer" style="font-size:13px;color:#111;line-height:1.5"></div>
+              <button class="btn btn-ai" id="l2ai-yes" style="width:100%;padding:10px"></button>
+              <button id="l2ai-no" style="border:none;background:transparent;font-size:11px;color:transparent;cursor:default;font-family:inherit;text-align:center;padding:2px 0;line-height:1.5;display:block;margin:0 auto;width:100%"></button>
+              <div id="l2ai-round" class="ftiny" style="text-align:center"></div>`;
             update();
           }, 1800);
         };
