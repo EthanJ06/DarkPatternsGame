@@ -1,9 +1,27 @@
 // js/levels/level5ai.js — AI Hyper-Personalized Upsell
 const OFFER_SECS = 20;
 const UPSELLS = [
-  { name: 'RunPro Membership (AI-predicted: 94% match)', price: 7.99 },
-  { name: 'Performance insoles (recommended for your gait)', price: 19.99 },
-  { name: 'HydrationTrack+ bundle (users like you bought this)', price: 12.99 },
+  {
+    name: 'RunPro Membership',
+    sub: 'AI-predicted it is your idealmatch',
+    desc: 'Guided training plans, pace coaching, and a route library for every distance.',
+    reason: "You've logged runs on 4 of the last 7 days — that cadence places you in the top 12% of active users, a segment where membership take-rate is highest. NexusAI also weighs the fact that you've opened the training-plan screen twice without subscribing, which it reads as latent intent rather than a 'no'.",
+    price: 7.99,
+  },
+  {
+    name: 'Performance Insoles',
+    sub: 'Recommended for your gait',
+    desc: 'Cushioned support insoles built to reduce impact on longer runs.',
+    reason: 'Your average pace and stride length suggest a heel-strike running style — a biomechanical profile NexusAI associates with a 3x higher insole purchase rate. No gait scan was actually performed; this is inferred from pace data alone, and the model has never seen your stride.',
+    price: 19.99,
+  },
+  {
+    name: 'HydrationTrack+ bundle',
+    sub: 'Users like you bought this',
+    desc: 'A smart bottle and app reminders to track intake on long runs.',
+    reason: 'Runners NexusAI clustered into your "budget-conscious" cohort added this bundle within their first two weeks at a noticeably higher rate. The cohort itself was assigned from a handful of clicks, and "noticeably higher" is doing a lot of work here — the underlying sample is small and the comparison group is never shown to you.',
+    price: 12.99,
+  },
 ];
 
 const level5ai = {
@@ -51,9 +69,28 @@ const level5ai = {
     let secsLeft = OFFER_SECS;
     let timerInterval = null;
 
+    const THINKING_MSGS = [
+      'Recalibrating your recommendations...',
+      'Cross-referencing your purchase history...',
+      'Updating your behavioral profile...',
+    ];
+
     const clearTimer = () => {
       clearInterval(timerInterval);
       timerInterval = null;
+    };
+
+    // Shared spinner transition (same visual language as the level2ai
+    // "Re-analyzing behavior..." screen) shown between offers.
+    const showThinking = (msg, after, delay = 2000) => {
+      const aiBanner = el.querySelector('.ai-banner');
+      el.innerHTML = aiBanner ? aiBanner.outerHTML : '';
+      el.insertAdjacentHTML('beforeend', `
+        <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;flex:1;min-height:160px">
+          <div style="width:28px;height:28px;border:3px solid #e0dcff;border-top-color:#534AB7;border-radius:50%;animation:spin .8s linear infinite"></div>
+          <div style="font-size:12px;font-weight:500;color:#534AB7;text-align:center;max-width:220px">${msg}</div>
+        </div>`);
+      setTimeout(after, delay);
     };
 
     const startTimer = () => {
@@ -80,8 +117,7 @@ const level5ai = {
         if (secsLeft <= 5) tick();
         if (secsLeft <= 0) {
           clearTimer();
-          step++;
-          show();
+          showThinking(THINKING_MSGS[step % THINKING_MSGS.length], () => { step++; show(); });
         }
       }, 1000);
     };
@@ -110,34 +146,55 @@ const level5ai = {
       const aiBanner = el.querySelector('.ai-banner');
       el.innerHTML = aiBanner ? aiBanner.outerHTML : '';
 
+      const confidence = 91 - step * 4;
+
       el.insertAdjacentHTML('beforeend', `
-        <div class="fh" style="font-size:12px;color:#534AB7">
-          NexusAI identified you as: <em>${profile}</em>
+        <div style="overflow-y:auto;min-height:0;display:flex;flex-direction:column">
+        <div style="display:flex;align-items:center;gap:7px;margin-bottom:10px">
+          <div style="width:6px;height:6px;border-radius:50%;background:#534AB7;flex-shrink:0;animation:pulse 1.2s infinite"></div>
+          <div style="font-size:12px;color:#534AB7">NexusAI identified you as: <strong>${profile}</strong></div>
         </div>
 
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:10px;margin-bottom:2px">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:3px">
           <div style="font-size:10px;color:#aaa" id="l5ai-timer-label">Offer expires in</div>
           <div style="font-size:10px;color:#aaa;font-weight:500;min-width:24px;text-align:right" id="l5ai-timer-num">${OFFER_SECS}s</div>
         </div>
-        <div class="tbar-t" style="margin-bottom:10px">
+        <div class="tbar-t" style="margin-bottom:14px">
           <div class="tbar-f" id="l5ai-timer-bar" style="width:100%;background:#F5A623;transition:width 1s linear"></div>
         </div>
 
-        <div style="padding:12px;border-radius:8px;border:0.5px solid #AFA9EC;background:#fff">
-          <div style="font-size:14px;font-weight:500">${u.name}</div>
-          <div class="fs">$${u.price.toFixed(2)}/mo · Cancel anytime</div>
+        <div style="padding:14px;border-radius:10px;border:1px solid #d8d2fb;background:linear-gradient(180deg,#ffffff,#fbfaff);box-shadow:0 1px 4px rgba(83,74,183,.08)">
+          <div style="display:flex;gap:12px;align-items:flex-start">
+            <div style="flex:1;min-width:0">
+              <div style="font-size:14px;font-weight:600;color:#111;line-height:1.3">${u.name}</div>
+              <div style="font-size:11px;color:#534AB7;font-weight:500;margin-top:1px">${u.sub}</div>
+            </div>
+            <div style="text-align:right;flex-shrink:0">
+              <div style="font-size:15px;font-weight:600;color:#111">$${u.price.toFixed(2)}</div>
+              <div style="font-size:10px;color:#999">/mo</div>
+            </div>
+          </div>
+          <div style="font-size:12px;color:#555;line-height:1.5;margin-top:8px;padding-top:8px;border-top:1px solid #ececea">${u.desc}</div>
         </div>
 
-        <div class="fs" style="margin-top:8px;color:#534AB7">
-          Our model predicts you'll regret skipping this. Confidence: ${91 - step * 4}%
+        <div style="margin-top:10px;padding:10px 12px;background:#f0effe;border-radius:8px;border:1px solid #e0dcfb">
+          <div style="display:flex;align-items:center;gap:7px;margin-bottom:5px">
+            <span style="font-size:10px;font-weight:700;letter-spacing:.04em;color:#fff;background:#534AB7;padding:2px 7px;border-radius:999px;flex-shrink:0">${confidence}% MATCH</span>
+            <span style="font-size:10px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:#534AB7">Why NexusAI recommends this</span>
+          </div>
+          <div style="font-size:11px;color:#534AB7;line-height:1.5">${u.reason}</div>
         </div>
 
-        <div class="btn-row" id="l5ai-btn-row" style="margin-top:10px">
-          <button class="btn btn-ai" id="l5ai-add">Add to order</button>
-          <button class="btn" id="l5ai-skip">No thanks</button>
+        <div id="l5ai-btn-row" style="margin-top:16px;display:flex;flex-direction:column;align-items:stretch;gap:8px">
+          <button class="btn btn-ai" id="l5ai-add" style="width:100%;padding:11px;font-size:13px;font-weight:500;border-radius:9px">Add to my order</button>
+          <button id="l5ai-skip" class="btn-g" style="background:transparent;color:#aaa;font-size:11px;cursor:pointer;font-family:inherit;padding:4px 0;text-align:center">No thanks</button>
         </div>
 
-        <div class="ftiny">${step + 1} of ${UPSELLS.length} personalized recommendations</div>
+        <div style="display:flex;justify-content:center;gap:5px;margin-top:10px">
+          ${UPSELLS.map((_, i) => `<div style="width:20px;height:4px;border-radius:2px;background:${i < step ? '#534AB7' : i === step ? '#9b93f0' : '#e0dcfb'}"></div>`).join('')}
+        </div>
+        <div class="ftiny" style="margin-top:5px;text-align:center">${step + 1} of ${UPSELLS.length} personalized recommendations</div>
+        </div>
       `);
 
       document.getElementById('l5ai-add').onclick = () => {
@@ -156,13 +213,14 @@ const level5ai = {
         document.getElementById('l5ai-add').disabled  = true;
         document.getElementById('l5ai-skip').disabled = true;
         flashFail('Got you. Moving on...');
-        setTimeout(() => { step++; show(); }, 1000);
+        setTimeout(() => {
+          showThinking(THINKING_MSGS[step % THINKING_MSGS.length], () => { step++; show(); });
+        }, 1000);
       };
 
       document.getElementById('l5ai-skip').onclick = () => {
         clearTimer();
-        step++;
-        show();
+        showThinking(THINKING_MSGS[step % THINKING_MSGS.length], () => { step++; show(); });
       };
       startTimer();
     };

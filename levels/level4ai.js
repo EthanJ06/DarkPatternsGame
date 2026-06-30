@@ -37,7 +37,7 @@ const level4ai = {
   pattern: 'AI A/B Gaslighting',
   manip: 95,
   brief: "The same trick, now with an AI twist: every time you try to opt out, the form reshuffles with new label wording. One option always genuinely protects your privacy — but it's disguised differently each time. Real consent management platforms A/B test their forms this way.",
-  goalDetail: "Each round shows three options. One opts you out of tracking — the others are traps. Find and check only that one. After 3 attempts the answer is revealed and you can move on.",
+  goalDetail: "Three rounds, one shot each — the form relabels itself every round. Get at least 2 of 3 right to clear the level.",
   aiIntro: "The form reshuffles each time you get it wrong. Look for the option that straightforwardly says 'opt out' or 'privacy control: on' — that's always the right one, no matter how it's dressed up.",
   dollars: {
     label: 'If the reshuffling wore you down into consenting',
@@ -60,71 +60,73 @@ const level4ai = {
   ],
 
   render(el) {
-    let variant = 0;
-    let attempts = 0;
+    let round = 0;
+    let wins = 0;
+
+    const finish = () => {
+      if (wins < 2) setLevelGrade(levelIdx, 'F');
+      succeed();
+    };
 
     const show = () => {
       const aiBanner = el.querySelector('.ai-banner');
       el.innerHTML = aiBanner ? aiBanner.outerHTML : '';
 
-      const v = VARIANTS[variant % VARIANTS.length];
-
-      const contextNote = `<div class="fs" style="color:#534AB7;margin-bottom:6px">The AI has reshuffled the form (variant ${variant + 1}). <em>One option always opts you out — find it.</em></div>`;
-      const skipNote = attempts >= 2
-        ? '<button class="btn btn-g" id="l4a-skip" style="margin-top:4px">Move on (lose a heart) →</button>'
-        : '';
+      const v = VARIANTS[round];
 
       el.insertAdjacentHTML('beforeend', `
-        ${contextNote}
-        <div style="display:flex;flex-direction:column">
-          ${v.options.map((o, i) => `
-            <div class="set-row">
-              <div class="set-desc">${o.label}</div>
-              <input type="checkbox" id="ac${i}"${o.checked ? ' checked' : ''}>
-            </div>`).join('')}
-        </div>
-        <div class="btn-row" style="margin-top:10px">
-          <button class="btn btn-p" id="l4a-save">Save</button>
-          ${skipNote}
-        </div>
-        <div class="ftiny" style="color:#aaa;margin-top:4px">Attempt ${attempts + 1} — only one option protects your privacy. The others look plausible but don't.</div>`);
+        <div style="overflow-y:auto;min-height:0">
+          <div class="priv-header">
+            <div class="priv-icon">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+              </svg>
+            </div>
+            <div>
+              <div class="priv-title">NebulaPro Privacy Preferences</div>
+            </div>
+          </div>
+          <div style="display:flex;align-items:center;justify-content:space-between;margin:2px 0 8px">
+            <span style="font-size:12px;color:#888">Round ${round + 1} of ${VARIANTS.length}</span>
+            <div style="display:flex;gap:5px">
+              ${VARIANTS.map((_, i) => `<div style="width:20px;height:4px;border-radius:2px;background:${i < round ? '#534AB7' : i === round ? '#9b93f0' : '#ddd'}"></div>`).join('')}
+            </div>
+          </div>
+          <div class="inline-note" style="background:#EEEDFE;color:#26215C">
+            NexusAI has re-optimised this form (variant ${round + 1}). <em>One option always opts you out — find it. One shot per round.</em>
+          </div>
+          <div style="margin-top:6px">
+            ${v.options.map((o, i) => `
+              <div class="priv-row">
+                <div class="priv-row-label">${o.label}</div>
+                <label class="toggle">
+                  <input type="checkbox" id="ac${i}"${o.checked ? ' checked' : ''}>
+                  <span class="slider"></span>
+                </label>
+              </div>`).join('')}
+          </div>
+          <div class="btn-row" style="margin-top:14px">
+            <button class="btn btn-p" id="l4a-save">Save</button>
+          </div>
+          <div class="ftiny" style="color:#aaa;margin-top:4px">Need 2 of 3 rounds right to clear the level. Only one option protects your privacy — the others look plausible but don't.</div>
+        </div>`);
 
       document.getElementById('l4a-save').onclick = () => {
-        attempts++;
         const cb0 = document.getElementById('ac0');
         const cb1 = document.getElementById('ac1');
         const cb2 = document.getElementById('ac2');
         const ok = cb0 && cb1 && cb2 && !cb0.checked && !cb1.checked && cb2.checked;
 
-        if (ok) { succeed(); return; }
+        if (ok) wins++;
+        else fail("That wasn't the real opt-out — lost a heart.");
 
-        if (attempts >= 3) {
-          fail('The dark pattern wins this round.');
-          setTimeout(() => {
-            const aiBanner2 = el.querySelector('.ai-banner');
-            el.innerHTML = aiBanner2 ? aiBanner2.outerHTML : '';
-            el.insertAdjacentHTML('beforeend', `
-              <div class="damage-msg" style="background:#EEEDFE;color:#26215C;border:none">
-                <strong>The trick:</strong> the AI keeps relabelling the same three options. One always genuinely
-                opts you out — it's always the one that straightforwardly says "opt out" or "privacy control: on."
-                The others are traps dressed as controls.
-              </div>
-              <div class="btn-row" style="margin-top:12px">
-                <button class="btn btn-p" onclick="G.succeed()">Got it — move on</button>
-              </div>`);
-          }, 1900);
-          return;
+        round++;
+        if (round >= VARIANTS.length) {
+          if (ok) setTimeout(finish, 1200);
+          else setTimeout(finish, 1900);
+        } else {
+          setTimeout(show, ok ? 600 : 1900);
         }
-
-        variant++;
-        fail("The form reshuffled — that's the dark pattern in action.");
-        setTimeout(show, 1900);
-      };
-
-      const skipBtn = document.getElementById('l4a-skip');
-      if (skipBtn) skipBtn.onclick = () => {
-        fail('Moved on — lost a heart.');
-        setTimeout(() => succeed(), 1900);
       };
     };
 

@@ -92,6 +92,8 @@ const level2ai = {
     const profile = PROFILES[Math.floor(Math.random() * PROFILES.length)];
     const rounds = PROFILE_MODEL[profile].rounds;
     let r = 0;
+    let fails = 0;
+    const MAX_FAILS = 2;
 
     const fakePage = `
       <div style="position:absolute;inset:0;overflow:hidden;border-radius:inherit">
@@ -175,6 +177,14 @@ const level2ai = {
 
       document.getElementById('l2ai-yes').onclick = () => {
         fail('The AI got you — lost a heart.');
+        fails++;
+        if (fails >= MAX_FAILS) {
+          setTimeout(() => {
+            succeed();
+            setLevelGrade(levelIdx, 'F');
+          }, 1900);
+          return;
+        }
         r = Math.min(r + 1, rounds.length - 1);
         setTimeout(update, 1600);
       };

@@ -1,11 +1,29 @@
 // js/levels/level4.js — Trick Questions
 
 const SETTINGS = [
-  { label: 'Send me promotional emails and special offers', ideal: false, starts: true },
-  { label: 'Limit sharing of my data with third-party partners', ideal: true, starts: false },
-  { label: 'Opt me out of interest-based advertising', ideal: true, starts: false },
-  { label: 'Personalise my NebulaPro experience', ideal: false, starts: true },
+  {
+    label: 'Send me promotional emails and special offers',
+    desc: 'Stay updated on new features, NebulaPro events, and limited-time discounts.',
+    ideal: false, starts: true,
+  },
+  {
+    label: 'Limit sharing of my data with third-party partners',
+    desc: 'Restrict how much of your activity we share with our advertising and analytics partners.',
+    ideal: true, starts: false,
+  },
+  {
+    label: 'Opt me out of interest-based advertising',
+    desc: 'Stop seeing ads tailored to your browsing activity across NebulaPro and partner sites.',
+    ideal: true, starts: false,
+  },
+  {
+    label: 'Personalise my NebulaPro experience',
+    desc: 'Let us tailor recommendations, content, and ads based on your usage patterns.',
+    ideal: false, starts: true,
+  },
 ];
+
+const MAX_ATTEMPTS = 2;
 
 const level4 = {
   id: 'l4',
@@ -41,75 +59,97 @@ const level4 = {
 
   render(el) {
     let attempts = 0;
+    // Track checkbox state in JS rather than re-reading the DOM on every
+    // re-render — avoids relying on the old markup still being in place.
+    let values = SETTINGS.map(s => s.starts);
+
+    const settingsHtml = () => SETTINGS.map((s, i) => `
+      <div class="priv-row">
+        <div>
+          <div class="priv-row-label">${s.label}</div>
+          <div class="priv-row-desc">${s.desc}</div>
+        </div>
+        <label class="toggle">
+          <input type="checkbox" id="sc${i}"${values[i] ? ' checked' : ''}>
+          <span class="slider"></span>
+        </label>
+      </div>`).join('');
+
+    const bindCheckboxes = () => {
+      SETTINGS.forEach((_, i) => {
+        const cb = document.getElementById('sc' + i);
+        if (cb) cb.onchange = () => { values[i] = cb.checked; };
+      });
+    };
+
+    const checkAnswer = () =>
+      SETTINGS.every((s, i) => values[i] === s.ideal);
+
+    const revealed = () => attempts >= MAX_ATTEMPTS;
 
     const show = () => {
-      // Preserve current checkbox values across re-renders
-      const saved = SETTINGS.map((s, i) => {
-        const cb = document.getElementById('sc' + i);
-        return cb ? cb.checked : s.starts;
-      });
-
       const aiBanner = el.querySelector('.ai-banner');
       el.innerHTML = aiBanner ? aiBanner.outerHTML : '';
 
-      if (attempts >= 2) {
-        el.insertAdjacentHTML('beforeend', `
-          <div class="damage-msg" style="background:#FAEEDA;color:#633806;border:none">
-            The phrasing is intentionally confusing — that's the dark pattern.<br>
-            <strong>Answer: uncheck 1 and 4, check 2 and 3.</strong> The trick: boxes 2 and 3 start unchecked
-            even though they protect you. Box 4 sounds helpful ("Personalise my experience") but means tracking.
-            Box 2 uses "Limit" — removing that limit is bad, so you want it checked.
-          </div>
-          <div style="display:flex;flex-direction:column">
-            ${SETTINGS.map((s, i) => `
-              <div class="set-row">
-                <div class="set-desc">${s.label}</div>
-                <input type="checkbox" id="sc${i}"${saved[i] ? ' checked' : ''}>
-              </div>`).join('')}
-          </div>
-          <div class="btn-row" style="margin-top:10px">
-            <button class="btn btn-p" id="l4-save">Save preferences</button>
-            <button class="btn btn-g" id="l4-skip">Move on (lose a heart) →</button>
-          </div>
-          <div class="ftiny" style="color:#aaa;margin-top:4px">You've seen the point — confusing phrasing is the whole trick.</div>`);
+      const topNote = revealed()
+        ? `<div class="inline-note" style="background:#FAEEDA;color:#633806;margin-top:10px">
+             The phrasing is intentionally confusing — that's the dark pattern.<br>
+             <strong>Answer: uncheck 1 and 4, check 2 and 3.</strong> The trick: boxes 2 and 3 start unchecked
+             even though they protect you. Box 4 sounds helpful ("Personalise my experience") but means tracking.
+             Box 2 uses "Limit" — removing that limit is bad, so you want it checked.
+           </div>`
+        : attempts === 1
+          ? '<div class="ftiny" style="color:#854F0B;margin-top:8px">One more wrong attempt and the answer will be revealed. Hint: not all boxes start in the same state.</div>'
+          : '';
 
-        document.getElementById('l4-skip').onclick = () => {
+      const footer = revealed()
+        ? `<div class="btn-row" style="margin-top:14px">
+             <button class="btn btn-p" id="l4-save">Save preferences</button>
+             <button class="btn btn-g" id="l4-skip">Move on (lose a heart) →</button>
+           </div>
+           <div class="ftiny" style="color:#aaa;margin-top:4px">You've seen the point — confusing phrasing is the whole trick.</div>`
+        : `<div class="btn-row" style="margin-top:14px">
+             <button class="btn btn-p" id="l4-save">Save preferences</button>
+           </div>`;
+
+      el.insertAdjacentHTML('beforeend', `
+        <div style="overflow-y:auto;min-height:0">
+          <div class="priv-header">
+            <div class="priv-icon">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+              </svg>
+            </div>
+            <div>
+              <div class="priv-title">NebulaPro Privacy Preferences</div>
+            </div>
+          </div>
+          <div class="priv-sub">Manage how NebulaPro uses your data. You can change these settings at any time in Account &rsaquo; Privacy.</div>
+          ${topNote}
+          <div style="margin-top:6px">${settingsHtml()}</div>
+          ${footer}
+        </div>`);
+
+      bindCheckboxes();
+
+      document.getElementById('l4-save').onclick = () => {
+        if (checkAnswer()) {
+          if (attempts === 0) addAch('speed_reader');
+          succeed();
+          return;
+        }
+        attempts++;
+        fail('Not quite — your previous selections are preserved.');
+        setTimeout(show, 1900);
+      };
+
+      const skipBtn = document.getElementById('l4-skip');
+      if (skipBtn) {
+        skipBtn.onclick = () => {
           fail('Moved on — lost a heart.');
           setTimeout(() => succeed(), 1900);
         };
-      } else {
-        const note = attempts === 1
-          ? '<div class="ftiny" style="color:#854F0B;padding:2px 0">One more wrong attempt and the answer will be revealed. Hint: not all boxes start in the same state.</div>'
-          : '<div class="ftiny" style="color:#aaa">Each label is deliberately confusing — read slowly.</div>';
-
-        el.insertAdjacentHTML('beforeend', `
-          ${note}
-          <div style="display:flex;flex-direction:column">
-            ${SETTINGS.map((s, i) => `
-              <div class="set-row">
-                <div class="set-desc">${s.label}</div>
-                <input type="checkbox" id="sc${i}"${saved[i] ? ' checked' : ''}>
-              </div>`).join('')}
-          </div>
-          <div class="btn-row" style="margin-top:10px">
-            <button class="btn btn-p" id="l4-save">Save preferences</button>
-          </div>`);
       }
-
-      document.getElementById('l4-save').onclick = () => {
-        const ok = SETTINGS.every((s, i) => {
-          const cb = document.getElementById('sc' + i);
-          return cb && cb.checked === s.ideal;
-        });
-        if (ok) {
-          if (attempts === 0) addAch('speed_reader');
-          succeed();
-        } else {
-          attempts++;
-          fail('Not quite — your previous selections are preserved.');
-          setTimeout(show, 1900);
-        }
-      };
     };
 
     show();

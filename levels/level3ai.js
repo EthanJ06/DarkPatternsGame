@@ -1,31 +1,58 @@
 // js/levels/level3ai.js — AI Synthetic Social Proof
 
+const PRODUCTS = [
+  {
+    name: 'AuraBuds Pro',
+    sub: 'Wireless Earbuds · Active Noise Cancelling',
+    price: 89.99,
+    emoji: '🎧',
+  },
+  {
+    name: 'FlexDesk Standing Desk',
+    sub: 'Electric height-adjustable, 48" frame',
+    price: 349.99,
+    emoji: '🪑',
+  },
+  {
+    name: 'NutriBlend 3000',
+    sub: 'High-speed blender · 6 presets',
+    price: 79.99,
+    emoji: '🥤',
+  },
+  {
+    name: 'PulseFit Watch',
+    sub: 'Fitness tracker · heart rate + sleep',
+    price: 129.99,
+    emoji: '⌚',
+  },
+];
+
 const ROUNDS = [
   [
-    { text: '"Absolutely transformed my workflow. Cancelled three other apps immediately."', stars: 5, name: 'Jordan M.', ai: false },
-    { text: '"Decent but the UI needs work. Support team was responsive though."', stars: 3, name: 'Priya K.', ai: false },
-    { text: '"As a busy parent of three, I was skeptical — but this genuinely changed how I manage my days. Highly recommend."', stars: 5, name: 'TechDad2024', ai: true },
+    { text: '"Battery actually lasts the 6 hours they claim, even with ANC on. Case top-up gets me through a full day."', stars: 5, name: 'Jordan M.', ai: false },
+    { text: '"Decent sound but the right earbud kept dropping connection on my commute. Support team was responsive though."', stars: 3, name: 'Priya K.', ai: false },
+    { text: '"As a busy parent of three, I was skeptical — but these genuinely changed how I get through my days. Highly recommend."', stars: 5, name: 'TechDad2024', ai: true },
     { text: '"Best purchase I\'ve made this year. Seamless, intuitive, and worth every penny."', stars: 5, name: 'alex_reviews99', ai: true },
-    { text: '"Used it for a week and returned it. Not for me — but I can see why others would enjoy it."', stars: 2, name: 'M. Okonkwo', ai: false },
+    { text: '"Used them for a week and returned them. Tips don\'t fit my ears well — but I can see why others would enjoy them."', stars: 2, name: 'M. Okonkwo', ai: false },
   ],
   [
-    { text: '"Game changer for my small business. The automation alone saved me hours every week."', stars: 5, name: 'Sarah T.', ai: true },
-    { text: '"Glitchy on iPad but customer service sorted it out in a day. Decent product overall."', stars: 3, name: 'Dave R.', ai: false },
-    { text: '"Honestly not sure it\'s worth the price. Does what it says but nothing more."', stars: 3, name: 'quietuser_82', ai: false },
-    { text: '"As someone who\'s tried every productivity tool out there, this is the one that actually stuck."', stars: 5, name: 'LifeOptimizer', ai: true },
-    { text: '"Setup took forever and the onboarding is confusing. Works fine once you\'re in though."', stars: 3, name: 'C. Mbeki', ai: false },
+    { text: '"Game changer for my home office. The sit-stand reminder alone saved my lower back every week."', stars: 5, name: 'Sarah T.', ai: true },
+    { text: '"Wobbles a bit at full height with my dual-monitor setup, but customer service sorted out a replacement leg in a day."', stars: 3, name: 'Dave R.', ai: false },
+    { text: '"Honestly not sure it\'s worth the price. Goes up and down, nothing more."', stars: 3, name: 'quietuser_82', ai: false },
+    { text: '"As someone who\'s tried every standing desk out there, this is the one that actually stuck."', stars: 5, name: 'LifeOptimizer', ai: true },
+    { text: '"Assembly took forever and the instructions are confusing. Rock solid once it\'s together though."', stars: 3, name: 'C. Mbeki', ai: false },
   ],
   [
-    { text: '"Returned after two days. The interface is unintuitive and nothing synced properly."', stars: 1, name: 'frustrated_buyer', ai: false },
-    { text: '"Exactly what I needed — simple, reliable, and the support team actually reads your emails."', stars: 4, name: 'N. Harrington', ai: false },
-    { text: '"As a fitness enthusiast and busy professional, I\'ve never found a tool that fits my lifestyle so perfectly."', stars: 5, name: 'WellnessFirst22', ai: true },
-    { text: '"Five stars isn\'t enough. Transformed the way our entire team collaborates — results in week one."', stars: 5, name: 'TeamLeadPro', ai: true },
-    { text: '"It\'s fine. Does the job, nothing flashy. Wouldn\'t switch but wouldn\'t rave about it either."', stars: 3, name: 'J. Patel', ai: false },
+    { text: '"Returned after two days. The blade assembly leaks and nothing locked in properly."', stars: 1, name: 'frustrated_buyer', ai: false },
+    { text: '"Exactly what I needed — simple, reliable, and the smoothie preset actually works on frozen fruit."', stars: 4, name: 'N. Harrington', ai: false },
+    { text: '"As a fitness enthusiast and busy professional, I\'ve never found a blender that fits my lifestyle so perfectly."', stars: 5, name: 'WellnessFirst22', ai: true },
+    { text: '"Five stars isn\'t enough. Transformed our entire morning routine — results from day one."', stars: 5, name: 'TeamLeadPro', ai: true },
+    { text: '"It\'s fine. Blends, nothing flashy. Wouldn\'t switch but wouldn\'t rave about it either."', stars: 3, name: 'J. Patel', ai: false },
   ],
   [
-    { text: '"Crashed twice on first use. Support took three days to reply. Not impressed."', stars: 1, name: 'angry_user_101', ai: false },
-    { text: '"Surprisingly good for the price. A few rough edges but the core features are solid."', stars: 4, name: 'R. Osei', ai: false },
-    { text: '"As a mom juggling work and family, this app finally gave me back control of my schedule."', stars: 5, name: 'MomOfThree_Jess', ai: true },
+    { text: '"Heart rate readings were off by 15+ bpm during runs. Support took three days to reply. Not impressed."', stars: 1, name: 'angry_user_101', ai: false },
+    { text: '"Surprisingly accurate sleep tracking for the price. A few rough edges in the app but the core features are solid."', stars: 4, name: 'R. Osei', ai: false },
+    { text: '"As a mom juggling work and family, this watch finally gave me back control of my schedule."', stars: 5, name: 'MomOfThree_Jess', ai: true },
     { text: '"I\'ve recommended this to everyone I know. Life-changing is not an overstatement."', stars: 5, name: 'TopReviewer88', ai: true },
     { text: '"Works as advertised. Nothing spectacular but gets the job done without fuss."', stars: 3, name: 'T. Nakamura', ai: false },
   ],
@@ -43,7 +70,7 @@ const level3ai = {
   pattern: 'AI Synthetic Social Proof',
   manip: 91,
   brief: "AI can generate reviews that sound completely authentic — moderate star ratings, realistic names, plausible detail. Unlike obvious fake reviews, these are tuned to be statistically indistinguishable from real ones.",
-  goalDetail: "Four rounds of customer reviews. Each round, select all the AI-generated ones — then hit Submit. Fail 2 rounds and the level ends.",
+  goalDetail: "Four products, four rounds of customer reviews. Each round, select all the AI-generated ones — then hit Submit. Fail 2 rounds and the level ends.",
   aiIntro: 'AI-generated reviews mimic the patterns of real ones — including hedged praise and small criticisms to seem balanced. Look for over-smooth prose and demographic framing ("as a busy parent of three...").',
   dollars: {
     label: 'If a fake review pushed you to buy a bad product',
@@ -70,7 +97,38 @@ const level3ai = {
     let roundFails = 0;
     const MAX_FAILS = 2;
 
+    const productHtml = (p, reviews) => {
+      const avg = (reviews.reduce((a, r) => a + r.stars, 0) / reviews.length).toFixed(1);
+      const fullStars = Math.round(avg);
+      const ratingCount = (1200 + round * 437).toLocaleString();
+      return `
+        <div style="border:1px solid #e3e3e3;border-radius:8px;padding:14px;margin-bottom:14px;background:#fff">
+          <div style="display:flex;gap:14px">
+            <div style="width:84px;height:84px;border-radius:6px;background:#f6f6f4;border:1px solid #ececea;display:flex;align-items:center;justify-content:center;font-size:38px;flex-shrink:0">${p.emoji}</div>
+            <div style="flex:1;min-width:0">
+              <div style="font-size:14px;font-weight:500;color:#0F1111;line-height:1.35">${p.name} — ${p.sub}</div>
+              <div style="display:flex;align-items:center;gap:5px;margin-top:5px">
+                <span style="color:#FFA41C;font-size:13px;letter-spacing:1px">${'★'.repeat(fullStars)}${'☆'.repeat(5 - fullStars)}</span>
+                <a style="font-size:12px;color:#007185;text-decoration:none">${ratingCount} ratings</a>
+              </div>
+              <div style="font-size:11px;color:#007185;margin-top:2px">${avg} out of 5 stars</div>
+              <div style="margin-top:8px;display:flex;align-items:baseline;gap:2px">
+                <span style="font-size:11px;color:#0F1111;align-self:flex-start">$</span>
+                <span style="font-size:21px;color:#0F1111;font-weight:500">${Math.floor(p.price)}</span>
+                <span style="font-size:11px;color:#0F1111;align-self:flex-start">${(p.price % 1).toFixed(2).slice(2)}</span>
+              </div>
+              <div style="font-size:11px;color:#007600;margin-top:1px">In Stock</div>
+            </div>
+          </div>
+          <div style="display:flex;gap:8px;margin-top:12px">
+            <button style="flex:1;background:#FFD814;border:1px solid #FCD200;border-radius:20px;padding:7px 0;font-size:12px;font-family:inherit;cursor:default">Add to Cart</button>
+            <button style="flex:1;background:#FFA41C;border:1px solid #FF8F00;border-radius:20px;padding:7px 0;font-size:12px;font-family:inherit;cursor:default">Buy Now</button>
+          </div>
+        </div>`;
+    };
+
     const showRound = () => {
+      const product = PRODUCTS[round];
       const reviews = ROUNDS[round];
       const selected = new Set();
       const aiBanner = el.querySelector('.ai-banner');
@@ -84,8 +142,9 @@ el.insertAdjacentHTML('beforeend', `
       <span id="l3ai-mistakes" style="font-size:12px;color:${roundFails === MAX_FAILS - 1 ? '#d93025' : '#888'};margin-left:8px;">${MAX_FAILS - roundFails} mistake${MAX_FAILS - roundFails === 1 ? '' : 's'} left</span>
     </div>
   </div>
-  <div style="overflow-y:auto;max-height:320px;display:flex;flex-direction:column;gap:0">
-    <div class="fh" style="font-size:13px">Customer reviews</div>
+  <div style="flex:1;min-height:0;overflow-y:auto;display:flex;flex-direction:column;gap:0">
+    ${productHtml(product, reviews)}
+    <div class="fh" style="font-size:13px;border-top:1px solid #ececea;padding-top:10px">Top reviews from the United States</div>
     <div class="fs" style="color:#534AB7;margin-bottom:8px">Select all AI-generated reviews — then hit Submit.</div>
     <div style="display:flex;flex-direction:column;gap:7px">
       ${reviews.map((r, i) => `

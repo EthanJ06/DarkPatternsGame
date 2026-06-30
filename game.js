@@ -480,7 +480,8 @@ function showLevel() {
   document.getElementById('h-goal').textContent = 'Goal: ' + lv.goal;
 
   const lc = document.getElementById('lc');
-  lc.className = 'fake-app' + (lv.isAI ? ' ai-app' : '');
+  lc.removeAttribute('style');
+  lc.className = 'fake-app fill-height' + (lv.isAI ? ' ai-app' : '');
   lc.innerHTML = '';
   lc.removeAttribute('style');
 
@@ -516,10 +517,10 @@ function showHint() {
 
   const d = document.createElement('div');
   d.id = 'hint-bubble';
-  d.style.cssText = 'background:var(--amber-dim);border:1px solid var(--amber);border-radius:8px;padding:8px 12px;font-size:12px;color:var(--amber);line-height:1.5;margin:0 14px';
+  d.className = 'hint-bubble';
   d.innerHTML = `💡 <strong>Hint ${level + 1} of ${lv.hints.length}:</strong> ${hint}`;
   hintState.text = d.innerHTML;
-  lc.prepend(d);
+  placeOverlay(d, 'bottom');
 
   if (hintState.level >= lv.hints.length) {
     const btn = document.getElementById('h-hint-btn');
@@ -588,25 +589,41 @@ function fail(msg) {
   const d = document.createElement('div');
   d.className   = 'damage-msg';
   d.textContent = msg || 'Caught! You lost a heart.';
-  lc.prepend(d);
+  placeOverlay(d, 'top');
   setTimeout(() => d.remove(), 1900);
 
   if (hintState.text && !document.getElementById('hint-bubble')) {
     const h = document.createElement('div');
     h.id = 'hint-bubble';
-    h.style.cssText = 'background:var(--amber-dim);border:1px solid var(--amber);border-radius:8px;padding:8px 12px;font-size:12px;color:var(--amber);line-height:1.5';
+    h.className = 'hint-bubble';
     h.innerHTML = hintState.text;
-    lc.prepend(h);
+    placeOverlay(h, 'bottom');
   }
 }
 
-// ── Shared helpers for level renderers ─────────────────────────────────────
+// ── Overlay positioning helper ──────────────────────────────────────────────
+// Positions a fixed-position element against #lc's live bounding box and appends it to <body> so it floats above level content even
+function placeOverlay(d, anchor /* 'top' | 'bottom' */) {
+  const lc = document.getElementById('lc');
+  if (!lc) { document.body.appendChild(d); return; }
+  const rect = lc.getBoundingClientRect();
+  d.style.left  = (rect.left + 16) + 'px';
+  d.style.width = (rect.width - 32) + 'px';
+  if (anchor === 'bottom') {
+    d.style.bottom = (window.innerHeight - rect.bottom + 16) + 'px';
+  } else {
+    d.style.top = (rect.top + 16) + 'px';
+  }
+  document.body.appendChild(d);
+}
+
+
 function almostGotYou(el, msg) {
   almost();
   const d = document.createElement('div');
   d.className   = 'almost-msg';
   d.textContent = msg || 'You almost fell for it — watch out!';
-  el.prepend(d);
+  placeOverlay(d, 'top');
   setTimeout(() => d.remove(), 2200);
 }
 
