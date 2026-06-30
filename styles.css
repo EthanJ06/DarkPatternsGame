@@ -51,7 +51,9 @@ overflow: hidden;
 height: min(100%, 620px);
 display: flex;
 flex-direction: column;
+margin: auto;
 }
+
 #scr-level { flex: 1; justify-content: space-between; }
 #lc-wrap { flex: 1; display: flex; align-items: center; padding: 0; }
 /* ── SCREENS ── */
@@ -130,6 +132,8 @@ display: flex;
 flex-direction: column;
 gap: 11px;
 border: 1px solid var(--light-border);
+overflow-y: auto;
+max-height: calc(100vh - 400px);
 }
 .ai-app    { border-color: #b0a8f0; background: #f0effe; }
 .ai-banner { display: flex; align-items: center; gap: 7px; padding: 6px 10px; background: #c8c2f8; border-radius: 7px; font-size: 12px; color: #26215C; font-weight: 500; }
@@ -272,7 +276,7 @@ border: 1px solid var(--light-border);
 .sneaky    { color: #bbb; font-size: 10px; }
 
 /* ── WIN SCREEN ── */
-.win-scr { align-items: center; justify-content: center; padding: 32px 16px; text-align: center; gap: 16px; background: var(--bg); }
+.win-scr { align-items: center; justify-content: flex-start; padding: 32px 16px; text-align: center; gap: 16px; background: var(--bg); overflow-y: auto; }
 .receipt-card { background: var(--bg2); border-radius: var(--radius); padding: 14px; width: 100%; max-width: 380px; border: 1px solid var(--border); }
 .receipt-row  { display: flex; justify-content: space-between; font-size: 12px; color: var(--text2); padding: 3px 0; }
 .receipt-total { display: flex; justify-content: space-between; font-size: 14px; font-weight: 500; color: var(--text); border-top: 1px solid var(--border2); padding-top: 8px; margin-top: 6px; }
@@ -294,6 +298,21 @@ border: 1px solid var(--light-border);
 .d-opt.selected { background: #111; color: #fff; border-color: transparent; }
 .d-breakdown-row        { display: flex; justify-content: space-between; font-size: 11px; color: #555; }
 .d-breakdown-row.active { color: #A32D2D; }
+#scr-designer {
+  overflow: hidden;
+  height: 100%;
+}
+#scr-designer > div:last-child {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+#scr-designer > div:last-child > div {
+  overflow-y: auto;
+  min-height: 0;
+  height: 100%;
+}
+
 
 /* ── SCORE POP ── */
 .score-pop { position: absolute; font-size: 16px; font-weight: 500; color: var(--green); pointer-events: none; animation: scorepop .8s ease forwards; z-index: 50; }

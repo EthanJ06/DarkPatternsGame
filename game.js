@@ -482,6 +482,7 @@ function showLevel() {
   const lc = document.getElementById('lc');
   lc.className = 'fake-app' + (lv.isAI ? ' ai-app' : '');
   lc.innerHTML = '';
+  lc.removeAttribute('style');
 
   if (lv.isAI) {
     lc.innerHTML = '<div class="ai-banner"><div class="ai-pulse"></div>NexusAI personalization engine — active</div>';

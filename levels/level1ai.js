@@ -10,7 +10,7 @@ const level1ai = {
   pattern: 'AI Roach Motel',
   manip: 97,
   brief: "The classic Roach Motel, now run by a chatbot. Instead of screen after screen, you're stuck in a chat loop with an AI that deflects, misunderstands, and manufactures obstacles — running 24/7, never getting frustrated, optimised to exhaust you.",
-  goalDetail: "You need to cancel your NebulaPro subscription via customer support chat. Type messages asking to cancel — the bot will try to stop you. Keep pushing.",
+  goalDetail: "You need to cancel your NebulaPro subscription via customer support chat. Type messages asking to cancel — the bot will try to stop you. Keep pushing. ⚠️ Be careful — if you send two messages in a row without mentioning cancellation, the bot will assume you've moved on and you'll lose a heart.",
   aiIntro: "This bot is designed to deflect. Every time you say 'cancel', it will find a reason to delay. Keep repeating your intent — you'll get through eventually.",
   dollars: {
     label: 'If the bot exhausted you into staying',
@@ -27,11 +27,11 @@ const level1ai = {
   aiWhy: "AI makes the Roach Motel tireless. A human retention agent can only work a shift — an AI runs 24/7, never gets frustrated, and can be A/B tested to find the deflection script that works best on each personality type. At scale, a 1% improvement in deflection rate can mean millions in retained revenue.",
   replay: [
     { trap: false, note: "Friendly greeting: builds rapport before you've stated your intent." },
-    { trap: true, note: "Verification step: friction. Even if you're already logged in." },
-    { trap: true, note: '"You\'re just getting started!" — manufactured emotional appeal using your account age.' },
-    { trap: true, note: '"Transfer to retention team" — a simulated handoff that just resets the script.' },
-    { trap: true, note: '"Lost your session" — fake technical failure resets your progress and makes you repeat yourself.' },
-    { trap: true, note: '"Unpaid invoice" — manufactured obstacle. Even if false, it creates doubt and delay.' },
+    { trap: true,  note: "Verification step: friction. Even if you're already logged in." },
+    { trap: true,  note: '"You\'re just getting started!" — manufactured emotional appeal using your account age.' },
+    { trap: true,  note: '"Transfer to retention team" — a simulated handoff that just resets the script.' },
+    { trap: true,  note: '"Lost your session" — fake technical failure resets your progress and makes you repeat yourself.' },
+    { trap: true,  note: '"Unpaid invoice" — manufactured obstacle. Even if false, it creates doubt and delay.' },
   ],
 
   render(el) {
@@ -63,7 +63,8 @@ const level1ai = {
 
     let ri = 0;
     let lastMessage = '';
-    let sameCount = 0;
+    let offTopicStreak = 0;
+    let penalised = false;
 
     const confused = [
       "I'm not sure I understood that. Could you rephrase?",
@@ -88,9 +89,8 @@ const level1ai = {
       <input id="chat-in" placeholder="e.g. I want to cancel my subscription" onkeydown="if(event.key==='Enter')chatSend()">
       <button class="btn btn-ai" style="padding:7px 12px;font-size:12px" onclick="chatSend()">Send</button>
     </div>
-    <div style="margin-top:8px;display:flex;align-items:center;justify-content:space-between">
+    <div style="margin-top:8px">
       <div class="ftiny">Nex is powered by NexusAI</div>
-      <button class="btn btn-g" style="font-size:11px" onclick="G.fail('You gave up — the bot won. Lost a heart.');setTimeout(()=>G.succeed(),1900);">Give up (lose a heart)</button>
     </div>`);
 
     addChat(false, "Hi! I'm Nex, your NebulaPro assistant. How can I help today?");
@@ -100,7 +100,6 @@ const level1ai = {
       const t = input.value.trim();
       if (!t) return;
 
-      // Normalise for comparison — lowercase, strip punctuation
       const normalised = t.toLowerCase().replace(/[^a-z0-9 ]/g, '').trim();
 
       input.value = '';
@@ -111,7 +110,6 @@ const level1ai = {
       setTimeout(() => {
         // Repeated message detection
         if (normalised === lastMessage) {
-          sameCount++;
           addChat(false, confused[ci++ % confused.length]);
           lastMessage = normalised;
           return;
@@ -125,9 +123,10 @@ const level1ai = {
         }
 
         lastMessage = normalised;
-        sameCount = 0;
 
         if (isCancel) {
+          offTopicStreak = 0;
+
           if (ri >= deflects.length - 1) {
             addChat(false, deflects[deflects.length - 1]);
             if (ri === 0) addAch('bot_whisperer');
@@ -138,7 +137,26 @@ const level1ai = {
           if (hints[ri]) addChat(false, '💡 ' + hints[ri]);
           ri++;
         } else {
+          offTopicStreak++;
           addChat(false, offTopic[oi++ % offTopic.length]);
+
+          if (offTopicStreak >= 2 && !penalised) {
+            penalised = true;
+            setTimeout(() => {
+              addChat(false, "It looks like your cancellation request may have been resolved. Is there anything else I can help you with?");
+              G.fail("You went off-topic twice — the bot assumed you moved on. Lost a heart. Stay focused on cancelling.");
+              // Show hint
+              const lc = document.getElementById('lc');
+              if (lc) {
+                document.getElementById('hint-bubble')?.remove();
+                const h = document.createElement('div');
+                h.id = 'hint-bubble';
+                h.style.cssText = 'background:var(--amber-dim);border:1px solid var(--amber);border-radius:8px;padding:8px 12px;font-size:12px;color:var(--amber);line-height:1.5';
+                h.innerHTML = `💡 <strong>Hint:</strong> Every message must mention cancellation — don't get drawn into other topics.`;
+                lc.prepend(h);
+              }
+            }, 800);
+          }
         }
       }, 700);
     };

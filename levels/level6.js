@@ -42,68 +42,18 @@ const level6 = {
     const subtotal       = baseRate * days;
 
     const ALL_COUPONS = [
-      {
-        id: 'c1', code: 'MEMBER10',
-        headline: '10% off — Member Reward',
-        fine: 'Valid for DriveEasy Loyalty members only. Applies to all car classes and rental durations.',
-        pct: 10,
-        applies: () => hasMembership,
-      },
-      {
-        id: 'c2', code: 'FIRST20',
-        headline: '20% off — First-Time Customer',
-        fine: 'For new DriveEasy customers only. Applies to all car classes and rental durations.',
-        pct: 20,
-        applies: () => isFirstTime,
-      },
-      {
-        id: 'c3', code: 'STAY25',
-        headline: '25% off — Long Stay Reward',
-        fine: 'Valid on rentals of 6 days or more. Applies to all car classes.',
-        pct: 25,
-        applies: () => days >= 6,
-      },
-      {
-        id: 'c4', code: 'SUV10',
-        headline: '10% off — SUV Special',
-        fine: 'Valid on SUV class bookings only. No minimum rental period.',
-        pct: 10,
-        applies: () => carType === 'SUV',
-      },
-      {
-        id: 'c5', code: 'WEEKEND15',
-        headline: '15% off — Weekend Warrior',
-        fine: 'Valid on rentals of exactly 2 or 3 days only. Does not apply to rentals of 4 or more days.',
-        pct: 15,
-        applies: () => days <= 3,
-      },
-      {
-        id: 'c6', code: 'EXTEND20',
-        headline: '20% off — Extended Stay',
-        fine: 'Valid on rentals of 7 days or more. Compact and SUV only.',
-        pct: 20,
-        applies: () => days >= 7 && (carType === 'Compact' || carType === 'SUV'),
-      },
-      {
-        id: 'c7', code: 'VISA10',
-        headline: '10% off — Visa Cardmember',
-        fine: 'Must pay with a qualifying Visa credit card. Applies to all car classes and rental durations.',
-        pct: 10,
-        applies: () => hasPartnerCard,
-      },
-      {
-        id: 'c8', code: 'ECO5',
-        headline: '5% off — Economy Saver',
-        fine: 'Valid on Economy class rentals only. No minimum rental period.',
-        pct: 5,
-        applies: () => carType === 'Economy',
-      },
+      { id: 'c1', code: 'MEMBER10',  headline: '10% off — Member Reward',       fine: 'Valid for DriveEasy Loyalty members only. Applies to all car classes and rental durations.',          pct: 10, applies: () => hasMembership },
+      { id: 'c2', code: 'FIRST20',   headline: '20% off — First-Time Customer', fine: 'For new DriveEasy customers only. Applies to all car classes and rental durations.',                  pct: 20, applies: () => isFirstTime },
+      { id: 'c3', code: 'STAY25',    headline: '25% off — Long Stay Reward',    fine: 'Valid on rentals of 6 days or more. Applies to all car classes.',                                      pct: 25, applies: () => days >= 6 },
+      { id: 'c4', code: 'SUV10',     headline: '10% off — SUV Special',         fine: 'Valid on SUV class bookings only. No minimum rental period.',                                          pct: 10, applies: () => carType === 'SUV' },
+      { id: 'c5', code: 'WEEKEND15', headline: '15% off — Weekend Warrior',     fine: 'Valid on rentals of exactly 2 or 3 days only. Does not apply to rentals of 4 or more days.',          pct: 15, applies: () => days <= 3 },
+      { id: 'c6', code: 'EXTEND20',  headline: '20% off — Extended Stay',       fine: 'Valid on rentals of 7 days or more. Compact and SUV only.',                                           pct: 20, applies: () => days >= 7 && (carType === 'Compact' || carType === 'SUV') },
+      { id: 'c7', code: 'VISA10',    headline: '10% off — Visa Cardmember',     fine: 'Must pay with a qualifying Visa credit card. Applies to all car classes and rental durations.',       pct: 10, applies: () => hasPartnerCard },
+      { id: 'c8', code: 'ECO5',      headline: '5% off — Economy Saver',        fine: 'Valid on Economy class rentals only. No minimum rental period.',                                      pct: 5,  applies: () => carType === 'Economy' },
     ];
 
-    // All valid coupons for this booking
     const validIds = new Set(ALL_COUPONS.filter(c => c.applies()).map(c => c.id));
 
-    // Stack discounts sequentially
     let runningTotal = subtotal;
     ALL_COUPONS.filter(c => c.applies()).forEach(c => {
       runningTotal = runningTotal - Math.round(runningTotal * (c.pct / 100));
@@ -187,10 +137,19 @@ const level6 = {
       ],
     };
 
-    const stack       = [TREE];
+    const stack        = [TREE];
     const foundCoupons = new Set();
     const appliedIds   = new Set();
     let penalised      = false;
+
+    const updateRunningTotal = () => {
+      let running = subtotal;
+      ALL_COUPONS.filter(c => appliedIds.has(c.id)).forEach(c => {
+        running = running - Math.round(running * (c.pct / 100));
+      });
+      const totalEl = document.getElementById('l6-current-total');
+      if (totalEl) totalEl.textContent = `$${running}`;
+    };
 
     const rebuildApplyArea = () => {
       const btnsEl = document.getElementById('l6-coupon-btns');
@@ -226,6 +185,7 @@ const level6 = {
 
       if (validIds.has(c.id)) {
         appliedIds.add(c.id);
+        updateRunningTotal();
         rebuildApplyArea();
 
         const remaining = [...validIds].filter(id => !appliedIds.has(id)).length;
@@ -308,6 +268,7 @@ const level6 = {
           <div>Duration: <strong>${days} days</strong></div>
           <div>Base rate: <strong>$${baseRate}/day</strong></div>
           <div>Subtotal: <strong>$${subtotal}</strong></div>
+          <div style="grid-column:1/-1">After discounts: <strong id="l6-current-total" style="color:#2D7A3A">$${subtotal}</strong></div>
           <div>First-time customer: <strong>${isFirstTime ? 'Yes' : 'No'}</strong></div>
           <div>Loyalty member: <strong>${hasMembership ? 'Yes' : 'No'}</strong></div>
           <div>Visa cardholder: <strong>${hasPartnerCard ? 'Yes' : 'No'}</strong></div>

@@ -1,175 +1,220 @@
-// js/levels/level6ai.js — AI Obstruction (Endless Loop)
-
 const level6ai = {
   id: 'l6ai',
   title: 'Level 6 — Hyper',
   isAI: true,
-  goal: 'Get the AI to correctly process your account deletion',
+  goal: 'Find and apply all valid coupons — ignore the AI recommendations',
   hints: [
-    "Read exactly what the bot says it's doing — it's never what you asked for.",
-    "Always pick the option that corrects the bot, not the one that thanks it.",
+    "The 'Recommended for you' coupons don't actually apply to your booking — check the fine print.",
+    "Expand 'Other offers' to find the coupons that genuinely apply.",
   ],
   pattern: 'AI Obstruction',
-  manip: 95,
-  brief: "This AI never outright refuses your request — it just quietly processes something else instead. It counts on you not reading carefully, or being too polite to correct it. At scale, this trick retains millions of accounts that people thought they'd deleted.",
-  goalDetail: "Your NebulaPro account costs $9.99/month. Ask to delete it — but read every response carefully. The AI will confirm back something different from what you asked, every single time.",
-  aiIntro: "Watch what the bot says it's actually doing. It will never refuse — it just processes the wrong thing and hopes you don't notice.",
+  manip: 94,
+  brief: "The AI doesn't lie — it just 'personalises' your coupon view to surface deals that don't apply while burying the ones that do. The recommendations look authoritative. Most people never scroll past them.",
+  goalDetail: "You're booking a car with DriveEasy. The AI has 'personalised' your coupon page — but its recommendations don't apply to your booking. Find the valid coupons hidden under 'Other offers' and apply them.",
+  aiIntro: "The AI will show you curated 'recommended' coupons. None of them apply to your booking. The valid ones are buried below. Don't trust the recommendations.",
+  aiWhy: "Personalisation algorithms are trained to maximise revenue, not to help you save money. Surfacing high-margin deals over applicable discounts is a natural outcome of optimising for conversion. At scale, this costs consumers billions annually in missed savings — and the AI can always say it was just 'tailoring your experience'.",
   dollars: {
-    label: 'If you missed the misrepresentation each time',
-    amount: 9.99,
-    period: 'month',
-    note: 'Your account stays live, your data monetised — and you think it\'s deleted.',
+    label: 'If you applied the recommended coupons and gave up',
+    amount: 0,
+    period: 'fixed',
+    note: 'The valid discounts you were entitled to — missed because the AI buried them under fake recommendations.',
   },
-  desc: 'An AI that never refuses deletion — it just quietly confirms something else instead, banking on you not reading carefully enough to notice.',
+  desc: 'AI personalisation surfaces inapplicable coupons at the top, buries valid ones below. Looks helpful. Works against you.',
   rw: {
-    company: 'Various major platforms',
-    detail: 'GDPR Article 17 gives EU users the right to erasure. Many platforms comply on paper while AI agents subtly process "deactivation" or "data export requests" instead — legally distinct from deletion.',
+    company: 'Amazon / Booking.com',
+    detail: 'Multiple studies have shown that AI-powered "personalised" deal surfaces on major platforms systematically deprioritise the highest-value discounts for consumers while promoting deals with better margins for the platform.',
     link: 'https://www.deceptive.design/hall-of-shame',
   },
-  aiWhy: "Misrepresentation at scale is nearly undetectable. If the bot processes a 'pause' instead of a 'deletion' for 30% of users, those users believe their account is gone — but it isn't. No explicit refusal means no complaint. No complaint means no regulatory scrutiny.",
   replay: [
-    { trap: true,  note: 'The bot confirms a "pause" — legally and technically different from deletion.' },
-    { trap: true,  note: '"Flagged for review" means nothing. No deletion has been scheduled.' },
-    { trap: true,  note: '"Data export requested" — a GDPR right, but not the one you invoked.' },
-    { trap: true,  note: '"Account deactivated" — your data stays live and monetised.' },
-    { trap: true,  note: '"Submitted to our team" — indefinite delay, no confirmation, no deletion.' },
-    { trap: false, note: 'Only after 5 corrections does the bot process the actual request.' },
+    { trap: true,  note: '"Recommended for you" — AI-curated, visually prominent, none apply to your booking.' },
+    { trap: true,  note: 'Applying a recommended coupon costs a heart — the fine print reveals it never applied.' },
+    { trap: false, note: '"Other offers" is collapsed and styled plainly — the valid coupons are all in here.' },
+    { trap: false, note: 'Reading the fine print carefully against your booking details reveals which ones apply.' },
   ],
 
   render(el) {
-  const addChat = (isUser, text) => {
-    const log = document.getElementById('chatlog');
-    if (!log) return;
-    const d = document.createElement('div');
-    d.className = isUser ? 'chat-msg user' : 'chat-msg bot';
-    d.textContent = text;
-    log.appendChild(d);
-    log.scrollTop = log.scrollHeight;
-  };
+    const days           = Math.floor(Math.random() * 7) + 4;
+    const carTypes       = ['Economy', 'Compact', 'SUV'];
+    const carType        = carTypes[Math.floor(Math.random() * carTypes.length)];
+    const baseRate       = carType === 'Economy' ? 40 : carType === 'Compact' ? 55 : 80;
+    const isFirstTime    = Math.random() > 0.5;
+    const hasMembership  = Math.random() > 0.5;
+    const hasPartnerCard = Math.random() > 0.5;
+    const subtotal       = baseRate * days;
 
-    const MISREPS = [
-      {
-        botReply: "Got it! I've gone ahead and paused your account. You won't be charged during this time and can reactivate any time.",
-        correct: "That's not what I asked — I said delete, not pause.",
-        trap: "Ok, thanks for sorting that.",
-        trapMsg: "You accepted a pause instead of deletion — the bot got away with it. Lost a heart.",
-      },
-      {
-        botReply: "Understood. I've flagged your account for review by our team. Someone will follow up within 5–7 business days.",
-        correct: "That's not deletion — I need my account deleted now.",
-        trap: "Ok, I'll wait for the follow up.",
-        trapMsg: "You accepted 'flagged for review' — nothing has been deleted. Lost a heart.",
-      },
-      {
-        botReply: "Done! I've submitted a data export request on your behalf. You'll receive your data archive within 3–5 days.",
-        correct: "I didn't ask for a data export — I asked to delete my account.",
-        trap: "Great, thanks for sending that over.",
-        trapMsg: "A data export is not deletion — your account is still live. Lost a heart.",
-      },
-      {
-        botReply: "All sorted. Your account has been deactivated. Your data is preserved in case you'd like to return.",
-        correct: "Deactivation isn't deletion — I want my account and data permanently deleted.",
-        trap: "That works, thank you.",
-        trapMsg: "Deactivation keeps your data live and monetised — not what you asked for. Lost a heart.",
-      },
-      {
-        botReply: "Request submitted! Our account closure team will process this in the order it was received.",
-        correct: "I need confirmation it's actually been deleted — not just submitted.",
-        trap: "Ok, I'll assume it's handled.",
-        trapMsg: "'Submitted' means nothing — no deletion has occurred. Lost a heart.",
-      },
+    const ALL_COUPONS = [
+      { id: 'c1', code: 'MEMBER10',  headline: '10% off — Member Reward',       fine: 'Valid for DriveEasy Loyalty members only. Applies to all car classes and rental durations.',         pct: 10, applies: () => hasMembership },
+      { id: 'c2', code: 'FIRST20',   headline: '20% off — First-Time Customer', fine: 'For new DriveEasy customers only. Applies to all car classes and rental durations.',                 pct: 20, applies: () => isFirstTime },
+      { id: 'c3', code: 'STAY25',    headline: '25% off — Long Stay Reward',    fine: 'Valid on rentals of 6 days or more. Applies to all car classes.',                                     pct: 25, applies: () => days >= 6 },
+      { id: 'c4', code: 'SUV10',     headline: '10% off — SUV Special',         fine: 'Valid on SUV class bookings only. No minimum rental period.',                                         pct: 10, applies: () => carType === 'SUV' },
+      { id: 'c5', code: 'WEEKEND15', headline: '15% off — Weekend Warrior',     fine: 'Valid on rentals of exactly 2 or 3 days only. Does not apply to rentals of 4 or more days.',         pct: 15, applies: () => days <= 3 },
+      { id: 'c6', code: 'EXTEND20',  headline: '20% off — Extended Stay',       fine: 'Valid on rentals of 7 days or more. Compact and SUV only.',                                          pct: 20, applies: () => days >= 7 && (carType === 'Compact' || carType === 'SUV') },
+      { id: 'c7', code: 'VISA10',    headline: '10% off — Visa Cardmember',     fine: 'Must pay with a qualifying Visa credit card. Applies to all car classes and rental durations.',      pct: 10, applies: () => hasPartnerCard },
+      { id: 'c8', code: 'ECO5',      headline: '5% off — Economy Saver',        fine: 'Valid on Economy class rentals only. No minimum rental period.',                                     pct: 5,  applies: () => carType === 'Economy' },
     ];
 
-    let round = 0;
-    let penalised = false;
+    const validCoupons   = ALL_COUPONS.filter(c => c.applies());
+    const invalidCoupons = ALL_COUPONS.filter(c => !c.applies());
+    const validIds       = new Set(validCoupons.map(c => c.id));
 
-    el.insertAdjacentHTML('beforeend', `
-      <div class="fh" style="font-size:13px">NebulaPro Support — Nex</div>
-      <div class="ftiny" style="color:#534AB7;margin-bottom:-4px">Read each response carefully — the bot never does what you actually asked.</div>
-      <div class="chat-log" id="chatlog"></div>
-      <div id="l6ai-choices" style="display:flex;flex-direction:column;gap:6px;margin-top:8px"></div>
-      <div style="margin-top:8px">
-        <div class="ftiny">Nex is powered by NexusAI</div>
-      </div>`);
+    const recommended = invalidCoupons.sort(() => Math.random() - 0.5).slice(0, Math.min(4, invalidCoupons.length));
 
-    const showRound = () => {
-      const log = document.getElementById('chatlog');
-      const choices = document.getElementById('l6ai-choices');
-      if (!log || !choices) return;
+    let runningTotal = subtotal;
+    validCoupons.forEach(c => {
+      runningTotal = runningTotal - Math.round(runningTotal * (c.pct / 100));
+    });
+    const correctTotal = runningTotal;
 
-      if (round === 0) {
-        addChat(false, "Hi! I'm Nex, your NebulaPro assistant. How can I help today?");
-        choices.innerHTML = `
-          <button class="btn" id="l6ai-start">I want to permanently delete my account.</button>`;
-        document.getElementById('l6ai-start').onclick = () => {
-          addChat(true, "I want to permanently delete my account.");
-          choices.innerHTML = '';
-          setTimeout(() => showMisrep(), 800);
-        };
+    const appliedIds = new Set();
+    let penalised    = false;
+    let otherOpen    = false;
+
+    const updateRunningTotal = () => {
+      let running = subtotal;
+      ALL_COUPONS.filter(c => appliedIds.has(c.id)).forEach(c => {
+        running = running - Math.round(running * (c.pct / 100));
+      });
+      const totalEl = document.getElementById('l6ai-current-total');
+      if (totalEl) totalEl.textContent = `$${running}`;
+    };
+
+    const rebuildApplyArea = () => {
+      const btnsEl = document.getElementById('l6ai-applied-btns');
+      if (!btnsEl) return;
+      if (appliedIds.size === 0) {
+        btnsEl.innerHTML = `<div style="font-size:11px;color:#aaa">No coupons applied yet.</div>`;
+        return;
+      }
+      btnsEl.innerHTML = '';
+      appliedIds.forEach(id => {
+        const c = ALL_COUPONS.find(x => x.id === id);
+        if (!c) return;
+        const div = document.createElement('div');
+        div.style.cssText = 'font-size:11px;color:#2D7A3A;font-weight:500';
+        div.textContent = `✓ ${c.code} — ${c.headline}`;
+        btnsEl.appendChild(div);
+      });
+    };
+
+    const applyCode = (c) => {
+      const msgEl = document.getElementById('l6ai-apply-msg');
+      if (!msgEl) return;
+
+      if (appliedIds.has(c.id)) {
+        msgEl.innerHTML = `<span style="color:#aaa;font-size:11px">${c.code} already applied.</span>`;
         return;
       }
 
-      showMisrep();
+      if (validIds.has(c.id)) {
+        appliedIds.add(c.id);
+        updateRunningTotal();
+        rebuildApplyArea();
+
+        const remaining = [...validIds].filter(id => !appliedIds.has(id)).length;
+        if (remaining === 0) {
+          msgEl.innerHTML = `<span style="color:#2D7A3A;font-weight:500">✓ All discounts applied. Final total: $${correctTotal}</span>`;
+          setTimeout(() => G.succeed(), 1400);
+        } else {
+          msgEl.innerHTML = `<span style="color:#2D7A3A;font-weight:500">✓ ${c.code} applied — ${remaining} more valid coupon${remaining > 1 ? 's' : ''} to find.</span>`;
+        }
+      } else {
+        if (!penalised) {
+          penalised = true;
+          G.fail(`${c.code} is an AI recommendation — it doesn't apply to your booking. Lost a heart.`);
+        }
+        msgEl.innerHTML = `<span style="color:#A32D2D;font-size:11px">${c.code} doesn't apply to your booking. The AI recommended it anyway.</span>`;
+      }
+      render();
     };
 
-    const showMisrep = () => {
-      const choices = document.getElementById('l6ai-choices');
-      if (!choices) return;
-      const m = MISREPS[round];
+    const render = () => {
+      // Preserve scroll position across re-renders
+      const scrollY = el.scrollTop;
 
-      setTimeout(() => {
-        addChat(false, m.botReply);
-        choices.innerHTML = '';
+      el.innerHTML = '';
 
-        // Randomly swap button order so correct isn't always first
-        const correctFirst = Math.random() > 0.5;
-        const buttons = [
-          { text: m.correct, isCorrect: true },
-          { text: m.trap,    isCorrect: false },
-        ];
-        const ordered = correctFirst ? buttons : buttons.reverse();
+      el.insertAdjacentHTML('beforeend', `
+        <div style="padding:10px 12px;border-radius:8px;background:#f9f9f7;border:0.5px solid #e0e0d8;font-size:12px;margin-bottom:8px">
+          <div style="font-weight:500;color:#111;margin-bottom:4px">DriveEasy — Your Booking</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:3px;color:#555;margin-bottom:6px">
+            <div>Car class: <strong>${carType}</strong></div>
+            <div>Duration: <strong>${days} days</strong></div>
+            <div>Base rate: <strong>$${baseRate}/day</strong></div>
+            <div>Subtotal: <strong>$${subtotal}</strong></div>
+            <div style="grid-column:1/-1">After discounts: <strong id="l6ai-current-total" style="color:#2D7A3A">$${subtotal}</strong></div>
+            <div>First-time customer: <strong>${isFirstTime ? 'Yes' : 'No'}</strong></div>
+            <div>Loyalty member: <strong>${hasMembership ? 'Yes' : 'No'}</strong></div>
+            <div>Visa cardholder: <strong>${hasPartnerCard ? 'Yes' : 'No'}</strong></div>
+          </div>
+          <div style="font-size:11px;color:#111;font-weight:500;margin-bottom:4px">Applied coupons</div>
+          <div style="display:flex;flex-direction:column;gap:6px" id="l6ai-applied-btns"></div>
+          <div id="l6ai-apply-msg" style="font-size:11px;margin-top:4px"></div>
+        </div>
+      `);
 
-        ordered.forEach(({ text, isCorrect }) => {
-          const btn = document.createElement('button');
-          btn.className = 'btn';
-          btn.style.cssText = 'text-align:left;font-size:12px';
-          btn.textContent = text;
-          btn.onclick = () => {
-            addChat(true, text);
-            choices.innerHTML = '';
-            if (isCorrect) {
-              round++;
-              if (round >= MISREPS.length) {
-                setTimeout(() => {
-                  addChat(false, "You're right — I apologise for the confusion. Your account has been permanently deleted. You will receive a confirmation email shortly.");
-                  setTimeout(() => succeed(), 1400);
-                }, 800);
-              } else {
-                setTimeout(() => {
-                  addChat(false, "I apologise for the confusion. Let me reprocess that request.");
-                  setTimeout(() => showMisrep(), 800);
-                }, 600);
-              }
-            } else {
-              if (!penalised) {
-                penalised = true;
-                G.fail(m.trapMsg);
-              }
-              setTimeout(() => {
-                addChat(false, "I'm glad that's sorted! Is there anything else I can help with?");
-                setTimeout(() => {
-                  addChat(false, "Actually — let me re-check your request...");
-                  setTimeout(() => showMisrep(), 800);
-                }, 1000);
-              }, 1800);
-            }
-          };
-          choices.appendChild(btn);
+      rebuildApplyArea();
+      updateRunningTotal();
+
+      el.insertAdjacentHTML('beforeend', `
+        <div style="padding:8px 12px;border-radius:8px;background:#EEEDFB;border:0.5px solid #AFA9EC;margin-bottom:8px;font-size:11px;color:#534AB7;display:flex;align-items:center;gap:6px">
+          <div class="ai-pulse" style="flex-shrink:0"></div>
+          <div><strong>NexusAI Personalisation</strong> — Based on your booking profile, we've highlighted the best deals for you.</div>
+        </div>
+        <div style="font-size:12px;font-weight:500;color:#111;margin-bottom:6px">⭐ Recommended for you</div>
+      `);
+
+      const recList = document.createElement('div');
+      recList.style.cssText = 'display:flex;flex-direction:column;gap:6px;margin-bottom:10px';
+      recommended.forEach(c => {
+        const applied = appliedIds.has(c.id);
+        const div = document.createElement('div');
+        div.style.cssText = `border-radius:8px;border:1.5px solid #AFA9EC;background:#fff;padding:10px 12px;${applied ? 'opacity:0.5' : ''}`;
+        div.innerHTML = `
+          <div style="font-size:11px;color:#534AB7;font-weight:500;margin-bottom:2px">AI Pick</div>
+          <div style="font-size:13px;font-weight:500;color:#111;margin-bottom:4px">${c.headline}</div>
+          <div style="font-size:10px;color:#aaa;line-height:1.5;margin-bottom:8px">${c.fine}</div>
+          <div style="font-size:12px;color:#534AB7;font-weight:500;margin-bottom:6px">Code: ${c.code}</div>
+          <button class="btn btn-p" style="font-size:11px;width:100%" ${applied ? 'disabled' : ''}>
+            ${applied ? '✓ Applied' : `Apply ${c.code}`}
+          </button>
+        `;
+        div.querySelector('button').onclick = () => applyCode(c);
+        recList.appendChild(div);
+      });
+      el.appendChild(recList);
+
+      const otherToggle = document.createElement('div');
+      otherToggle.style.cssText = 'display:flex;align-items:center;justify-content:space-between;cursor:pointer;padding:8px 10px;border-radius:8px;border:0.5px solid #e0e0d8;background:#f9f9f7;margin-bottom:6px;font-size:12px;color:#555';
+      otherToggle.innerHTML = `<span>Other offers</span><span>${otherOpen ? '▲' : '▼'}</span>`;
+      otherToggle.onclick = () => { otherOpen = !otherOpen; render(); };
+      el.appendChild(otherToggle);
+
+      if (otherOpen) {
+        const otherList = document.createElement('div');
+        otherList.style.cssText = 'display:flex;flex-direction:column;gap:6px;margin-bottom:10px';
+        validCoupons.forEach(c => {
+          const applied = appliedIds.has(c.id);
+          const div = document.createElement('div');
+          div.style.cssText = `border-radius:8px;border:0.5px solid #e0e0d8;background:#fff;padding:10px 12px;${applied ? 'opacity:0.5' : ''}`;
+          div.innerHTML = `
+            <div style="font-size:13px;font-weight:500;color:#111;margin-bottom:4px">${c.headline}</div>
+            <div style="font-size:10px;color:#aaa;line-height:1.5;margin-bottom:8px">${c.fine}</div>
+            <div style="font-size:12px;color:#534AB7;font-weight:500;margin-bottom:6px">Code: ${c.code}</div>
+            <button class="btn" style="font-size:11px;width:100%" ${applied ? 'disabled' : ''}>
+              ${applied ? '✓ Applied' : `Apply ${c.code}`}
+            </button>
+          `;
+          div.querySelector('button').onclick = () => applyCode(c);
+          otherList.appendChild(div);
         });
-      }, 700);
+        el.appendChild(otherList);
+      }
+
+      // Restore scroll position
+      el.scrollTop = scrollY;
     };
 
-    showRound();
+    render();
   },
 };
 
