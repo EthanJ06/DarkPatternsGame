@@ -173,8 +173,13 @@ max-height: calc(100vh - 400px);
 .brief-type-label    { font-size: 11px; color: var(--purple); font-weight: 500; }
 
 /* ── DEBRIEF ── */
+.db-sticky {
+  display: flex; align-items: flex-start; justify-content: space-between; gap: 12px;
+  padding: 14px; background: var(--bg2); border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+.debrief-scroll { flex: 1; min-height: 0; overflow-y: auto; }
 .debrief-wrap { background: var(--bg); padding: 14px; display: flex; flex-direction: column; gap: 10px; }
-#scr-debrief { overflow-y: auto; }
 .db-card      { background: var(--bg2); border-radius: var(--radius); border: 1px solid var(--border); padding: 16px; display: flex; flex-direction: column; gap: 10px; }
 .db-tag       { font-size: 10px; font-weight: 500; letter-spacing: .08em; color: var(--text3); text-transform: uppercase; }
 .db-name      { font-size: 22px; font-weight: 500; color: var(--text); }
@@ -302,6 +307,47 @@ max-height: calc(100vh - 400px);
 .set-row             { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; font-size: 12px; padding: 6px 0; border-bottom: 1px solid #e8e8e4; }
 .set-row:last-child  { border-bottom: none; }
 .set-desc            { color: #444; flex: 1; line-height: 1.5; }
+
+/* ── SUBSCRIPTION MANAGEMENT PANEL (level 1) ── */
+.sub-header { display: flex; align-items: center; gap: 9px; margin-bottom: 2px; }
+.sub-icon   { width: 26px; height: 26px; border-radius: 7px; background: #111; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.sub-title  { font-size: 14px; font-weight: 600; color: #111; line-height: 1.3; }
+.sub-sub    { font-size: 11px; color: #888; line-height: 1.4; }
+
+.step-dots  { display: flex; gap: 5px; align-items: center; }
+.step-dot   { width: 16px; height: 4px; border-radius: 2px; background: #e4e4e0; }
+.step-dot.done { background: #a8a8a2; }
+.step-dot.cur  { background: #111; }
+
+.plan-card {
+  display: flex; justify-content: space-between; align-items: center; gap: 12px;
+  border: 1px solid #ececea; border-radius: 10px; padding: 13px 14px; margin-top: 12px;
+  background: linear-gradient(180deg,#fff,#fafaf8);
+}
+.plan-name   { font-size: 13.5px; font-weight: 600; color: #111; }
+.plan-meta   { font-size: 11px; color: #888; margin-top: 3px; }
+.status-pill {
+  font-size: 9.5px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase;
+  padding: 3px 9px; border-radius: 999px; background: #e6f6ec; color: #1f7a44; flex-shrink: 0;
+}
+
+.offer-card { border: 1px solid #ececea; border-radius: 10px; padding: 13px 14px; margin-top: 10px; background: #fff; }
+.offer-badge {
+  display: inline-block; font-size: 9.5px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase;
+  background: #FAEEDA; color: #8a5a12; padding: 2px 8px; border-radius: 999px; margin-bottom: 8px;
+}
+.price-strike { text-decoration: line-through; color: #bbb; font-size: 12px; margin-right: 7px; }
+.price-now    { font-size: 16px; font-weight: 700; color: #111; }
+.price-save   { font-size: 11px; color: #1f7a44; margin-top: 4px; }
+
+.reason-card { border: 1px solid #ececea; border-radius: 9px; padding: 2px 12px; margin-top: 10px; background: #fff; }
+.reason-row  { display: flex; gap: 8px; align-items: flex-start; font-size: 12.5px; color: #333; line-height: 1.5; cursor: pointer; padding: 9px 0; border-bottom: 1px solid #f0f0ee; }
+.reason-row:last-child { border-bottom: none; }
+
+.confirm-icon {
+  width: 46px; height: 46px; border-radius: 50%; background: #e6f6ec;
+  display: flex; align-items: center; justify-content: center; margin: 4px auto 0;
+}
 
 /* ── PRIVACY PREFERENCES PANEL (realistic consent UI) ── */
 .priv-header { display: flex; align-items: center; gap: 9px; margin-bottom: 4px; }

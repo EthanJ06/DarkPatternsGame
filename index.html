@@ -98,31 +98,35 @@
 
   <!-- DEBRIEF -->
   <div class="scr" id="scr-debrief">
-    <div class="debrief-wrap">
-      <div class="db-card">
-        <div>
-          <div class="db-tag" id="db-tag">Pattern identified</div>
-          <div class="db-name" id="db-name"></div>
-        </div>
-        <div class="db-desc" id="db-desc"></div>
-        <div class="manip-row">
-          <div class="manip-lbl">Manipulativeness</div>
-          <div class="bar-t"><div class="bar-f" id="db-bar"></div></div>
-          <div style="font-size:11px;color:#666;min-width:28px" id="db-score-lbl"></div>
-        </div>
-        <div style="display:flex;align-items:center;gap:10px">
-          <div id="db-grade" class="grade-badge"></div>
-          <div id="db-result"></div>
-        </div>
-        <div class="btn-row" style="margin-top:4px">
-          <button class="gbtn gbtn-green" id="db-next" onclick="G.next()">Next level →</button>
-          <button class="gbtn gbtn-ghost" onclick="Glossary.show()">Glossary</button>
-        </div>
+    <div class="db-sticky">
+      <div>
+        <div class="db-tag" id="db-tag">Pattern identified</div>
+        <div class="db-name" id="db-name"></div>
       </div>
-      <div class="rw-card" id="db-rw"></div>
-      <div class="ai-card" id="db-ai-card" style="display:none"></div>
-      <div id="db-dollars" style="display:none"></div>
-      <div class="replay-card" id="db-replay"></div>
+      <div class="btn-row" style="flex-shrink:0">
+        <button class="gbtn gbtn-green" id="db-next" onclick="G.next()">Next level →</button>
+        <button class="gbtn gbtn-ghost" onclick="Glossary.show()">Glossary</button>
+      </div>
+    </div>
+    <div class="debrief-scroll">
+      <div class="debrief-wrap">
+        <div class="db-card">
+          <div class="db-desc" id="db-desc"></div>
+          <div class="manip-row">
+            <div class="manip-lbl">Manipulativeness</div>
+            <div class="bar-t"><div class="bar-f" id="db-bar"></div></div>
+            <div style="font-size:11px;color:#666;min-width:28px" id="db-score-lbl"></div>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px">
+            <div id="db-grade" class="grade-badge"></div>
+            <div id="db-result"></div>
+          </div>
+        </div>
+        <div class="rw-card" id="db-rw"></div>
+        <div class="ai-card" id="db-ai-card" style="display:none"></div>
+        <div id="db-dollars" style="display:none"></div>
+        <div class="replay-card" id="db-replay"></div>
+      </div>
     </div>
     <div class="dots" id="dots-d"></div>
   </div>
