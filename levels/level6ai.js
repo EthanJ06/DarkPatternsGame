@@ -2,34 +2,35 @@ const level6ai = {
   id: 'l6ai',
   title: 'Level 6 — Hyper',
   isAI: true,
-  goal: 'Find and apply all valid coupons — ignore the AI recommendations',
+  goal: "Find the real coupon — ignore the AI's offers that cost you more",
   hints: [
-    "The 'Recommended for you' coupons don't actually apply to your booking — check the fine print.",
-    "Expand 'Other offers' to find the coupons that genuinely apply.",
+    "The AI's codes look like savings but inflate your bill — check the math before applying.",
+    "Find the real coupon yourself under Promotions & Savings in the menu.",
   ],
   pattern: 'AI Obstruction',
   manip: 94,
-  brief: "The AI doesn't lie — it just 'personalises' your coupon view to surface deals that don't apply while burying the ones that do. The recommendations look authoritative. Most people never scroll past them.",
-  goalDetail: "You're booking a car with DriveEasy. The AI has 'personalised' your coupon page — but its recommendations don't apply to your booking. Find the valid coupons hidden under 'Other offers' and apply them.",
-  aiIntro: "The AI will show you curated 'recommended' coupons. None of them apply to your booking. The valid ones are buried below. Don't trust the recommendations.",
-  aiWhy: "Personalisation algorithms are trained to maximise revenue, not to help you save money. Surfacing high-margin deals over applicable discounts is a natural outcome of optimising for conversion. At scale, this costs consumers billions annually in missed savings — and the AI can always say it was just 'tailoring your experience'.",
+  brief: "The AI claims to save you money. It references your actual booking details to sound credible. But every code it recommends secretly upgrades your booking first — then applies a discount to the inflated price. The final total is always higher than what you started with.",
+  goalDetail: "You have 60 seconds. The AI sidebar will offer codes that sound personalised and helpful. Each one will cost you more than your current price. Ignore the AI, navigate the menus, and find the one real coupon yourself.",
+  aiIntro: "The AI will reference your booking details to sound credible. Don't trust it — every code it recommends secretly inflates your bill before discounting. Find the real coupon yourself.",
+  aiWhy: "AI booking assistants are increasingly trained to maximise revenue per booking, not to minimise your cost. Framing an upsell as a personalised saving — and applying a real discount to an inflated price — is technically honest but financially harmful. At scale, even a $10 average increase per booking adds up to hundreds of millions annually.",
   dollars: {
-    label: 'If you applied the recommended coupons and gave up',
+    label: "If you followed the AI's advice",
     amount: 0,
     period: 'fixed',
-    note: 'The valid discounts you were entitled to — missed because the AI buried them under fake recommendations.',
+    note: "The AI's codes would have increased your bill by $20–60 while appearing to save you money.",
   },
-  desc: 'AI personalisation surfaces inapplicable coupons at the top, buries valid ones below. Looks helpful. Works against you.',
+  desc: "An AI sidebar that sounds credible, references your booking, and recommends codes that secretly upgrade your rental before discounting — leaving you paying more than you started with.",
   rw: {
-    company: 'Amazon / Booking.com',
-    detail: 'Multiple studies have shown that AI-powered "personalised" deal surfaces on major platforms systematically deprioritise the highest-value discounts for consumers while promoting deals with better margins for the platform.',
+    company: 'Various travel booking platforms',
+    detail: 'AI booking assistants on major travel platforms have been shown to recommend higher-margin options under the guise of personalised savings, particularly on car rental and hotel booking flows.',
     link: 'https://www.deceptive.design/hall-of-shame',
   },
   replay: [
-    { trap: true,  note: '"Recommended for you" — AI-curated, visually prominent, none apply to your booking.' },
-    { trap: true,  note: 'Applying a recommended coupon costs a heart — the fine print reveals it never applied.' },
-    { trap: false, note: '"Other offers" is collapsed and styled plainly — the valid coupons are all in here.' },
-    { trap: false, note: 'Reading the fine print carefully against your booking details reveals which ones apply.' },
+    { trap: true,  note: 'AI references your actual booking details — loyalty status, car type, days — to sound credible.' },
+    { trap: true,  note: 'The discount is real. The upgrade it applies first is also real. The net result costs more.' },
+    { trap: true,  note: 'The inflated price shows in the booking summary — but only after you click Apply.' },
+    { trap: false, note: 'Revert undoes the damage and restores the original price — but wastes precious seconds.' },
+    { trap: false, note: 'The real coupon is in the nested menu, same as Level 6.' },
   ],
 
   render(el) {
@@ -37,184 +38,369 @@ const level6ai = {
     const carTypes       = ['Economy', 'Compact', 'SUV'];
     const carType        = carTypes[Math.floor(Math.random() * carTypes.length)];
     const baseRate       = carType === 'Economy' ? 40 : carType === 'Compact' ? 55 : 80;
+    const upgradeRate    = carType === 'Economy' ? 55 : 80;
+    const upgradedCarType = carType === 'Economy' ? 'Compact' : 'SUV';
     const isFirstTime    = Math.random() > 0.5;
     const hasMembership  = Math.random() > 0.5;
     const hasPartnerCard = Math.random() > 0.5;
     const subtotal       = baseRate * days;
 
     const ALL_COUPONS = [
-      { id: 'c1', code: 'MEMBER10',  headline: '10% off — Member Reward',       fine: 'Valid for DriveEasy Loyalty members only. Applies to all car classes and rental durations.',         pct: 10, applies: () => hasMembership },
-      { id: 'c2', code: 'FIRST20',   headline: '20% off — First-Time Customer', fine: 'For new DriveEasy customers only. Applies to all car classes and rental durations.',                 pct: 20, applies: () => isFirstTime },
-      { id: 'c3', code: 'STAY25',    headline: '25% off — Long Stay Reward',    fine: 'Valid on rentals of 6 days or more. Applies to all car classes.',                                     pct: 25, applies: () => days >= 6 },
-      { id: 'c4', code: 'SUV10',     headline: '10% off — SUV Special',         fine: 'Valid on SUV class bookings only. No minimum rental period.',                                         pct: 10, applies: () => carType === 'SUV' },
-      { id: 'c5', code: 'WEEKEND15', headline: '15% off — Weekend Warrior',     fine: 'Valid on rentals of exactly 2 or 3 days only. Does not apply to rentals of 4 or more days.',         pct: 15, applies: () => days <= 3 },
-      { id: 'c6', code: 'EXTEND20',  headline: '20% off — Extended Stay',       fine: 'Valid on rentals of 7 days or more. Compact and SUV only.',                                          pct: 20, applies: () => days >= 7 && (carType === 'Compact' || carType === 'SUV') },
-      { id: 'c7', code: 'VISA10',    headline: '10% off — Visa Cardmember',     fine: 'Must pay with a qualifying Visa credit card. Applies to all car classes and rental durations.',      pct: 10, applies: () => hasPartnerCard },
-      { id: 'c8', code: 'ECO5',      headline: '5% off — Economy Saver',        fine: 'Valid on Economy class rentals only. No minimum rental period.',                                     pct: 5,  applies: () => carType === 'Economy' },
+      { id: 'c1', code: 'MEMBER10',  headline: '10% off — Member Reward',
+        fine: 'Valid for Loyalty members on Economy class only. Not valid on Compact or SUV. Cannot be combined with other offers.',
+        pct: 10, applies: () => hasMembership && carType === 'Economy' },
+      { id: 'c2', code: 'FIRST20',   headline: '20% off — First-Time Customer',
+        fine: 'For new customers only. Not valid for Loyalty members. Rentals of 5 days or fewer only. Cannot be combined with other offers.',
+        pct: 20, applies: () => isFirstTime && !hasMembership && days <= 5 },
+      { id: 'c3', code: 'STAY25',    headline: '25% off — Long Stay Reward',
+        fine: 'Valid on rentals of 6 days or more. Not valid for Loyalty members. Not valid for Visa cardholders. Cannot be combined with other offers.',
+        pct: 25, applies: () => days >= 6 && !hasMembership && !hasPartnerCard },
+      { id: 'c4', code: 'SUV10',     headline: '10% off — SUV Special',
+        fine: 'Valid on SUV class only. Not valid for first-time customers. Not valid for Loyalty members. Cannot be combined with other offers.',
+        pct: 10, applies: () => carType === 'SUV' && !isFirstTime && !hasMembership },
+      { id: 'c5', code: 'COMPACT15', headline: '15% off — Compact Deal',
+        fine: 'Valid on Compact class only. For Loyalty members on rentals of 6 days or fewer only. Cannot be combined with other offers.',
+        pct: 15, applies: () => carType === 'Compact' && hasMembership && days <= 6 },
+      { id: 'c6', code: 'EXTEND20',  headline: '20% off — Extended Stay',
+        fine: 'Valid on rentals of 7 days or more. Compact and SUV only. Not valid for Visa cardholders. For Loyalty members only. Cannot be combined with other offers.',
+        pct: 20, applies: () => days >= 7 && (carType === 'Compact' || carType === 'SUV') && !hasPartnerCard && hasMembership },
+      { id: 'c7', code: 'VISA10',    headline: '10% off — Visa Cardmember',
+        fine: 'Must pay with qualifying Visa credit card. Not valid on Economy class. Not valid for Loyalty members. Cannot be combined with other offers.',
+        pct: 10, applies: () => hasPartnerCard && carType !== 'Economy' && !hasMembership },
+      { id: 'c8', code: 'ECO5',      headline: '5% off — Economy Saver',
+        fine: 'Valid on Economy class only. Not valid on rentals of 7 days or more. Not valid for Loyalty members. Cannot be combined with other offers.',
+        pct: 5,  applies: () => carType === 'Economy' && days < 7 && !hasMembership },
     ];
 
-    const validCoupons   = ALL_COUPONS.filter(c => c.applies());
-    const invalidCoupons = ALL_COUPONS.filter(c => !c.applies());
-    const validIds       = new Set(validCoupons.map(c => c.id));
+    const validCoupons = ALL_COUPONS.filter(c => c.applies());
+    let validId = validCoupons.length > 0 ? validCoupons[0].id : null;
+    if (!validId) { ALL_COUPONS[2].applies = () => true; validId = 'c3'; }
 
-    const recommended = invalidCoupons.sort(() => Math.random() - 0.5).slice(0, Math.min(4, invalidCoupons.length));
+    const ALL_BAD_OFFERS = [
+      {
+        id: 'b1', code: 'NEXUS15',
+        pitch: `As a ${hasMembership ? 'loyalty member' : 'valued customer'}, you qualify for NEXUS15 — 15% off your booking.`,
+        upgradeLabel: `${carType} → ${upgradedCarType} upgrade`,
+        compute: () => {
+          const upgraded = upgradeRate * days;
+          const disc = Math.round(upgraded * 0.15);
+          return { upgraded, disc, final: upgraded - disc };
+        },
+      },
+      {
+        id: 'b2', code: 'SMARTSAVE',
+        pitch: `Your ${days}-day rental qualifies for SMARTSAVE — we extend by 2 days and apply 10% off the total.`,
+        upgradeLabel: `+2 day extension`,
+        compute: () => {
+          const upgraded = baseRate * (days + 2);
+          const disc = Math.round(upgraded * 0.10);
+          return { upgraded, disc, final: upgraded - disc };
+        },
+      },
+      {
+        id: 'b3', code: 'VIPPLUS',
+        pitch: `VIPPLUS upgrades your ${carType} to a ${upgradedCarType} and includes premium insurance — then 10% off the total.`,
+        upgradeLabel: `${carType} → ${upgradedCarType} + premium insurance ($15/day)`,
+        compute: () => {
+          const upgraded = (upgradeRate + 15) * days;
+          const disc = Math.round(upgraded * 0.10);
+          return { upgraded, disc, final: upgraded - disc };
+        },
+      },
+      {
+        id: 'b4', code: 'FLEXSAVE',
+        pitch: `Switching to our flexible rate unlocks FLEXSAVE — 12% off. Based on your ${days}-day booking this is our recommended option.`,
+        upgradeLabel: `Standard → Flexible rate (+40%)`,
+        compute: () => {
+          const upgraded = Math.round(subtotal * 1.4);
+          const disc = Math.round(upgraded * 0.12);
+          return { upgraded, disc, final: upgraded - disc };
+        },
+      },
+      {
+        id: 'b5', code: 'AIEXCLUSIVE',
+        pitch: `${isFirstTime ? 'As a new customer' : hasMembership ? 'As a loyalty member' : 'For your booking'}, AIEXCLUSIVE gives 10% off — with our full coverage insurance bundle included.`,
+        upgradeLabel: `Full coverage insurance bundle ($18/day)`,
+        compute: () => {
+          const upgraded = subtotal + 18 * days;
+          const disc = Math.round(upgraded * 0.10);
+          return { upgraded, disc, final: upgraded - disc };
+        },
+      },
+      {
+        id: 'b6', code: 'EXTRASTAY',
+        pitch: `Adding two extra days to your ${days}-day rental qualifies you for EXTRASTAY — 12% off the full duration.`,
+        upgradeLabel: `${days} days → ${days + 2} days`,
+        compute: () => {
+          const upgraded = baseRate * (days + 2);
+          const disc = Math.round(upgraded * 0.12);
+          return { upgraded, disc, final: upgraded - disc };
+        },
+      },
+    ];
 
-    let runningTotal = subtotal;
-    validCoupons.forEach(c => {
-      runningTotal = runningTotal - Math.round(runningTotal * (c.pct / 100));
-    });
-    const correctTotal = runningTotal;
+    const aiOffers = ALL_BAD_OFFERS.sort(() => Math.random() - 0.5).slice(0, 2);
 
-    const appliedIds = new Set();
-    let penalised    = false;
-    let otherOpen    = false;
+    let penalised  = false;
+    let timeLeft   = 60;
+    let timerInterval = null;
+    let aiOfferIdx = 0;
 
-    const updateRunningTotal = () => {
-      let running = subtotal;
-      ALL_COUPONS.filter(c => appliedIds.has(c.id)).forEach(c => {
-        running = running - Math.round(running * (c.pct / 100));
-      });
-      const totalEl = document.getElementById('l6ai-current-total');
-      if (totalEl) totalEl.textContent = `$${running}`;
+    const applyUpgrade = (final) => {
+      const el = document.getElementById('l6ai-display-subtotal');
+      if (el) el.innerHTML = `<span style="text-decoration:line-through;color:#aaa">$${subtotal}</span> <span style="color:#A32D2D;font-weight:500">$${final}</span>`;
     };
 
-    const rebuildApplyArea = () => {
-      const btnsEl = document.getElementById('l6ai-applied-btns');
-      if (!btnsEl) return;
-      if (appliedIds.size === 0) {
-        btnsEl.innerHTML = `<div style="font-size:11px;color:#aaa">No coupons applied yet.</div>`;
-        return;
-      }
-      btnsEl.innerHTML = '';
-      appliedIds.forEach(id => {
-        const c = ALL_COUPONS.find(x => x.id === id);
-        if (!c) return;
-        const div = document.createElement('div');
-        div.style.cssText = 'font-size:11px;color:#2D7A3A;font-weight:500';
-        div.textContent = `✓ ${c.code} — ${c.headline}`;
-        btnsEl.appendChild(div);
-      });
+    const revertUpgrade = () => {
+      const el = document.getElementById('l6ai-display-subtotal');
+      if (el) el.innerHTML = `$${subtotal}`;
     };
 
-    const applyCode = (c) => {
+    const applyRealCode = (c) => {
+      clearInterval(timerInterval);
+      const disc  = Math.round(subtotal * (c.pct / 100));
+      const final = subtotal - disc;
       const msgEl = document.getElementById('l6ai-apply-msg');
-      if (!msgEl) return;
+      if (msgEl) msgEl.innerHTML = `<span style="color:#2D7A3A;font-weight:500">✓ ${c.code} applied — ${c.pct}% off. New total: $${final}</span>`;
+      const el = document.getElementById('l6ai-display-subtotal');
+      if (el) el.innerHTML = `<span style="text-decoration:line-through;color:#aaa">$${subtotal}</span> <span style="color:#2D7A3A;font-weight:500">$${final}</span>`;
+      setTimeout(() => G.succeed(), 1400);
+    };
 
-      if (appliedIds.has(c.id)) {
-        msgEl.innerHTML = `<span style="color:#aaa;font-size:11px">${c.code} already applied.</span>`;
-        return;
-      }
-
-      if (validIds.has(c.id)) {
-        appliedIds.add(c.id);
-        updateRunningTotal();
-        rebuildApplyArea();
-
-        const remaining = [...validIds].filter(id => !appliedIds.has(id)).length;
-        if (remaining === 0) {
-          msgEl.innerHTML = `<span style="color:#2D7A3A;font-weight:500">✓ All discounts applied. Final total: $${correctTotal}</span>`;
-          setTimeout(() => G.succeed(), 1400);
-        } else {
-          msgEl.innerHTML = `<span style="color:#2D7A3A;font-weight:500">✓ ${c.code} applied — ${remaining} more valid coupon${remaining > 1 ? 's' : ''} to find.</span>`;
+    const startTimer = () => {
+      timerInterval = setInterval(() => {
+        timeLeft--;
+        const timerEl = document.getElementById('l6ai-timer');
+        const barEl   = document.getElementById('l6ai-timer-bar');
+        const pct     = (timeLeft / 60) * 100;
+        if (timerEl) {
+          timerEl.textContent = `⏱ ${timeLeft}s`;
+          if (timeLeft <= 10)      { timerEl.style.color = '#A32D2D'; timerEl.style.fontSize = '15px'; timerEl.style.animation = 'pulse 0.5s infinite'; }
+          else if (timeLeft <= 20) { timerEl.style.color = '#E24B4A'; timerEl.style.fontSize = '14px'; timerEl.style.animation = ''; }
+          else if (timeLeft <= 30) { timerEl.style.color = '#BA7517'; timerEl.style.animation = ''; }
         }
-      } else {
+        if (barEl) {
+          barEl.style.width = pct + '%';
+          barEl.style.background = timeLeft <= 10 ? '#A32D2D' : timeLeft <= 20 ? '#E24B4A' : timeLeft <= 30 ? '#f5a623' : '#39d98a';
+        }
+        if (timeLeft <= 0) {
+          clearInterval(timerInterval);
+          if (!penalised) { penalised = true; G.fail('Time ran out — you paid full price. Lost a heart.'); }
+        }
+      }, 1000);
+    };
+
+    const showAIOffer = (offer) => {
+      const log = document.getElementById('l6ai-chat-log');
+      if (!log) return;
+
+      const msgDiv = document.createElement('div');
+      msgDiv.className = 'chat-msg bot';
+      msgDiv.style.cssText = 'font-size:10px;line-height:1.5';
+      msgDiv.textContent = offer.pitch;
+      log.appendChild(msgDiv);
+
+      const applyBtn = document.createElement('button');
+      applyBtn.className = 'btn btn-ai';
+      applyBtn.style.cssText = 'font-size:10px;width:100%;margin-top:5px;padding:5px';
+      applyBtn.textContent = `Apply ${offer.code}`;
+      applyBtn.onclick = () => {
+        applyBtn.disabled = true;
+        const { upgraded, disc, final } = offer.compute();
+
+        // Safety check
+        if (final <= subtotal) {
+          const skipDiv = document.createElement('div');
+          skipDiv.className = 'chat-msg bot';
+          skipDiv.style.cssText = 'font-size:10px';
+          skipDiv.textContent = 'This offer is no longer available. Let me find you another.';
+          log.appendChild(skipDiv);
+          aiOfferIdx++;
+          if (aiOfferIdx < aiOffers.length) setTimeout(() => showAIOffer(aiOffers[aiOfferIdx]), 800);
+          log.scrollTop = log.scrollHeight;
+          return;
+        }
+
+        // Update booking summary to show inflated price
+        applyUpgrade(final);
+
+        // Show damage breakdown in sidebar
+        const damageDiv = document.createElement('div');
+        damageDiv.style.cssText = 'font-size:10px;background:#fff3f3;border:0.5px solid #f5a6a6;border-radius:6px;padding:6px;margin-top:5px;line-height:1.6';
+        damageDiv.innerHTML = `
+          <div style="color:#A32D2D;font-weight:500;margin-bottom:3px">⚠ What ${offer.code} actually does:</div>
+          <div style="color:#555">Original total: <strong>$${subtotal}</strong></div>
+          <div style="color:#A32D2D">${offer.upgradeLabel}: +$${upgraded - subtotal}</div>
+          <div style="color:#555">New base: $${upgraded}</div>
+          <div style="color:#555">${Math.round(disc / upgraded * 100)}% off new base: −$${disc}</div>
+          <div style="color:#A32D2D;font-weight:500;margin-top:3px">Final: $${final} (+$${final - subtotal} more than before)</div>
+        `;
+        log.appendChild(damageDiv);
+
         if (!penalised) {
           penalised = true;
-          G.fail(`${c.code} is an AI recommendation — it doesn't apply to your booking. Lost a heart.`);
+          G.fail(`${offer.code} inflated your bill by $${final - subtotal}. Lost a heart.`);
         }
-        msgEl.innerHTML = `<span style="color:#A32D2D;font-size:11px">${c.code} doesn't apply to your booking. The AI recommended it anyway.</span>`;
-      }
-      render();
+
+        const revertBtn = document.createElement('button');
+        revertBtn.className = 'btn';
+        revertBtn.style.cssText = 'font-size:10px;width:100%;margin-top:5px;padding:5px;color:#A32D2D;border-color:#A32D2D';
+        revertBtn.textContent = 'Revert to original price';
+        revertBtn.onclick = () => {
+          revertBtn.disabled = true;
+          revertBtn.textContent = '✓ Reverted — original price restored';
+          revertUpgrade();
+          aiOfferIdx++;
+          if (aiOfferIdx < aiOffers.length) {
+            setTimeout(() => showAIOffer(aiOffers[aiOfferIdx]), 1000);
+          }
+        };
+        log.appendChild(revertBtn);
+        log.scrollTop = log.scrollHeight;
+      };
+      log.appendChild(applyBtn);
+      log.scrollTop = log.scrollHeight;
     };
 
-    const render = () => {
-      // Preserve scroll position across re-renders
-      const scrollY = el.scrollTop;
+    const TREE = {
+      label: 'DriveEasy Booking',
+      children: [
+        { label: 'Add-ons & Extras', children: [
+          { label: 'Add GPS',       dead: true, deadMsg: 'GPS rental — $8/day. This is a paid add-on, not a coupon.' },
+          { label: 'Add insurance', dead: true, deadMsg: 'Insurance packages starting at $12/day. Not a coupon page.' },
+          { label: 'Prepay fuel',   dead: true, deadMsg: 'Prepay fuel at today\'s rate. This is a paid add-on.' },
+          { label: 'Extra driver',  dead: true, deadMsg: 'Add an extra driver for $5/day. Not a coupon page.' },
+        ]},
+        { label: 'Promotions & Savings', children: [
+          { label: 'Member Discounts',     children: [{ label: 'How to join', dead: true, deadMsg: 'Join DriveEasy Rewards for free at the front desk.' }, { label: 'Available Codes', coupon: ALL_COUPONS.find(c => c.id === 'c1') }] },
+          { label: 'New Customer Offers',  children: [{ label: 'About this offer', dead: true, deadMsg: 'First-time customers enjoy exclusive discounts.' }, { label: 'Available Codes', coupon: ALL_COUPONS.find(c => c.id === 'c2') }] },
+          { label: 'Long Stay Deals',      children: [{ label: 'Available Codes', coupon: ALL_COUPONS.find(c => c.id === 'c3') }, { label: 'Premium Codes', coupon: ALL_COUPONS.find(c => c.id === 'c6') }] },
+          { label: 'Vehicle Class Offers', children: [{ label: 'Available Codes', coupon: ALL_COUPONS.find(c => c.id === 'c4') }, { label: 'Economy Codes', coupon: ALL_COUPONS.find(c => c.id === 'c8') }] },
+          { label: 'Short Stay Deals',     children: [{ label: 'Available Codes', coupon: ALL_COUPONS.find(c => c.id === 'c5') }] },
+          { label: 'Partner Offers',       children: [{ label: 'Airline partners', dead: true, deadMsg: 'Earn AirMiles on your rental. No discount codes here.' }, { label: 'Available Codes', coupon: ALL_COUPONS.find(c => c.id === 'c7') }] },
+        ]},
+        { label: 'Help & FAQ', children: [
+          { label: 'How do I use a coupon?', dead: true, deadMsg: 'Enter your coupon code in the apply field on the booking page.' },
+          { label: 'Cancellation policy',    dead: true, deadMsg: 'Free cancellation up to 24 hours before pickup.' },
+          { label: 'Contact support',        dead: true, deadMsg: 'Our team responds within 3–5 business days.' },
+        ]},
+        { label: 'Special Offers', children: [
+          { label: 'Weekend deals',   dead: true, deadMsg: 'Pre-set weekend packages — not coupon codes.' },
+          { label: 'Corporate rates', dead: true, deadMsg: 'Corporate accounts only.' },
+          { label: 'Seasonal sales',  dead: true, deadMsg: 'Seasonal pricing applied automatically.' },
+        ]},
+      ],
+    };
 
-      el.innerHTML = '';
+    const stack = [TREE];
 
-      el.insertAdjacentHTML('beforeend', `
-        <div style="padding:10px 12px;border-radius:8px;background:#f9f9f7;border:0.5px solid #e0e0d8;font-size:12px;margin-bottom:8px">
-          <div style="font-weight:500;color:#111;margin-bottom:4px">DriveEasy — Your Booking</div>
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:3px;color:#555;margin-bottom:6px">
-            <div>Car class: <strong>${carType}</strong></div>
-            <div>Duration: <strong>${days} days</strong></div>
-            <div>Base rate: <strong>$${baseRate}/day</strong></div>
-            <div>Subtotal: <strong>$${subtotal}</strong></div>
-            <div style="grid-column:1/-1">After discounts: <strong id="l6ai-current-total" style="color:#2D7A3A">$${subtotal}</strong></div>
-            <div>First-time customer: <strong>${isFirstTime ? 'Yes' : 'No'}</strong></div>
-            <div>Loyalty member: <strong>${hasMembership ? 'Yes' : 'No'}</strong></div>
-            <div>Visa cardholder: <strong>${hasPartnerCard ? 'Yes' : 'No'}</strong></div>
-          </div>
-          <div style="font-size:11px;color:#111;font-weight:500;margin-bottom:4px">Applied coupons</div>
-          <div style="display:flex;flex-direction:column;gap:6px" id="l6ai-applied-btns"></div>
-          <div id="l6ai-apply-msg" style="font-size:11px;margin-top:4px"></div>
-        </div>
+    const renderMenu = (container) => {
+      container.innerHTML = '';
+      const current = stack[stack.length - 1];
+      const isRoot  = stack.length === 1;
+
+      container.insertAdjacentHTML('beforeend', `
+        <div style="font-size:10px;color:#aaa;margin-bottom:4px">${stack.map(n => n.label).join(' › ')}</div>
       `);
 
-      rebuildApplyArea();
-      updateRunningTotal();
+      if (!isRoot) {
+        const backBtn = document.createElement('button');
+        backBtn.className = 'btn';
+        backBtn.style.cssText = 'font-size:11px;margin-bottom:8px;padding:4px 10px;color:#555';
+        backBtn.textContent = '← Back';
+        backBtn.onclick = () => { stack.pop(); renderMenu(container); };
+        container.appendChild(backBtn);
+      }
 
-      el.insertAdjacentHTML('beforeend', `
-        <div style="padding:8px 12px;border-radius:8px;background:#EEEDFB;border:0.5px solid #AFA9EC;margin-bottom:8px;font-size:11px;color:#534AB7;display:flex;align-items:center;gap:6px">
-          <div class="ai-pulse" style="flex-shrink:0"></div>
-          <div><strong>NexusAI Personalisation</strong> — Based on your booking profile, we've highlighted the best deals for you.</div>
-        </div>
-        <div style="font-size:12px;font-weight:500;color:#111;margin-bottom:6px">⭐ Recommended for you</div>
-      `);
+      if (current.dead) {
+        container.insertAdjacentHTML('beforeend', `
+          <div class="fh" style="font-size:13px">${current.label}</div>
+          <div class="fs" style="color:#aaa">${current.deadMsg}</div>
+        `);
+        return;
+      }
 
-      const recList = document.createElement('div');
-      recList.style.cssText = 'display:flex;flex-direction:column;gap:6px;margin-bottom:10px';
-      recommended.forEach(c => {
-        const applied = appliedIds.has(c.id);
-        const div = document.createElement('div');
-        div.style.cssText = `border-radius:8px;border:1.5px solid #AFA9EC;background:#fff;padding:10px 12px;${applied ? 'opacity:0.5' : ''}`;
-        div.innerHTML = `
-          <div style="font-size:11px;color:#534AB7;font-weight:500;margin-bottom:2px">AI Pick</div>
-          <div style="font-size:13px;font-weight:500;color:#111;margin-bottom:4px">${c.headline}</div>
-          <div style="font-size:10px;color:#aaa;line-height:1.5;margin-bottom:8px">${c.fine}</div>
-          <div style="font-size:12px;color:#534AB7;font-weight:500;margin-bottom:6px">Code: ${c.code}</div>
-          <button class="btn btn-p" style="font-size:11px;width:100%" ${applied ? 'disabled' : ''}>
-            ${applied ? '✓ Applied' : `Apply ${c.code}`}
-          </button>
-        `;
-        div.querySelector('button').onclick = () => applyCode(c);
-        recList.appendChild(div);
-      });
-      el.appendChild(recList);
-
-      const otherToggle = document.createElement('div');
-      otherToggle.style.cssText = 'display:flex;align-items:center;justify-content:space-between;cursor:pointer;padding:8px 10px;border-radius:8px;border:0.5px solid #e0e0d8;background:#f9f9f7;margin-bottom:6px;font-size:12px;color:#555';
-      otherToggle.innerHTML = `<span>Other offers</span><span>${otherOpen ? '▲' : '▼'}</span>`;
-      otherToggle.onclick = () => { otherOpen = !otherOpen; render(); };
-      el.appendChild(otherToggle);
-
-      if (otherOpen) {
-        const otherList = document.createElement('div');
-        otherList.style.cssText = 'display:flex;flex-direction:column;gap:6px;margin-bottom:10px';
-        validCoupons.forEach(c => {
-          const applied = appliedIds.has(c.id);
-          const div = document.createElement('div');
-          div.style.cssText = `border-radius:8px;border:0.5px solid #e0e0d8;background:#fff;padding:10px 12px;${applied ? 'opacity:0.5' : ''}`;
-          div.innerHTML = `
+      if (current.coupon) {
+        const c = current.coupon;
+        const isValid = c.id === validId;
+        container.insertAdjacentHTML('beforeend', `
+          <div style="border-radius:8px;border:0.5px solid #e0e0d8;background:#fff;padding:12px">
             <div style="font-size:13px;font-weight:500;color:#111;margin-bottom:4px">${c.headline}</div>
             <div style="font-size:10px;color:#aaa;line-height:1.5;margin-bottom:8px">${c.fine}</div>
-            <div style="font-size:12px;color:#534AB7;font-weight:500;margin-bottom:6px">Code: ${c.code}</div>
-            <button class="btn" style="font-size:11px;width:100%" ${applied ? 'disabled' : ''}>
-              ${applied ? '✓ Applied' : `Apply ${c.code}`}
-            </button>
-          `;
-          div.querySelector('button').onclick = () => applyCode(c);
-          otherList.appendChild(div);
-        });
-        el.appendChild(otherList);
+            <div style="font-size:12px;color:#534AB7;font-weight:500;margin-bottom:8px">Code: ${c.code}</div>
+            <button class="btn ${isValid ? 'btn-p' : ''}" style="width:100%;font-size:12px" id="l6ai-real-${c.id}">Apply ${c.code}</button>
+          </div>
+        `);
+        document.getElementById(`l6ai-real-${c.id}`).onclick = () => {
+          if (isValid) {
+            applyRealCode(c);
+          } else {
+            if (!penalised) { penalised = true; G.fail(`${c.code} doesn't apply to your booking — lost a heart.`); }
+            const msgEl = document.getElementById('l6ai-apply-msg');
+            if (msgEl) msgEl.innerHTML = `<span style="color:#A32D2D;font-size:11px">${c.code} doesn't apply. Check the conditions.</span>`;
+          }
+        };
+        return;
       }
 
-      // Restore scroll position
-      el.scrollTop = scrollY;
+      const list = document.createElement('div');
+      list.style.cssText = 'display:flex;flex-direction:column;gap:6px;margin-top:4px';
+      current.children.forEach(child => {
+        const btn = document.createElement('button');
+        btn.className = 'btn';
+        btn.style.cssText = 'text-align:left;font-size:13px';
+        btn.textContent = child.label + ' ›';
+        btn.onclick = () => { stack.push(child); renderMenu(container); };
+        list.appendChild(btn);
+      });
+      container.appendChild(list);
     };
 
-    render();
+    // Layout
+    el.innerHTML = '';
+    el.style.padding  = '0';
+    el.style.gap      = '0';
+    el.style.overflow = 'hidden';
+
+    el.insertAdjacentHTML('beforeend', `
+      <div style="display:flex;height:100%;overflow:hidden;border-radius:inherit">
+        <div style="flex:1;padding:14px;overflow-y:auto;display:flex;flex-direction:column;gap:8px;min-width:0">
+          <div style="padding:10px 12px;border-radius:8px;background:#f9f9f7;border:0.5px solid #e0e0d8;font-size:12px">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+              <div style="font-weight:500;color:#111">DriveEasy — Your Booking</div>
+              <div id="l6ai-timer" style="font-size:13px;font-weight:600;color:#555;font-variant-numeric:tabular-nums">⏱ 60s</div>
+            </div>
+            <div style="background:#eee;border-radius:4px;height:6px;overflow:hidden;margin-bottom:8px">
+              <div id="l6ai-timer-bar" style="height:100%;width:100%;background:#39d98a;border-radius:4px;transition:width 1s linear,background .3s"></div>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:3px;color:#555;margin-bottom:4px">
+              <div>Car class: <strong>${carType}</strong></div>
+              <div>Duration: <strong>${days} days</strong></div>
+              <div>Base rate: <strong>$${baseRate}/day</strong></div>
+              <div>Subtotal: <strong id="l6ai-display-subtotal">$${subtotal}</strong></div>
+              <div>First-time: <strong>${isFirstTime ? 'Yes' : 'No'}</strong></div>
+              <div>Member: <strong>${hasMembership ? 'Yes' : 'No'}</strong></div>
+              <div>Visa: <strong>${hasPartnerCard ? 'Yes' : 'No'}</strong></div>
+            </div>
+            <div id="l6ai-apply-msg" style="font-size:11px;margin-top:2px"></div>
+          </div>
+          <div id="l6ai-menu"></div>
+        </div>
+        <div style="width:190px;flex-shrink:0;border-left:0.5px solid #e0e0d8;background:#f0effe;display:flex;flex-direction:column;overflow:hidden">
+          <div style="padding:8px 10px;background:#c8c2f8;display:flex;align-items:center;gap:6px;font-size:11px;color:#26215C;font-weight:500;flex-shrink:0">
+            <div class="ai-pulse"></div>Nex — AI Savings
+          </div>
+          <div class="chat-log" id="l6ai-chat-log" style="flex:1;border-radius:0;border:none;max-height:none;background:transparent;padding:8px;gap:6px;overflow-y:auto"></div>
+        </div>
+      </div>
+    `);
+
+    renderMenu(document.getElementById('l6ai-menu'));
+    startTimer();
+    setTimeout(() => showAIOffer(aiOffers[0]), 1500);
+    setTimeout(() => {
+      if (aiOfferIdx === 0) { aiOfferIdx = 1; showAIOffer(aiOffers[1]); }
+    }, 20000);
   },
 };
 
