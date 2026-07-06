@@ -272,16 +272,18 @@
   </div>
 
   <!-- GAME OVER -->
-  <div class="scr" id="scr-gameover" style="padding:28px 20px;align-items:center;text-align:center;gap:14px">
-    <div style="font-size:32px">💔</div>
-    <div style="font-size:22px;font-weight:500;color:var(--text)">Game Over</div>
-    <div style="font-size:13px;color:var(--text2);max-width:380px;line-height:1.6">The dark patterns got you. Here's how each level went:</div>
-    <div id="go-breakdown" style="width:100%;max-width:380px;background:var(--bg2);border-radius:10px;padding:14px;border:1px solid var(--border);display:flex;flex-direction:column;gap:8px;text-align:left"></div>
-    <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center">
-      <button class="gbtn gbtn-green" onclick="G.tryAgain()">Try Again →</button>
-      <button class="gbtn gbtn-dark"  onclick="G.continueAfterFail()">Continue anyway →</button>
+  <div class="gameover-overlay" id="scr-gameover" style="display:none">
+    <div class="gameover-panel">
+      <div style="font-size:32px">💔</div>
+      <div style="font-size:22px;font-weight:500;color:var(--text)">Game Over</div>
+      <div style="font-size:13px;color:var(--text2);line-height:1.6">The dark patterns got you. Here's how each level went:</div>
+      <div id="go-breakdown" style="width:100%;background:var(--bg3);border-radius:10px;padding:14px;border:1px solid var(--border);display:flex;flex-direction:column;gap:8px;text-align:left"></div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center">
+        <button class="gbtn gbtn-green" onclick="G.tryAgain()">Try Again →</button>
+        <button class="gbtn gbtn-dark"  onclick="G.continueAfterFail()">Continue anyway →</button>
+      </div>
+      <div style="font-size:11px;color:var(--text3)">Continuing resets your hearts but keeps your progress.</div>
     </div>
-    <div style="font-size:11px;color:var(--text3)">Continuing resets your hearts but keeps your progress.</div>
   </div>
 
 </div>

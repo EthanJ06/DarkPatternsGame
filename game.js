@@ -423,13 +423,16 @@ function registerUI(callbacks) {
 }
 
 // ── Screen management ──────────────────────────────────────────────────────
-const SCREENS = ['intro', 'brief', 'level', 'debrief', 'win', 'designer', 'gameover'];
+const SCREENS = ['intro', 'brief', 'level', 'debrief', 'win', 'designer'];
 
 function setScr(name) {
   SCREENS.forEach(s => {
     const el = document.getElementById('scr-' + s);
     if (el) el.classList.toggle('active', s === name);
   });
+  //Close game over screen whenever user navigates to another screen
+  const go = document.getElementById('scr-gameover');
+  if (go) go.style.display = 'none';
 }
 
 // ── Brief ──────────────────────────────────────────────────────────────────
@@ -662,7 +665,8 @@ function jumpTo(idx) {
 
 // ── Game Over ──────────────────────────────────────────────────────────────
 function showGameOver() {
-  setScr('gameover');
+  const overlay = document.getElementById('scr-gameover');
+  if (overlay) overlay.style.display = 'flex';
   const el = document.getElementById('go-breakdown');
   if (!el) return;
   el.innerHTML = LEVELS.map((lv, i) => {
