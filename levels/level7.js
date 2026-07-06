@@ -1,64 +1,113 @@
 // js/levels/level7.js — Fake Scarcity / Urgency
 
 const NOTIFICATIONS = [
-  "Sarah from New York just purchased this item",
-  "Marcus from Austin just purchased this item",
-  "Priya from Seattle just purchased this item",
-  "David from Chicago just purchased Wireless Earbuds",
-  "Emma from Boston just purchased this item",
+  'Someone bought this 6 minutes ago',
+  '14 people bought this in the last hour',
+  'Someone just checked out with Wireless Earbuds',
+  'M. in Austin added this to their cart just now',
 ];
 
 const STYLES = `
-  .l7-topbar{background:#232f3e;padding:6px 10px;display:flex;align-items:center;gap:6px;border-radius:8px 8px 0 0}
-  .l7-searchbox{flex:1;background:#fff;border-radius:4px;display:flex;align-items:center;padding:0 8px;height:28px;gap:5px}
-  .l7-searchbox input{flex:1;border:none;outline:none;font-size:12px;color:#111;background:transparent}
-  .l7-sbtn{background:#febd69;border:none;padding:0 8px;height:28px;font-size:13px;cursor:pointer;border-radius:0 3px 3px 0}
-  .l7-cartbtn{position:relative;background:#37475a;border:none;height:28px;padding:0 9px;border-radius:4px;cursor:pointer;display:flex;align-items:center;gap:5px;color:#fff;font-size:12px;font-family:inherit;flex-shrink:0}
-  .l7-cartbtn:hover{background:#41566c}
-  .l7-cartbadge{position:absolute;top:-5px;right:-5px;background:#febd69;color:#111;font-size:9px;font-weight:700;border-radius:50%;min-width:15px;height:15px;display:flex;align-items:center;justify-content:center;padding:0 2px}
-  .l7-feed{max-height:320px;overflow-y:auto;overflow-x:hidden;display:flex;flex-direction:column;gap:0;border:0.5px solid #e0e0d8;border-radius:0 0 8px 8px}
-  .l7-banner{padding:6px 10px;font-size:11px;font-weight:500;display:flex;align-items:center;justify-content:space-between;border-bottom:0.5px solid #e8e8e4}
+  .l7-wrap{display:flex;flex-direction:column;background:#f0f2f2;font-family:system-ui,-apple-system,sans-serif}
+  .l7-nav{background:#232f3e;padding:9px 12px;display:flex;align-items:center;gap:10px;flex-shrink:0}
+  .l7-logo{color:#fff;font-size:15px;font-weight:700;letter-spacing:-.5px;white-space:nowrap;flex-shrink:0;cursor:pointer}
+  .l7-logo span{color:#febd69}
+  .l7-delivery{background:#232f3e;color:#e2e2e2;font-size:10px;padding:0 12px 7px;display:flex;align-items:center;gap:4px;flex-shrink:0}
+  .l7-delivery b{color:#fff;font-weight:600}
+  .l7-searchrow{flex:1;display:flex;min-width:0}
+  .l7-searchbox{flex:1;display:flex;background:#fff;border-radius:7px;overflow:hidden;border:2px solid transparent;transition:border-color .15s,box-shadow .15s}
+  .l7-catsel{background:#e9ecef;color:#444;font-size:11px;padding:0 8px;display:flex;align-items:center;border-right:1px solid #d8d8d3;flex-shrink:0;white-space:nowrap}
+  .l7-searchbox:focus-within{border-color:#febd69;box-shadow:0 0 0 2px rgba(254,189,105,.25)}
+  .l7-searchbox input{flex:1;border:none;outline:none;font-size:12px;color:#111;background:transparent;padding:0 10px;height:32px;min-width:0;font-family:inherit}
+  .l7-sbtn{background:#febd69;border:none;padding:0 12px;height:32px;font-size:14px;cursor:pointer;flex-shrink:0}
+  .l7-sbtn:hover{background:#f0a921}
+  .l7-cartbtn{position:relative;background:#37475a;border:none;height:32px;padding:0 12px;border-radius:7px;cursor:pointer;display:flex;align-items:center;gap:6px;color:#fff;font-size:12px;font-family:inherit;flex-shrink:0;white-space:nowrap}
+  .l7-cartbtn:hover{background:#485769}
+  .l7-cartbadge{position:absolute;top:-6px;right:-6px;background:#febd69;color:#111;font-size:9px;font-weight:700;border-radius:50%;min-width:16px;height:16px;display:flex;align-items:center;justify-content:center;padding:0 2px;box-shadow:0 0 0 2px #232f3e}
+  .l7-subnav{background:#37475a;padding:5px 12px;display:flex;gap:14px;overflow-x:auto;flex-shrink:0}
+  .l7-subnav::-webkit-scrollbar{display:none}
+  .l7-snitem{color:#fff;font-size:11px;white-space:nowrap;opacity:.82}
+  .l7-goalbar{background:#1b2531;color:#febd69;font-size:11px;font-weight:500;padding:7px 12px;text-align:center;border-bottom:1px solid #37475a;flex-shrink:0}
+  .l7-goalbar.done{background:#123018;color:#5fe39a}
+  .l7-reservebar{background:#fbeee0;color:#7a4a14;font-size:10px;font-weight:500;padding:5px 12px;text-align:center;flex-shrink:0;border-bottom:.5px solid #f0ddc2}
+  .l7-content{overflow-y:auto;overflow-x:hidden;max-height:380px}
+  .l7-section{padding:16px;background:#fff;margin-bottom:8px}
+  .l7-shead{font-size:13px;font-weight:600;color:#111;margin-bottom:14px;display:flex;justify-content:space-between;align-items:center}
+  .l7-seemore{font-size:11px;font-weight:500;color:#0C447C;cursor:default}
+  .l7-seemore.active{cursor:pointer}
+  .l7-seemore.active:hover{text-decoration:underline}
+  .l7-row{display:flex;gap:18px;overflow-x:auto;padding-bottom:4px}
+  .l7-row::-webkit-scrollbar{display:none}
+  .l7-card{flex-shrink:0;width:98px;display:flex;flex-direction:column;gap:6px;cursor:pointer}
+  .l7-card-img{width:98px;height:80px;background:radial-gradient(120% 120% at 50% 20%,#ffffff 0%,#f4f4f1 60%,#eaeae5 100%);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:29px;border:.5px solid #e6e6e1;position:relative;overflow:hidden;transition:box-shadow .15s,transform .15s}
+  .l7-card-img::after{content:'';position:absolute;left:50%;bottom:9px;width:52%;height:7px;background:radial-gradient(closest-side,rgba(0,0,0,.16),transparent 75%);transform:translateX(-50%)}
+  .l7-card:hover .l7-card-img{box-shadow:0 3px 10px rgba(0,0,0,.12);transform:translateY(-1px)}
+  .l7-card-badge{position:absolute;top:5px;left:5px;background:#A32D2D;color:#fff;font-size:8px;font-weight:600;padding:2px 5px;border-radius:4px}
+  .l7-card-title{font-size:10px;color:#111;line-height:1.3;min-height:26px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+  .l7-card-price{font-size:11px;font-weight:600;color:#111}
+  .l7-card-orig{font-size:10px;color:#888;text-decoration:line-through}
+  .l7-chip{flex-shrink:0;display:flex;align-items:center;gap:6px;padding:8px 12px;background:#f5f5f2;border:.5px solid #e8e8e4;border-radius:20px;cursor:pointer;font-size:11px;color:#111;white-space:nowrap;transition:background .12s,box-shadow .15s}
+  .l7-chip:hover{background:#ececea;box-shadow:0 1px 4px rgba(0,0,0,.08)}
+  .l7-chip span{font-size:15px}
+  .l7-atc{font-size:9px;background:#febd69;border:1px solid #f0a921;border-radius:5px;padding:5px 6px;cursor:pointer;color:#111;font-family:inherit;width:100%}
+  .l7-atc:hover{background:#f0a921}
+  .l7-atc.added{background:#EAF3DE;color:#27500A;border-color:#27500A}
+  .l7-feed{background:#f0f2f2}
+  .l7-feed-head{padding:9px 12px;background:#fff;font-size:11px;color:#555;border-bottom:.5px solid #e8e8e4}
+  .l7-feed-head strong{color:#111}
+  .l7-banner{padding:7px 12px;font-size:11px;font-weight:500;margin-bottom:2px}
   .l7-banner.red{background:#FCEBEB;color:#A32D2D}
   .l7-banner.amber{background:#FAEEDA;color:#854F0B}
   .l7-banner.blue{background:#E6F1FB;color:#185FA5}
-  .l7-product{padding:9px 10px;border-bottom:0.5px solid #e8e8e4;display:flex;gap:8px;background:#fff}
-  .l7-product:hover{background:#f9f9f7}
-  .l7-pimg{width:56px;height:56px;border-radius:5px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:20px;background:#f5f5f2}
-  .l7-pbody{flex:1;display:flex;flex-direction:column;gap:2px;min-width:0}
-  .l7-ptitle{font-size:12px;color:#111;line-height:1.4}
-  .l7-pstars{font-size:10px;color:#854F0B}
-  .l7-pprice{font-size:13px;font-weight:500;color:#111}
-  .l7-pprice .orig{font-size:10px;text-decoration:line-through;color:#aaa;margin-left:4px;font-weight:400}
-  .l7-pbadge{font-size:9px;font-weight:500;padding:2px 5px;border-radius:3px;display:inline-block;margin-top:1px}
+  .l7-notif{padding:6px 12px;font-size:10px;color:#888;background:#f9f9f7;border-bottom:.5px solid #f0f0ec;font-style:italic;margin-bottom:2px}
+  .l7-product{padding:16px;display:flex;gap:14px;background:#fff;margin-bottom:2px;cursor:pointer;transition:background .12s}
+  .l7-product:hover{background:#fafafa}
+  .l7-pimg{width:74px;height:74px;border-radius:11px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:28px;background:radial-gradient(120% 120% at 50% 20%,#ffffff 0%,#f4f4f1 60%,#eaeae5 100%);border:.5px solid #e6e6e1;position:relative;overflow:hidden}
+  .l7-pimg::after{content:'';position:absolute;left:50%;bottom:7px;width:50%;height:6px;background:radial-gradient(closest-side,rgba(0,0,0,.15),transparent 75%);transform:translateX(-50%)}
+  .l7-pbody{flex:1;display:flex;flex-direction:column;gap:4px;min-width:0}
+  .l7-ptitle{font-size:13px;color:#0C447C;line-height:1.4;font-weight:500}
+  .l7-ptitle:hover{text-decoration:underline;color:#c45500}
+  .l7-pstars{font-size:11px;color:#854F0B}
+  .l7-rcount{color:#0C447C;font-weight:500}
+  .l7-pprice{font-size:15px;font-weight:600;color:#111}
+  .l7-pprice .orig{font-size:11px;text-decoration:line-through;color:#aaa;margin-left:4px;font-weight:400}
+  .l7-pbadge{font-size:10px;font-weight:500;padding:3px 7px;border-radius:4px;display:inline-block;margin-top:1px}
   .l7-br{background:#FCEBEB;color:#A32D2D}
   .l7-ba{background:#FAEEDA;color:#633806}
-  .l7-bb{background:#E6F1FB;color:#0C447C}
   .l7-bg{background:#EAF3DE;color:#27500A}
-  .l7-pmeta{font-size:10px;color:#aaa}
-  .l7-notif{padding:5px 10px;font-size:10px;color:#888;background:#f9f9f7;border-bottom:0.5px solid #f0f0ec;font-style:italic}
-  .l7-sechead{padding:5px 10px;font-size:10px;font-weight:500;color:#888;background:#f0f0ec;border-bottom:0.5px solid #e8e8e4;text-transform:uppercase;letter-spacing:.05em}
-  .l7-addbtn{align-self:flex-start;margin-top:3px;background:#febd69;border:none;border-radius:4px;padding:4px 9px;font-size:11px;font-weight:500;cursor:pointer;color:#111;font-family:inherit}
-  .l7-addbtn:hover{opacity:.9}
-  .l7-addbtn.added{background:#EAF3DE;color:#27500A}
-  .l7-cart{padding:12px;display:flex;flex-direction:column;gap:8px;background:#fff;border:0.5px solid #e0e0d8;border-radius:0 0 8px 8px}
-  .l7-crow{display:flex;justify-content:space-between;align-items:center;font-size:12px;padding:5px 0;border-bottom:0.5px solid #e8e8e4;gap:8px}
+  .l7-pmeta{font-size:11px;color:#aaa;margin-top:1px}
+  .l7-product .l7-atc{align-self:flex-start;width:auto;padding:7px 16px;font-size:12px;margin-top:5px}
+  .l7-cart{padding:14px;display:flex;flex-direction:column;gap:10px;background:#fff;min-height:200px}
+  .l7-cart-head{font-size:15px;font-weight:600;color:#111;border-bottom:1px solid #e8e8e4;padding-bottom:9px}
+  .l7-crow{display:flex;justify-content:space-between;align-items:center;font-size:12px;padding:9px 0;border-bottom:.5px solid #e8e8e4;gap:8px}
   .l7-crow:last-of-type{border-bottom:none}
-  .l7-crow .l7-cname{flex:1;color:#111}
-  .l7-cremove{background:none;border:none;color:#0C447C;font-size:11px;cursor:pointer;font-family:inherit;padding:2px 4px;flex-shrink:0}
-  .l7-cremove:hover{text-decoration:underline}
-  .l7-ctotal{display:flex;justify-content:space-between;font-size:13px;font-weight:500;padding-top:6px;border-top:0.5px solid #ccc}
-  .l7-tbar{height:3px;background:#eee;border-radius:2px;overflow:hidden;margin-bottom:2px}
-  .l7-tfill{height:100%;background:#E24B4A;border-radius:2px;transition:width 1s linear}
-  .l7-obtn{background:#febd69;border:none;border-radius:5px;padding:8px;font-size:13px;font-weight:500;cursor:pointer;width:100%;color:#111;font-family:inherit}
-  .l7-obtn:hover{opacity:.9}
+  .l7-cname{flex:1;color:#111;line-height:1.4}
+  .l7-cremove{background:none;border:none;color:#0C447C;font-size:11px;cursor:pointer;font-family:inherit;padding:3px 5px;flex-shrink:0}
+  .l7-cremove:hover{text-decoration:underline;color:#c45500}
+  .l7-ctotal{display:flex;justify-content:space-between;font-size:13px;font-weight:600;padding-top:9px;border-top:1px solid #ccc}
+  .l7-obtn{background:#febd69;border:1px solid #f0a921;border-radius:7px;padding:10px;font-size:13px;font-weight:500;cursor:pointer;width:100%;color:#111;font-family:inherit}
+  .l7-obtn:hover{background:#f0a921}
+  .l7-obtn:disabled{opacity:.55;cursor:default}
   .l7-backbtn{background:none;border:none;color:#0C447C;font-size:11px;cursor:pointer;font-family:inherit;text-align:left;padding:0;align-self:flex-start}
   .l7-backbtn:hover{text-decoration:underline}
-  .l7-goalbar{background:#232f3e;color:#ddd;font-size:10px;padding:4px 10px;text-align:center;border-radius:0}
-  .l7-empty{padding:24px;text-align:center;color:#aaa;font-size:12px}
+  .l7-empty{padding:28px;text-align:center;color:#aaa;font-size:12px}
+  .l7-pdp{padding:14px;background:#fff;display:flex;flex-direction:column;gap:11px}
+  .l7-pdp-top{display:flex;gap:14px;align-items:flex-start}
+  .l7-pdp-img{width:90px;height:90px;background:radial-gradient(120% 120% at 50% 20%,#ffffff 0%,#f4f4f1 60%,#eaeae5 100%);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:40px;border:.5px solid #e6e6e1;flex-shrink:0;position:relative;overflow:hidden}
+  .l7-pdp-img::after{content:'';position:absolute;left:50%;bottom:10px;width:48%;height:8px;background:radial-gradient(closest-side,rgba(0,0,0,.16),transparent 75%);transform:translateX(-50%)}
+  .l7-pdp-info{flex:1;display:flex;flex-direction:column;gap:4px}
+  .l7-pdp-title{font-size:14px;font-weight:600;color:#111;line-height:1.4}
+  .l7-pdp-stars{font-size:11px;color:#854F0B}
+  .l7-pdp-price{font-size:18px;font-weight:700;color:#111}
+  .l7-pdp-orig{font-size:11px;color:#888;text-decoration:line-through;margin-left:4px;font-weight:400}
+  .l7-pdp-desc{font-size:12px;color:#555;line-height:1.6;border-top:.5px solid #e8e8e4;padding-top:9px}
+  .l7-pdp-meta{font-size:11px;color:#555;display:flex;flex-direction:column;gap:4px}
+  .l7-pdp-meta span{display:flex;gap:5px;align-items:center}
+  .l7-pdp .l7-atc{padding:9px 14px;font-size:13px}
 `;
 
 function injectStyles() {
-  if (document.getElementById('l7-style')) return;
+  document.getElementById('l7-style')?.remove();
   const s = document.createElement('style');
   s.id = 'l7-style';
   s.textContent = STYLES;
@@ -66,33 +115,94 @@ function injectStyles() {
 }
 
 function fmt(s) {
-  const m = Math.floor(s / 60);
-  const sec = s % 60;
+  const m = Math.floor(s / 60), sec = s % 60;
   return m + ':' + (sec < 10 ? '0' : '') + sec;
 }
+function randViewers() { return Math.floor(Math.random() * 120) + 780; }
+const VIEWER_PHRASES = n => Math.random() < 0.5 ? n + ' people viewed today' : n + ' people have this in their cart right now';
+function starsHTML(s) { return s ? s.replace(/\(([\d,]+)\)/, '(<span class="l7-rcount">$1</span>)') : ''; }
 
-function randViewers() {
-  return Math.floor(Math.random() * 120) + 780;
-}
+// ── Catalog — only what's actually shown ───────────────────────────────────
+const PRODUCTS = {
+  AdventureBackpack: { img: '🎒', title: 'Adventure Backpack — 40L', price: 39.99, orig: null,   stars: '★★★★☆ (4,892)', desc: 'Versatile 40L adventure backpack with padded back panel, laptop sleeve, rain cover, and multiple organizer pockets. Built for weekend trips and everyday carry.', meta: ['Ships today', 'Eligible for free shipping'] },
+  MiniDaypack:       { img: '🎒', title: 'Mini Daypack — 12L',        price: 17.99, orig: null,   stars: '★★★☆☆ (1,447)', desc: 'Compact 12L daypack for day hikes, city commutes, or gym visits. Lightweight at 0.4 lbs.', meta: ['Usually ships within 2 days'] },
+  SchoolBackpack:    { img: '🎒', title: 'School Backpack — 20L',     price: 16.49, orig: null,   stars: '★★★☆☆ (980)',   desc: 'Roomy 20L school backpack with padded straps, organizer pocket, and laptop sleeve up to 15".', meta: ['Usually ships within 2 days'] },
+  LaptopBackpack:    { img: '🎒', title: 'Laptop Backpack — 25L',     price: 28.99, orig: 34.99,  stars: '★★★★☆ (3,310)', desc: '25L backpack with padded sleeve up to 16", USB charging port, TSA-friendly layout.', meta: ['Ships today'] },
+  TrekkingPack:      { img: '🎒', title: 'Trekking Backpack — 35L',   price: 32.99, orig: 44.99,  stars: '★★★★☆ (2,105)', desc: '35L trekking pack with waterproof zipper, adjustable hip belt, integrated rain cover.', meta: ['Ships today'] },
+  WirelessEarbuds:   { img: '🎧', title: 'Wireless Earbuds',          price: 24.99, orig: 49.99,  stars: '★★★★☆ (12,481)', desc: 'True wireless earbuds with ANC, 8-hour battery, and a charging case.', meta: ['Ships today'] },
+  Smartwatch:        { img: '⌚', title: 'Smartwatch',                 price: 149.99, orig: 199.99, stars: '★★★★☆ (5,820)', desc: 'Heart rate monitoring, GPS, sleep tracking, 7-day battery life.', meta: ['Sold by TechGear Direct'] },
+  Charger65W:        { img: '🔌', title: '65W Charger',                price: 14.99, orig: 29.99,  stars: '★★★★☆ (8,320)', desc: 'Universal 65W GaN charger with 3 ports.', meta: ['Ships today'] },
+  SmartBulb:         { img: '💡', title: 'Smart Bulb 4-pack',          price: 12.99, orig: 24.99,  stars: '★★★★☆ (6,540)', desc: 'Works with Alexa and Google Home. 16 million colors, dimmable.', meta: ['Sold by SmartHome Co'] },
+  OutdoorCamping:    { img: '🏕️', title: 'Outdoor & Camping',          price: null,  orig: null,   stars: null, desc: 'Tents, sleeping bags, camp stoves, and more.', meta: ['Browse hundreds of products'] },
+  Travel:            { img: '🧳', title: 'Travel',                     price: null,  orig: null,   stars: null, desc: 'Suitcases, travel pillows, packing cubes, passport holders.', meta: ['Browse hundreds of products'] },
+  Electronics:       { img: '🔌', title: 'Electronics',                price: null,  orig: null,   stars: null, desc: 'Headphones, wearables, chargers, and smart home gadgets.', meta: ['Browse hundreds of products'] },
+  Tent2Person:       { img: '⛺', title: '2-Person Tent',               price: 79.99, orig: 99.99,  stars: '★★★★☆ (2,240)', desc: 'Weatherproof 2-person tent with rainfly and a freestanding pole design. Sets up in under 5 minutes.', meta: ['Ships today'] },
+  HikingBoots:       { img: '🥾', title: 'Waterproof Hiking Boots',    price: 64.99, orig: 89.99,  stars: '★★★★☆ (3,105)', desc: 'Waterproof hiking boots with ankle support and a grippy outsole built for rocky trails.', meta: ['Ships today'] },
+  SleepingBag:       { img: '🛌', title: '3-Season Sleeping Bag',      price: 44.99, orig: 59.99,  stars: '★★★★☆ (1,830)', desc: 'Rated to 20°F and compresses down to the size of a football for easy packing.', meta: ['Usually ships within 2 days'] },
+  CampStove:         { img: '🔥', title: 'Portable Camp Stove',        price: 29.99, orig: null,   stars: '★★★★☆ (960)',   desc: 'Compact folding stove with piezo ignition. Boils a liter of water in under 3 minutes.', meta: ['Ships today'] },
+  Headlamp:          { img: '🔦', title: 'Rechargeable Headlamp',      price: 18.99, orig: 24.99,  stars: '★★★★☆ (2,510)', desc: '350-lumen rechargeable headlamp with a red night-vision mode and adjustable strap.', meta: ['Ships today'] },
+  CampChair:         { img: '🪑', title: 'Folding Camp Chair',         price: 34.99, orig: 44.99,  stars: '★★★★☆ (1,675)', desc: 'Lightweight folding camp chair with a cup holder and side pocket. Packs into its own bag.', meta: ['Ships today'] },
+  WaterFilter:       { img: '💧', title: 'Portable Water Filter',      price: 24.99, orig: null,   stars: '★★★★☆ (3,920)', desc: 'Filters up to 1,500 gallons of water, removing 99.9% of bacteria and protozoa.', meta: ['Ships today'] },
+  Hammock:           { img: '🪢', title: 'Camping Hammock',            price: 27.99, orig: 34.99,  stars: '★★★★☆ (2,240)', desc: 'Parachute-nylon hammock with tree straps included. Holds up to 400 lbs.', meta: ['Usually ships within 2 days'] },
+  Cooler:            { img: '🧊', title: '20-Quart Cooler',            price: 49.99, orig: 64.99,  stars: '★★★★☆ (1,340)', desc: 'Keeps ice for up to 3 days. Bear-resistant latch and non-slip feet.', meta: ['Ships today'] },
+  PackingCubes:      { img: '🧳', title: 'Packing Cubes (6-Set)',      price: 19.99, orig: 26.99,  stars: '★★★★☆ (4,410)', desc: 'Compress and organize a suitcase with six zippered cubes in graduated sizes.', meta: ['Ships today'] },
+  TravelPillow:      { img: '💤', title: 'Memory Foam Travel Pillow',  price: 15.99, orig: 22.99,  stars: '★★★☆☆ (2,780)', desc: 'Ergonomic memory foam neck pillow with a washable cover. Compresses for storage.', meta: ['Ships today'] },
+  PassportHolder:    { img: '🛂', title: 'RFID Passport Holder',       price: 12.99, orig: 16.99,  stars: '★★★★☆ (2,860)', desc: 'RFID-blocking passport wallet with card slots and a pen holder.', meta: ['Ships today'] },
+  LuggageScale:      { img: '⚖️', title: 'Digital Luggage Scale',      price: 9.99,  orig: 14.99,  stars: '★★★★☆ (5,120)', desc: 'Handheld digital scale for weighing checked bags before you get to the airport.', meta: ['Ships today'] },
+  TSALocks:          { img: '🔒', title: 'TSA-Approved Locks (2-Pack)', price: 8.99, orig: 12.99,  stars: '★★★★☆ (3,340)', desc: 'TSA-approved combination locks for zippered luggage. Airport security can open them without cutting.', meta: ['Ships today'] },
+  ToiletryBag:       { img: '🧴', title: 'Hanging Toiletry Bag',       price: 17.99, orig: 23.99,  stars: '★★★★☆ (2,110)', desc: 'Water-resistant hanging toiletry bag with a metal hook and a clear TSA-friendly pouch.', meta: ['Ships today'] },
+  PowerBank:         { img: '🔋', title: '10,000mAh Power Bank',       price: 19.99, orig: 29.99,  stars: '★★★★☆ (7,230)', desc: 'Slim 10,000mAh power bank with USB-C fast charging. Fits in a pocket.', meta: ['Ships today'] },
+  BluetoothSpeaker:  { img: '🔊', title: 'Portable Bluetooth Speaker', price: 22.99, orig: 34.99,  stars: '★★★★☆ (4,050)', desc: 'Waterproof portable speaker with a 12-hour battery and punchy bass.', meta: ['Ships today'] },
+  PhoneCase:         { img: '📱', title: 'Shockproof Phone Case',      price: 11.99, orig: 16.99,  stars: '★★★★☆ (3,610)', desc: 'Shockproof case with raised edges to protect the screen and camera.', meta: ['Ships today'] },
+  USBCHub:           { img: '🖧', title: '7-in-1 USB-C Hub',           price: 26.99, orig: 34.99,  stars: '★★★★☆ (2,470)', desc: '7-in-1 USB-C hub with HDMI, an SD card reader, and 100W pass-through charging.', meta: ['Ships today'] },
+};
+
+const HOME_DEALS = ['WirelessEarbuds', 'Smartwatch', 'Charger65W', 'SmartBulb', 'PowerBank', 'BluetoothSpeaker', 'Tent2Person', 'HikingBoots'];
+const HOME_CATS  = ['OutdoorCamping', 'Travel', 'Electronics'];
+const CATEGORY_PRODUCTS = {
+  OutdoorCamping: ['TrekkingPack', 'Tent2Person', 'HikingBoots', 'SleepingBag','MiniDaypack', 'CampStove', 'Headlamp', 'CampChair', 'WaterFilter', 'Hammock', 'Cooler'],
+  Travel:         ['LaptopBackpack', 'SchoolBackpack', 'TrekkingPack', 'PackingCubes', 'TravelPillow', 'PassportHolder', 'LuggageScale', 'TSALocks', 'ToiletryBag'],
+  Electronics:    ['WirelessEarbuds', 'Smartwatch', 'Charger65W', 'SmartBulb', 'PowerBank', 'BluetoothSpeaker', 'PhoneCase', 'USBCHub'],
+};
+
+const FEED_ITEMS = [
+  { t: 'banner', cls: 'red', txt: '⚡ Lightning Deal ends in 02:13', id: 'l7-dealtimer' },
+  { t: 'product', key: 'WirelessEarbuds', badges: [['l7-ba', 'Sponsored']], meta: '' },
+  { t: 'notif', txt: NOTIFICATIONS[0] },
+  { t: 'banner', cls: 'amber', txt: 'Results for "backpack" — 1,284 items' },
+  { t: 'product', key: 'MiniDaypack',    badges: [['l7-bg', 'Compact & lightweight']], meta: '' },
+  { t: 'product', key: 'SchoolBackpack', badges: [['l7-bg', 'Budget pick']], meta: '' },
+  { t: 'notif', txt: NOTIFICATIONS[1] },
+  { t: 'product', key: 'LaptopBackpack', badges: [['l7-ba', 'Padded laptop sleeve']], meta: '' },
+  { t: 'banner', cls: 'blue', txt: 'Free shipping on orders over $35' },
+  { t: 'product', key: 'TrekkingPack',   badges: [['l7-ba', 'Waterproof zipper']], meta: '' },
+  { t: 'notif', txt: NOTIFICATIONS[2] },
+  { t: 'product', key: 'AdventureBackpack', badges: [['l7-ba', "Editor's pick"], ['l7-br', 'Only 1 left in stock!']], meta: VIEWER_PHRASES(randViewers()), isTarget: true },
+  { t: 'notif', txt: NOTIFICATIONS[3] },
+];
+
+const TARGET_NAME  = PRODUCTS.AdventureBackpack.title;
+const TARGET_PRICE = PRODUCTS.AdventureBackpack.price;
 
 const level7 = {
   id: 'l7',
   title: 'Level 7',
   isAI: false,
-  goal: 'Buy only what you want, without getting distracted',
+  goal: 'Buy only the Adventure Backpack — 40L',
   hints: [
-    "Several backpacks are in the feed, but only one is the exact target — 'Adventure Backpack — 40L'. Check the title carefully before adding.",
-    "Add the real backpack whenever you spot it, then open your cart from the top-right and remove anything else that's snuck in before placing the order.",
+    "Search for 'backpack' using the search bar at the top to find what you need.",
+    "Several backpacks are in the results — only one is the exact target: 'Adventure Backpack — 40L'. Read titles carefully.",
+    "Add it to your cart, then open your cart from the top-right and remove anything that snuck in before placing your order.",
   ],
   pattern: 'Fake Scarcity / Urgency',
   manip: 82,
-  brief: "Fake scarcity and urgency are designed to impair your decision-making with a false deadline to rush you into decisions. Countdown timers, 'Only 2 left!', and '847 people viewing' create a sense of panic that makes you act before you think. Almost none of it is real.",
-  goalDetail: "You want to buy one specific item: the Adventure Backpack — 40L. Several other backpacks are mixed into the feed as decoys. Scroll, add the real one to your cart, and check out with only that item. Open your cart any time from the top-right — but watch out for anything that ends up in there that you didn't add yourself.",
+  brief: "Fake scarcity and urgency are designed to impair your decision-making with a false deadline to rush you into decisions. Countdown timers, 'Only 1 left!', and 'X people viewing' create a sense of panic that makes you act before you think. Almost none of it is real.",
+  goalDetail: "You want to buy one specific item: the Adventure Backpack — 40L. Start from the home screen and search for it. Several other backpacks are mixed into the results as decoys. Add the right one to your cart and check out with only that item.",
   dollars: {
     label: 'If every urgency signal worked on you',
     amount: 47.97,
     period: 'one-time',
-    note: "$47.97 in impulse purchases triggered by fake scarcity — plus a subscription you didn't need",
+    note: "$47.97 in impulse purchases triggered by fake scarcity — plus a sneaked warranty you never agreed to",
   },
   desc: 'Countdown timers, fake stock warnings, and social proof pressure combine to make you act before you think. Studies show urgency increases conversion by up to 332% — almost none of the scarcity is real.',
   rw: {
@@ -101,289 +211,386 @@ const level7 = {
     link: 'https://www.deceptive.design/hall-of-shame',
   },
   replay: [
-    { trap: true, note: 'The countdown bar and the "Lightning Deal ends in 02:13" banner both tick down, then quietly reset to their starting values. Neither one ever actually expires into anything — the urgency is manufactured.' },
-    { trap: true, note: '"Only 2 left in stock" — the number is static and never changes regardless of how many people "buy". It exists purely to trigger loss aversion.' },
-    { trap: true, note: '"847 people viewing" — a randomly generated number refreshed on a loop. No real data underlies it.' },
-    { trap: true, note: 'Multiple near-identical backpacks are mixed into the feed. Picking any of them except the exact target counts as a miss — read titles carefully, not just the product icon.' },
-    { trap: true, note: 'An item can sneak into your cart even though you never clicked "add" — exactly how pre-checked add-ons work in real checkouts.' },
-    { trap: false, note: 'The winning move: ignore all timers and counters, read each title in full, and double-check your cart contents right before you place the order.' },
+    { trap: true,  note: 'The "Lightning Deal ends in 02:13" banner ticks down then quietly resets. It never expires into anything — the urgency is manufactured.' },
+    { trap: true,  note: '"Only 1 left in stock!" on the target item is a static number that never changes regardless of how many people add it to their cart.' },
+    { trap: true,  note: 'The viewer count ("X people viewed today") fluctuates randomly. No real data underlies it.' },
+    { trap: true,  note: '"Items reserved for X:XX" implies your cart will be released to someone else. Nothing is actually being held.' },
+    { trap: true,  note: 'Multiple near-identical backpacks fill the results. Picking any except the exact target counts as a miss — read titles fully, not just the icon.' },
+    { trap: true,  note: 'A warranty item sneaks into your cart automatically once you add the backpack. You have to actively notice and remove it.' },
+    { trap: false, note: 'The winning move: ignore all timers and counters, read each title in full, and double-check your cart contents before placing the order.' },
   ],
 
   render(el) {
     injectStyles();
 
-    let cart = [];     // [{ name, price, sneaky }]
+    let cart = [];
+    let view = 'home';
+    let prevView = 'home';
     let cartTimer = 300;
     let cartInterval = null;
     let sneakInjected = false;
-    let dealSecsLeft = 133;   // drives the "Lightning Deal ends in 02:13" banner
-    let view = 'feed'; // 'feed' | 'cart'
+    let dealSecsLeft = 133;
+    let extraIntervals = [];
 
-    el.innerHTML = '';
+    const trackInterval = id => extraIntervals.push(id);
+    const clearExtraIntervals = () => { extraIntervals.forEach(clearInterval); extraIntervals = []; };
 
-    const TARGET_NAME = 'Adventure Backpack — 40L';
-    const TARGET_PRICE = 39.99;
-
-    const ITEMS = [
-      { t: 'banner', cls: 'red', txt: '⚡ Lightning Deal ends in 02:13', id: 'l7-dealtimer' },
-      { t: 'product', img: '🎧', title: 'Wireless Earbuds Pro Max', stars: '★★★★☆ (12,481)', price: 24.99, orig: 49.99, badges: [['l7-br', '⚡ 68% off'], ['l7-ba', '847 viewed today']], meta: 'Ships today' },
-      { t: 'notif', txt: NOTIFICATIONS[0] },
-      { t: 'banner', cls: 'amber', txt: '50% Off Phone Chargers — Limited Time' },
-      { t: 'product', img: '🔌', title: 'Ultra-Fast 65W Charger 3-Pack', stars: '★★★★★ (8,203)', price: 14.99, orig: 29.99, badges: [['l7-br', 'Only 2 left!'], ['l7-ba', 'Deal ends in 09:59']], meta: 'Often bought with earbuds' },
-      { t: 'sec', txt: "Today's Deals" },
-      { t: 'product', img: '⌚', title: 'SmartBand Fitness Tracker', stars: '★★★★☆ (5,602)', price: 39.99, orig: 79.99, badges: [['l7-bb', 'Flash Sale'], ['l7-ba', '72 people viewing']], meta: '' },
-      { t: 'notif', txt: NOTIFICATIONS[1] },
-      { t: 'banner', cls: 'red', txt: 'Flash Sale ends in 07:44' },
-      { t: 'product', img: '🖱️', title: 'Ergonomic Wireless Mouse', stars: '★★★★☆ (3,891)', price: 19.99, orig: 35.99, badges: [['l7-ba', 'Offer expires soon'], ['l7-br', 'Hot deal']], meta: 'Ships in 1-2 days' },
-      { t: 'sec', txt: 'Trending in bags' },
-      { t: 'notif', txt: NOTIFICATIONS[2] },
-      { t: 'product', img: '🎒', title: 'Mini Daypack — 12L', stars: '★★★☆☆ (1,447)', price: 17.99, orig: null, badges: [['l7-bg', 'Compact & lightweight']], meta: '' },
-      { t: 'product', img: '👜', title: 'Tote Bag Set (3-pack)', stars: '★★★☆☆ (2,104)', price: 22.99, orig: null, badges: [['l7-bg', '1,438 bought last month']], meta: '' },
-      { t: 'banner', cls: 'blue', txt: 'Free shipping on orders over $35' },
-      { t: 'product', img: '🎒', title: 'School Backpack — 20L', stars: '★★★☆☆ (980)', price: 16.49, orig: null, badges: [['l7-bg', 'Budget pick']], meta: '' },
-      { t: 'product', img: '💼', title: 'Rolling Carry-On Suitcase', stars: '★★★★☆ (7,230)', price: 89.99, orig: 139.99, badges: [['l7-ba', 'Deal ends tonight'], ['l7-br', 'Only 3 left!']], meta: '' },
-      { t: 'notif', txt: NOTIFICATIONS[3] },
-      { t: 'sec', txt: 'You might also like' },
-      { t: 'product', img: '🎒', title: 'Laptop Backpack — 25L', stars: '★★★★☆ (3,310)', price: 28.99, orig: 34.99, badges: [['l7-ba', 'Padded laptop sleeve']], meta: '' },
-      { t: 'product', img: '🎒', title: TARGET_NAME, stars: '★★★★☆ (4,892)', price: TARGET_PRICE, orig: null, badges: [['l7-ba', 'Trending'], ['l7-br', 'Only 1 left in stock!']], meta: randViewers() + ' people viewed today', isTarget: true },
-      { t: 'notif', txt: NOTIFICATIONS[4] },
-      { t: 'product', img: '🎒', title: 'Hiking Backpack — 50L', stars: '★★★★☆ (2,675)', price: 64.99, orig: 79.99, badges: [['l7-br', 'Limited stock']], meta: '' },
-    ];
-
-    // ── Cart helpers ──────────────────────────────────────────────────────
+    // ── Cart helpers ─────────────────────────────────────────────────────
     const inCart = name => cart.some(c => c.name === name);
-
-    const addToCart = (name, price, sneaky = false) => {
-      if (inCart(name)) return;
-      cart.push({ name, price, sneaky });
-      updateCartBadge();
-    };
-
-    const removeFromCart = name => {
-      cart = cart.filter(c => c.name !== name);
-      updateCartBadge();
-      if (view === 'cart') renderCart();
-    };
 
     const updateCartBadge = () => {
       const b = document.getElementById('l7-cartbadge');
       if (!b) return;
-      if (cart.length > 0) { b.textContent = cart.length; b.style.display = 'flex'; }
-      else b.style.display = 'none';
+      b.textContent = cart.length;
+      b.style.display = cart.length > 0 ? 'flex' : 'none';
     };
 
-    // ── Timer (runs immediately and continuously) ─────────────────────────
-    const clearTimer = () => {
-      clearInterval(cartInterval);
-      cartInterval = null;
+    const updateReserveBar = () => {
+      const r = document.getElementById('l7-reservebar');
+      if (!r) return;
+      r.style.display = cart.length ? 'block' : 'none';
+      if (cart.length) r.textContent = '⏳ Items in your cart are reserved for ' + fmt(cartTimer);
     };
 
+    const refreshATCButtons = (name, added) => {
+      document.querySelectorAll(`[data-atc="${CSS.escape(name)}"]`).forEach(btn => {
+        btn.textContent = added ? '✓ Added' : 'Add to cart';
+        btn.classList.toggle('added', added);
+      });
+    };
+
+    const addToCart = (name, price) => {
+      if (inCart(name)) return;
+      if (cart.length === 0) cartTimer = 300;
+      cart.push({ name, price, sneaky: false });
+      updateCartBadge(); updateReserveBar(); refreshATCButtons(name, true);
+    };
+
+    const removeFromCart = name => {
+      cart = cart.filter(c => c.name !== name);
+      updateCartBadge(); updateReserveBar(); refreshATCButtons(name, false);
+      if (view === 'cart') renderCart();
+    };
+
+    // ── Timer ────────────────────────────────────────────────────────────
+    const clearTimer = () => { clearInterval(cartInterval); cartInterval = null; };
     const startTimer = () => {
       clearTimer();
-
       cartInterval = setInterval(() => {
-        cartTimer--;
-
-        const lbl = document.getElementById('l7-clabel');
-        const bar = document.getElementById('l7-cbar');
-
-        if (lbl) {
-          lbl.textContent = 'Flash deal ends in ' + fmt(cartTimer);
-        }
-
-        if (bar) {
-          bar.style.width = ((cartTimer / 300) * 100) + '%';
-          bar.style.background = cartTimer < 60 ? '#E24B4A' : '#854F0B';
-        }
-
-        // fake lightning-deal banner
-        dealSecsLeft--;
-        if (dealSecsLeft <= 0) dealSecsLeft = 133;
-
+        dealSecsLeft = dealSecsLeft <= 1 ? 133 : dealSecsLeft - 1;
         const dealEl = document.getElementById('l7-dealtimer');
-        if (dealEl) {
-          dealEl.textContent =
-            '⚡ Lightning Deal ends in ' + fmt(dealSecsLeft);
-        }
+        if (dealEl) dealEl.textContent = '⚡ Lightning Deal ends in ' + fmt(dealSecsLeft);
 
-        // sneak-in-basket
-        if (!sneakInjected && cartTimer <= 270 && inCart(TARGET_NAME)) {
+        if (cart.length) {
+          cartTimer = cartTimer <= 1 ? 300 : cartTimer - 1;
+          updateReserveBar();
+        }
+        if (!sneakInjected && inCart(TARGET_NAME)) {
           sneakInjected = true;
-
-          cart.push({
-            name: 'Extended warranty (1yr)',
-            price: 9.99,
-            sneaky: true
-          });
-
-          updateCartBadge();
-
-          if (view === 'cart') {
-            renderCart();
-          }
-        }
-
-        // fake deadline resets forever
-        if (cartTimer <= 0) {
-          cartTimer = 300;
+          cart.push({ name: 'Extended warranty (1yr)', price: 9.99, sneaky: true });
+          updateCartBadge(); updateReserveBar();
+          if (view === 'cart') renderCart();
         }
       }, 1000);
     };
 
-    // ── Render: top bar (persists across views) ────────────────────────────
-    const renderShell = () => {
-      el.innerHTML = '';
-      el.insertAdjacentHTML('beforeend', `
-        <div class="l7-goalbar" id="l7-goalbar">Goal: buy only the adventure backpack — check your cart before ordering</div>
-        <div class="l7-topbar">
-          <div style="color:#fff;font-size:13px;font-weight:500;letter-spacing:-.5px">QuickCart</div>
-          <div class="l7-searchbox">
-            <span style="font-size:13px;color:#888">&#128269;</span>
-            <input id="l7-search" placeholder="Search..." value="backpack">
-          </div>
-          <button class="l7-cartbtn" id="l7-cartbtn">
-            🛒 Cart
-            <span class="l7-cartbadge" id="l7-cartbadge" style="display:none">0</span>
-          </button>
-        </div>
-        <div id="l7-view"></div>`);
-
-      document.getElementById('l7-cartbtn').onclick = () => { view = 'cart'; renderCart(); };
-      updateCartBadge();
+    // ── Shared button/card HTML ─────────────────────────────────────────
+    const atcBtn = (name, price) => {
+      const already = inCart(name);
+      return `<button class="l7-atc${already ? ' added' : ''}" data-atc="${name}" data-price="${price}">${already ? '✓ Added' : 'Add to cart'}</button>`;
     };
-
-    // ── Render: feed view ───────────────────────────────────────────────────
-    const renderFeed = () => {
-      view = 'feed';
-      const host = document.getElementById('l7-view');
-      if (!host) { renderShell(); return renderFeed(); }
-      host.innerHTML = '<div class="l7-feed" id="l7-feed"></div>';
-      const feed = document.getElementById('l7-feed');
-
-      ITEMS.forEach(item => {
-        const d = document.createElement('div');
-        if (item.t === 'banner') {
-          d.className = 'l7-banner ' + item.cls;
-          d.textContent = item.txt;
-          if (item.id) d.id = item.id;
-        } else if (item.t === 'sec') {
-          d.className = 'l7-sechead';
-          d.textContent = item.txt;
-        } else if (item.t === 'notif') {
-          d.className = 'l7-notif';
-          d.textContent = item.txt;
-        } else if (item.t === 'product') {
-          d.className = 'l7-product';
-          const bdgs = item.badges.map(([cls, txt]) => `<span class="l7-pbadge ${cls}">${txt}</span>`).join(' ');
-          const already = inCart(item.title);
-          d.innerHTML = `
-            <div class="l7-pimg">${item.img}</div>
-            <div class="l7-pbody">
-              <div class="l7-ptitle">${item.title}</div>
-              <div class="l7-pstars">${item.stars}</div>
-              <div class="l7-pprice">$${item.price.toFixed(2)}${item.orig ? `<span class="orig">$${item.orig.toFixed(2)}</span>` : ''}</div>
-              <div style="display:flex;gap:3px;flex-wrap:wrap;margin-top:2px">${bdgs}</div>
-              ${item.meta ? `<div class="l7-pmeta" ${item.isTarget ? 'id="l7-viewers"' : ''}>${item.meta}</div>` : ''}
-              <button class="l7-addbtn${already ? ' added' : ''}" id="l7-add-${item.title.replace(/[^a-z0-9]/gi, '')}">${already ? '✓ In cart' : 'Add to cart'}</button>
-            </div>`;
-          feed.appendChild(d);
-
-          const btn = d.querySelector('.l7-addbtn');
-          btn.onclick = () => {
-            if (inCart(item.title)) { removeFromCart(item.title); btn.textContent = 'Add to cart'; btn.classList.remove('added'); }
-            else {
-              addToCart(item.title, item.price, false);
-              btn.textContent = '✓ In cart'; btn.classList.add('added');
-            }
-          };
-          return;
-        }
-        feed.appendChild(d);
+    const bindATCButtons = () => {
+      document.querySelectorAll('[data-atc]').forEach(btn => {
+        btn.onclick = e => {
+          e.stopPropagation();
+          const name = btn.dataset.atc, price = parseFloat(btn.dataset.price);
+          inCart(name) ? removeFromCart(name) : addToCart(name, price);
+        };
       });
-
-      // Live viewer flicker
-      setInterval(() => {
-        const v = document.getElementById('l7-viewers');
-        if (v?.textContent.includes('viewed')) v.textContent = randViewers() + ' people viewed today';
-      }, 3000);
-
-      // Notification cycling
-      let ni = 0;
-      setInterval(() => {
-        if (view !== 'feed') return;
-        ni = (ni + 1) % NOTIFICATIONS.length;
-        const notifs = feed.querySelectorAll('.l7-notif');
-        if (notifs.length) notifs[ni % notifs.length].textContent = NOTIFICATIONS[ni];
-      }, 4000);
+    };
+    const bindPDPLinks = () => {
+      document.querySelectorAll('[data-pdp]').forEach(node => {
+        node.onclick = e => { if (!e.target.closest('[data-atc]')) openPDP(node.dataset.pdp); };
+      });
     };
 
-    // ── Render: cart view ───────────────────────────────────────────────────
-    const renderCart = () => {
-      view = 'cart';
-      const host = document.getElementById('l7-view');
-      if (!host) { renderShell(); }
-      const total = cart.reduce((a, c) => a + c.price, 0);
-
-      document.getElementById('l7-view').innerHTML = `
-        <div class="l7-cart">
-          <button class="l7-backbtn" id="l7-back">← Back to shopping</button>
-          <div style="font-size:14px;font-weight:500;color:#111">Your cart</div>
-          <div>
-            ${cart.length === 0
-          ? '<div class="l7-empty">Your cart is empty.</div>'
-          : cart.map(c => `
-                <div class="l7-crow">
-                  <span class="l7-cname">${c.name}${c.sneaky ? ' <span style="color:#A32D2D;font-size:10px">(added for you)</span>' : ''}</span>
-                  <span style="font-weight:500;flex-shrink:0">$${c.price.toFixed(2)}</span>
-                  <button class="l7-cremove" data-name="${c.name}">Remove</button>
-                </div>`).join('')}
+    // Shared "full-width product row" markup — used by category list, deals list, and search feed
+    const productItemHTML = (key, { badges = [], meta = '', isTarget = false } = {}) => {
+      const p = PRODUCTS[key];
+      const bdgHTML = badges.length
+        ? `<div style="display:flex;gap:3px;flex-wrap:wrap;margin-top:2px">${badges.map(([cls, txt]) => `<span class="l7-pbadge ${cls}">${txt}</span>`).join(' ')}</div>`
+        : '';
+      return `
+        <div class="l7-product" data-pdp="${key}">
+          <div class="l7-pimg">${p.img}</div>
+          <div class="l7-pbody">
+            <div class="l7-ptitle">${p.title}</div>
+            <div class="l7-pstars">${starsHTML(p.stars)}</div>
+            <div class="l7-pprice">$${p.price.toFixed(2)}${p.orig ? `<span class="orig">$${p.orig.toFixed(2)}</span>` : ''}</div>
+            ${bdgHTML}
+            ${meta ? `<div class="l7-pmeta"${isTarget ? ' id="l7-viewers"' : ''}>${meta}</div>` : ''}
+            ${atcBtn(p.title, p.price)}
           </div>
-          <div class="l7-ctotal"><span>Order total</span><span>$${total.toFixed(2)}</span></div>
-          <button class="l7-obtn" id="l7-place">Place your order</button>
-          <div style="font-size:10px;color:#aaa;text-align:center">By placing your order, you agree to our Conditions of Use</div>
+        </div>`;
+    };
+
+    // Shared list-view renderer — used by category and deals screens (product list + header + back button)
+    const renderProductListPage = (viewName, headerHTML, items, onBack) => {
+      clearExtraIntervals();
+      view = viewName;
+      document.getElementById('l7-content').innerHTML = `
+        <div class="l7-feed-head">
+          <button class="l7-backbtn" id="l7-list-back">← Back</button><br>
+          ${headerHTML}
+        </div>
+        <div class="l7-feed">${items.map(key => productItemHTML(key)).join('')}</div>`;
+      document.getElementById('l7-list-back').onclick = onBack;
+      bindPDPLinks();
+      bindATCButtons();
+    };
+
+    const cardHTML = key => {
+      const p = PRODUCTS[key];
+      return `<div class="l7-card" data-pdp="${key}">
+        <div class="l7-card-img">${p.img}${p.orig ? `<span class="l7-card-badge">-${Math.round((1 - p.price / p.orig) * 100)}%</span>` : ''}</div>
+        <div class="l7-card-title">${p.title}</div>
+        ${p.price !== null ? `<div class="l7-card-price">$${p.price.toFixed(2)}</div>` : ''}
+        ${p.orig ? `<div class="l7-card-orig">$${p.orig.toFixed(2)}</div>` : ''}
+        ${p.price !== null ? atcBtn(p.title, p.price) : ''}
+      </div>`;
+    };
+
+    // ── Product detail page ─────────────────────────────────────────────
+    const openPDP = key => {
+      clearExtraIntervals();
+      prevView = view;
+      view = 'pdp';
+      const p = PRODUCTS[key];
+      document.getElementById('l7-content').innerHTML = `
+        <div class="l7-pdp">
+          <button class="l7-backbtn" id="l7-pdp-back">← Back</button>
+          <div class="l7-pdp-top">
+            <div class="l7-pdp-img">${p.img}</div>
+            <div class="l7-pdp-info">
+              <div class="l7-pdp-title">${p.title}</div>
+              ${p.stars ? `<div class="l7-pdp-stars">${starsHTML(p.stars)}</div>` : ''}
+              ${p.price !== null
+                ? `<div class="l7-pdp-price">$${p.price.toFixed(2)}${p.orig ? `<span class="l7-pdp-orig">$${p.orig.toFixed(2)}</span>` : ''}</div>`
+                : '<div style="font-size:12px;color:#555;margin-top:4px">Browse category</div>'}
+            </div>
+          </div>
+          <div class="l7-pdp-desc">${p.desc}</div>
+          <div class="l7-pdp-meta">${p.meta.map(m => `<span>✓ ${m}</span>`).join('')}</div>
+          ${p.price !== null ? atcBtn(p.title, p.price) : ''}
+        </div>`;
+      document.getElementById('l7-pdp-back').onclick = () => prevView === 'feed' ? renderFeed() : renderHome();
+      bindATCButtons();
+    };
+
+    // ── Shell ────────────────────────────────────────────────────────────
+    const renderShell = () => {
+      el.innerHTML = `
+        <div class="l7-wrap">
+          <div class="l7-reservebar" id="l7-reservebar" style="display:none"></div>
+          <div class="l7-nav">
+            <div class="l7-logo" id="l7-logo">QuickCart</div>
+            <div class="l7-searchrow">
+              <div class="l7-searchbox">
+                <div class="l7-catsel">All</div>
+                <input id="l7-searchinput" placeholder="Search QuickCart" autocomplete="off">
+                <button class="l7-sbtn" id="l7-sbtn">🔍</button>
+              </div>
+            </div>
+            <button class="l7-cartbtn" id="l7-cartbtn">🛒 Cart<span class="l7-cartbadge" id="l7-cartbadge" style="display:none">0</span></button>
+          </div>
+          <div class="l7-delivery">📍 Deliver to <b>New York 10001</b></div>
+          <div class="l7-subnav">
+            <span class="l7-snitem">All</span><span class="l7-snitem">Today's Deals</span>
+            <span class="l7-snitem">Electronics</span><span class="l7-snitem">Outdoors</span>
+            <span class="l7-snitem">Travel</span>
+          </div>
+          <div class="l7-content" id="l7-content"></div>
         </div>`;
 
-      document.getElementById('l7-back').onclick = renderFeed;
+      const doSearch = () => {
+        const val = document.getElementById('l7-searchinput').value.trim().toLowerCase();
+        if (val === 'backpack') { renderFeed(); return; }
+        if (!val) return;
+        clearExtraIntervals();
+        document.getElementById('l7-content').innerHTML = `
+          <div style="padding:24px;text-align:center;color:#555;font-size:13px;display:flex;flex-direction:column;gap:8px;align-items:center">
+            <div style="font-size:24px">🔍</div>
+            <div>No results for "<strong>${val}</strong>"</div>
+            <div style="font-size:11px;color:#aaa">Try searching for "backpack"</div>
+          </div>`;
+      };
+      document.getElementById('l7-sbtn').onclick = doSearch;
+      document.getElementById('l7-searchinput').addEventListener('keydown', e => { if (e.key === 'Enter') doSearch(); });
+      document.getElementById('l7-cartbtn').onclick = () => { clearExtraIntervals(); prevView = view; renderCart(); };
+      document.getElementById('l7-logo').onclick = () => {
+        const inp = document.getElementById('l7-searchinput');
+        if (inp) inp.value = '';
+        renderHome();
+      };
 
-      document.querySelectorAll('.l7-cremove').forEach(b => {
-        b.onclick = () => removeFromCart(b.dataset.name);
-      });
-
-      document.getElementById('l7-place').onclick = placeOrder;
+      updateCartBadge();
+      startTimer();
+      renderHome();
     };
 
-    // ── Order validation ────────────────────────────────────────────────────
+    const chipHTML = key => {
+      const p = PRODUCTS[key];
+      return `<div class="l7-chip" data-cat="${key}"><span>${p.img}</span>${p.title}</div>`;
+    };
+    const bindCatLinks = () => {
+      document.querySelectorAll('[data-cat]').forEach(node => {
+        node.onclick = () => renderCategory(node.dataset.cat);
+      });
+    };
+
+    // ── Category screen (filtered product list) ─────────────────────────
+    const renderCategory = key => {
+      const cat = PRODUCTS[key];
+      const items = CATEGORY_PRODUCTS[key] || [];
+      renderProductListPage('category',
+        `Showing <strong>${items.length}</strong> product${items.length !== 1 ? 's' : ''} in <strong>${cat.title}</strong>`,
+        items, renderHome);
+    };
+
+    // ── Home screen ──────────────────────────────────────────────────────
+    const renderHome = () => {
+      clearExtraIntervals();
+      view = 'home';
+      document.getElementById('l7-content').innerHTML = `
+        <div class="l7-section">
+          <div class="l7-shead">Today's Deals<span class="l7-seemore active" id="l7-deals-more">See more ›</span></div>
+          <div class="l7-row">${HOME_DEALS.map(cardHTML).join('')}</div>
+        </div>
+        <div class="l7-section">
+          <div class="l7-shead">Shop by category<span class="l7-seemore">See more ›</span></div>
+          <div class="l7-row">${HOME_CATS.map(chipHTML).join('')}</div>
+        </div>`;
+      bindPDPLinks();
+      bindATCButtons();
+      bindCatLinks();
+      document.getElementById('l7-deals-more').onclick = renderDeals;
+    };
+
+    // ── Full deals list (all discounted products) ───────────────────────
+    const renderDeals = () => {
+      const items = Object.keys(PRODUCTS).filter(k => PRODUCTS[k].price !== null && PRODUCTS[k].orig !== null);
+      renderProductListPage('deals', `Showing <strong>${items.length}</strong> deals today`, items, renderHome);
+    };
+
+    // ── Feed (search results) ───────────────────────────────────────────
+    const renderFeed = () => {
+      clearExtraIntervals();
+      view = 'feed';
+      const inp = document.getElementById('l7-searchinput');
+      if (inp) inp.value = 'backpack';
+
+      let html = `<div class="l7-feed-head">Showing results for <strong>"backpack"</strong></div><div class="l7-feed">`;
+      FEED_ITEMS.forEach(item => {
+        if (item.t === 'banner') {
+          html += `<div class="l7-banner ${item.cls}"${item.id ? ` id="${item.id}"` : ''}>${item.txt}</div>`;
+        } else if (item.t === 'notif') {
+          html += `<div class="l7-notif">${item.txt}</div>`;
+        } else if (item.t === 'product') {
+          html += productItemHTML(item.key, { badges: item.badges, meta: item.meta, isTarget: item.isTarget });
+        }
+      });
+      html += `</div>`;
+      document.getElementById('l7-content').innerHTML = html;
+
+      bindPDPLinks();
+      bindATCButtons();
+
+      trackInterval(setInterval(() => {
+        const v = document.getElementById('l7-viewers');
+        if (v) v.textContent = VIEWER_PHRASES(randViewers());
+      }, 3000));
+
+      let ni = 0;
+      trackInterval(setInterval(() => {
+        ni = (ni + 1) % NOTIFICATIONS.length;
+        const notifs = document.querySelectorAll('.l7-notif');
+        if (notifs.length) notifs[ni % notifs.length].textContent = NOTIFICATIONS[ni];
+      }, 4000));
+    };
+
+    // ── Cart view ────────────────────────────────────────────────────────
+    const renderCart = () => {
+      clearExtraIntervals();
+      view = 'cart';
+      const total = cart.reduce((a, c) => a + c.price, 0);
+      document.getElementById('l7-content').innerHTML = `
+        <div class="l7-cart">
+          <button class="l7-backbtn" id="l7-back">← Continue shopping</button>
+          <div class="l7-cart-head">Shopping Cart (${cart.length} item${cart.length !== 1 ? 's' : ''})</div>
+          <div>
+            ${cart.length === 0 ? '<div class="l7-empty">Your cart is empty.</div>' : cart.map(c => `
+              <div class="l7-crow">
+                <span class="l7-cname">${c.name}${c.sneaky ? ' <span style="color:#A32D2D;font-size:10px;display:block">(added for you)</span>' : ''}</span>
+                <span style="font-weight:600;flex-shrink:0;margin-right:4px">$${c.price.toFixed(2)}</span>
+                <button class="l7-cremove" data-name="${c.name}">Remove</button>
+              </div>`).join('')}
+          </div>
+          ${cart.length > 0 ? `
+            <div class="l7-ctotal"><span>Order total</span><span>$${total.toFixed(2)}</span></div>
+            <button class="l7-obtn" id="l7-place">Place your order →</button>
+            <div style="font-size:10px;color:#aaa;text-align:center">By placing your order you agree to our Conditions of Use</div>` : ''}
+        </div>`;
+
+      document.getElementById('l7-back').onclick = () => {
+        const inp = document.getElementById('l7-searchinput');
+        inp?.value.toLowerCase() === 'backpack' ? renderFeed() : renderHome();
+      };
+      document.querySelectorAll('.l7-cremove').forEach(b => { b.onclick = () => removeFromCart(b.dataset.name); });
+      const placeBtn = document.getElementById('l7-place');
+      if (placeBtn) placeBtn.onclick = placeOrder;
+
+      updateReserveBar();
+    };
+
+    // ── Order validation ────────────────────────────────────────────────
     const placeOrder = () => {
-      clearTimer();
-      const onlyBackpack = cart.length === 1 && cart[0].name === TARGET_NAME;
+      const placeBtn = document.getElementById('l7-place');
+      if (placeBtn) placeBtn.disabled = true;
+
       const hasBackpack = cart.some(c => c.name === TARGET_NAME);
+      const onlyBackpack = cart.length === 1 && hasBackpack;
 
       if (!hasBackpack) {
-        fail('Your cart never had the backpack in it!');
-        setTimeout(() => { startTimer(); renderCart(); }, 1700);
+        G.fail("Your cart doesn't have the backpack in it!");
+        setTimeout(renderCart, 1700);
         return;
       }
-
+    
       if (!onlyBackpack) {
-        fail('Extra items snuck into your order — check your cart before placing it!');
-        setTimeout(() => { startTimer(); renderCart(); }, 1700);
+        G.fail('Extra items snuck into your order — check your cart before placing it!');
+        setTimeout(renderCart, 1700);
         return;
       }
 
+      clearTimer();
+      clearExtraIntervals();
       const gb = document.getElementById('l7-goalbar');
-      if (gb) { gb.style.background = '#3B6D11'; gb.textContent = 'Done — backpack purchased'; }
-      document.getElementById('l7-view').innerHTML = `
-        <div style="padding:24px 12px;text-align:center;display:flex;flex-direction:column;gap:8px;align-items:center;background:#fff">
-          <div style="font-size:24px;color:#3B6D11">✓</div>
-          <div style="font-size:14px;font-weight:500;color:#111">Order placed!</div>
-          <div style="font-size:12px;color:#555">${TARGET_NAME} — $${TARGET_PRICE.toFixed(2)}</div>
+      if (gb) { gb.className = 'l7-goalbar done'; gb.textContent = '✓ Done — Adventure Backpack purchased for $' + TARGET_PRICE.toFixed(2); }
+      const reserveBar = document.getElementById('l7-reservebar');
+      if (reserveBar) reserveBar.style.display = 'none';
+
+      document.getElementById('l7-content').innerHTML = `
+        <div style="padding:32px 12px;text-align:center;display:flex;flex-direction:column;gap:10px;align-items:center;background:#fff">
+          <div style="font-size:32px">✓</div>
+          <div style="font-size:15px;font-weight:600;color:#111">Order placed!</div>
+          <div style="font-size:12px;color:#555">${TARGET_NAME}</div>
+          <div style="font-size:14px;font-weight:600;color:#111">$${TARGET_PRICE.toFixed(2)}</div>
+          <div style="font-size:11px;color:#aaa">Estimated delivery: 2–3 business days</div>
         </div>`;
-      succeed();
+      G.succeed();
     };
 
-renderShell();
-renderFeed();
-startTimer();
+    renderShell();
   },
 };
 
