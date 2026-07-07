@@ -41,48 +41,61 @@ const level6 = {
     const subtotal       = baseRate * days;
 
     const ALL_COUPONS = [
-  { id: 'c1', code: 'MEMBER10',  headline: '10% off — Member Reward',
-    fine: 'Valid for Loyalty members on Economy class only. Not valid on Compact or SUV. Cannot be combined with other offers.',
-    pct: 10, applies: () => hasMembership && carType === 'Economy' },
+      { id: 'c1', code: 'MEMBER10',  headline: '10% off — Member Reward',
+        fine: 'Valid for Loyalty members on Economy class only. Not valid on Compact or SUV. Cannot be combined with other offers.',
+        pct: 10, applies: () => hasMembership && carType === 'Economy' },
+      { id: 'c2', code: 'FIRST20',   headline: '20% off — First-Time Customer',
+        fine: 'For new customers only. Not valid for Loyalty members. Rentals of 5 days or fewer only. Cannot be combined with other offers.',
+        pct: 20, applies: () => isFirstTime && !hasMembership && days <= 5 },
+      { id: 'c3', code: 'STAY25',    headline: '25% off — Long Stay Reward',
+        fine: 'Valid on rentals of 6 days or more. Not valid for Loyalty members. Not valid for Visa cardholders. Cannot be combined with other offers.',
+        pct: 25, applies: () => days >= 6 && !hasMembership && !hasPartnerCard },
+      { id: 'c4', code: 'SUV10',     headline: '10% off — SUV Special',
+        fine: 'Valid on SUV class only. Not valid for first-time customers. Not valid for Loyalty members. Cannot be combined with other offers.',
+        pct: 10, applies: () => carType === 'SUV' && !isFirstTime && !hasMembership },
+      { id: 'c5', code: 'COMPACT15', headline: '15% off — Compact Deal',
+        fine: 'Valid on Compact class only. For Loyalty members on rentals of 6 days or fewer only. Cannot be combined with other offers.',
+        pct: 15, applies: () => carType === 'Compact' && hasMembership && days <= 6 },
+      { id: 'c6', code: 'EXTEND20',  headline: '20% off — Extended Stay',
+        fine: 'Valid on rentals of 7 days or more. Compact and SUV only. Not valid for Visa cardholders. For Loyalty members only. Cannot be combined with other offers.',
+        pct: 20, applies: () => days >= 7 && (carType === 'Compact' || carType === 'SUV') && !hasPartnerCard && hasMembership },
+      { id: 'c7', code: 'VISA10',    headline: '10% off — Visa Cardmember',
+        fine: 'Must pay with qualifying Visa credit card. Not valid on Economy class. Not valid for Loyalty members. Cannot be combined with other offers.',
+        pct: 10, applies: () => hasPartnerCard && carType !== 'Economy' && !hasMembership },
+      { id: 'c8', code: 'ECO5',      headline: '5% off — Economy Saver',
+        fine: 'Valid on Economy class only. Not valid on rentals of 7 days or more. Not valid for Loyalty members. Cannot be combined with other offers.',
+        pct: 5,  applies: () => carType === 'Economy' && days < 7 && !hasMembership },
+    ];
 
-  { id: 'c2', code: 'FIRST20',   headline: '20% off — First-Time Customer',
-    fine: 'For new customers only. Not valid for Loyalty members. Rentals of 5 days or fewer only. Cannot be combined with other offers.',
-    pct: 20, applies: () => isFirstTime && !hasMembership && days <= 5 },
+    // Safe coupon lookup — never returns undefined
+    const getCoupon = (id) => ALL_COUPONS.find(c => c.id === id) || {
+      id, code: id, headline: 'Offer unavailable',
+      fine: 'This offer is not available for your current booking.',
+      pct: 0, dead: true, deadMsg: 'This offer is not available for your current booking.',
+    };
 
-  { id: 'c3', code: 'STAY25',    headline: '25% off — Long Stay Reward',
-    fine: 'Valid on rentals of 6 days or more. Not valid for Loyalty members. Not valid for Visa cardholders. Cannot be combined with other offers.',
-    pct: 25, applies: () => days >= 6 && !hasMembership && !hasPartnerCard },
-
-  { id: 'c4', code: 'SUV10',     headline: '10% off — SUV Special',
-    fine: 'Valid on SUV class only. Not valid for first-time customers. Not valid for Loyalty members. Cannot be combined with other offers.',
-    pct: 10, applies: () => carType === 'SUV' && !isFirstTime && !hasMembership },
-
-  { id: 'c5', code: 'COMPACT15', headline: '15% off — Compact Deal',
-    fine: 'Valid on Compact class only. For Loyalty members on rentals of 6 days or fewer only. Cannot be combined with other offers.',
-    pct: 15, applies: () => carType === 'Compact' && hasMembership && days <= 6 },
-
-  { id: 'c6', code: 'EXTEND20',  headline: '20% off — Extended Stay',
-    fine: 'Valid on rentals of 7 days or more. Compact and SUV only. Not valid for Visa cardholders. For Loyalty members only. Cannot be combined with other offers.',
-    pct: 20, applies: () => days >= 7 && (carType === 'Compact' || carType === 'SUV') && !hasPartnerCard && hasMembership },
-
-  { id: 'c7', code: 'VISA10',    headline: '10% off — Visa Cardmember',
-    fine: 'Must pay with qualifying Visa credit card. Not valid on Economy class. Not valid for Loyalty members. Cannot be combined with other offers.',
-    pct: 10, applies: () => hasPartnerCard && carType !== 'Economy' && !hasMembership },
-
-  { id: 'c8', code: 'ECO5',      headline: '5% off — Economy Saver',
-    fine: 'Valid on Economy class only. Not valid on rentals of 7 days or more. Not valid for Loyalty members. Cannot be combined with other offers.',
-    pct: 5,  applies: () => carType === 'Economy' && days < 7 && !hasMembership },
-];
-
-    const validCoupons = ALL_COUPONS.filter(c => c.applies());
-    const validCoupon  = validCoupons[Math.floor(Math.random() * validCoupons.length)];
+    // Guarantee exactly one valid coupon — if none match, force c3
+    let validCoupons = ALL_COUPONS.filter(c => c.applies());
+    if (validCoupons.length === 0) {
+      // Force a sensible fallback based on booking
+      if (!hasMembership && !hasPartnerCard) {
+        ALL_COUPONS[2].applies = () => true; // STAY25 — no membership, no visa required
+        validCoupons = [ALL_COUPONS[2]];
+      } else if (hasMembership && carType !== 'Economy') {
+        ALL_COUPONS[4].applies = () => true; // COMPACT15 — relax day restriction
+        validCoupons = [ALL_COUPONS[4]];
+      } else {
+        ALL_COUPONS[0].applies = () => true; // MEMBER10 — relax car type restriction
+        validCoupons = [ALL_COUPONS[0]];
+      }
+    }
+    const validCoupon  = validCoupons[0];
     const validId      = validCoupon.id;
     const discount     = Math.round(subtotal * (validCoupon.pct / 100));
     const correctTotal = subtotal - discount;
 
-    let penalised = false;
-    let timerExpired = false;
-    let timeLeft = 60;
+    let penalised    = false;
+    let timeLeft     = 60;
     let timerInterval = null;
 
     const TREE = {
@@ -100,12 +113,12 @@ const level6 = {
         {
           label: 'Promotions & Savings',
           children: [
-            { label: 'Member Discounts',    children: [{ label: 'How to join', dead: true, deadMsg: 'Join DriveEasy Rewards for free at the front desk. No codes here.' }, { label: 'Available Codes', coupon: ALL_COUPONS.find(c => c.id === 'c1') }] },
-            { label: 'New Customer Offers', children: [{ label: 'About this offer', dead: true, deadMsg: 'First-time customers enjoy exclusive discounts.' }, { label: 'Available Codes', coupon: ALL_COUPONS.find(c => c.id === 'c2') }] },
-            { label: 'Long Stay Deals',     children: [{ label: 'Available Codes', coupon: ALL_COUPONS.find(c => c.id === 'c3') }, { label: 'Premium Codes', coupon: ALL_COUPONS.find(c => c.id === 'c6') }] },
-            { label: 'Vehicle Class Offers',children: [{ label: 'Available Codes', coupon: ALL_COUPONS.find(c => c.id === 'c4') }, { label: 'Economy Codes', coupon: ALL_COUPONS.find(c => c.id === 'c8') }] },
-            { label: 'Short Stay Deals',    children: [{ label: 'Available Codes', coupon: ALL_COUPONS.find(c => c.id === 'c5') }] },
-            { label: 'Partner Offers',      children: [{ label: 'Airline partners', dead: true, deadMsg: 'Earn AirMiles on your rental. No discount codes on this page.' }, { label: 'Available Codes', coupon: ALL_COUPONS.find(c => c.id === 'c7') }] },
+            { label: 'Member Discounts',     children: [{ label: 'How to join', dead: true, deadMsg: 'Join DriveEasy Rewards for free at the front desk. No codes here.' }, { label: 'Available Codes', coupon: getCoupon('c1') }] },
+            { label: 'New Customer Offers',  children: [{ label: 'About this offer', dead: true, deadMsg: 'First-time customers enjoy exclusive discounts.' }, { label: 'Available Codes', coupon: getCoupon('c2') }] },
+            { label: 'Long Stay Deals',      children: [{ label: 'Available Codes', coupon: getCoupon('c3') }, { label: 'Premium Codes', coupon: getCoupon('c6') }] },
+            { label: 'Vehicle Class Offers', children: [{ label: 'Available Codes', coupon: getCoupon('c4') }, { label: 'Economy Codes', coupon: getCoupon('c8') }] },
+            { label: 'Short Stay Deals',     children: [{ label: 'Available Codes', coupon: getCoupon('c5') }] },
+            { label: 'Partner Offers',       children: [{ label: 'Airline partners', dead: true, deadMsg: 'Earn AirMiles on your rental. No discount codes on this page.' }, { label: 'Available Codes', coupon: getCoupon('c7') }] },
           ],
         },
         {
@@ -127,24 +140,27 @@ const level6 = {
       ],
     };
 
-    const stack = [];
-    stack.push(TREE);
+    const stack = [TREE];
 
     const startTimer = () => {
       timerInterval = setInterval(() => {
         timeLeft--;
         const timerEl = document.getElementById('l6-timer');
+        const barEl   = document.getElementById('l6-timer-bar');
+        const pct     = (timeLeft / 60) * 100;
         if (timerEl) {
           timerEl.textContent = `⏱ ${timeLeft}s`;
-          timerEl.style.color = timeLeft <= 15 ? '#A32D2D' : '#555';
+          if (timeLeft <= 10)      { timerEl.style.color = '#A32D2D'; timerEl.style.fontSize = '15px'; timerEl.style.animation = 'pulse 0.5s infinite'; }
+          else if (timeLeft <= 20) { timerEl.style.color = '#E24B4A'; timerEl.style.fontSize = '14px'; timerEl.style.animation = ''; }
+          else if (timeLeft <= 30) { timerEl.style.color = '#BA7517'; timerEl.style.animation = ''; }
+        }
+        if (barEl) {
+          barEl.style.width = pct + '%';
+          barEl.style.background = timeLeft <= 10 ? '#A32D2D' : timeLeft <= 20 ? '#E24B4A' : timeLeft <= 30 ? '#f5a623' : '#39d98a';
         }
         if (timeLeft <= 0) {
           clearInterval(timerInterval);
-          timerExpired = true;
-          if (!penalised) {
-            penalised = true;
-            G.fail('Time ran out — you paid full price. Lost a heart.');
-          }
+          if (!penalised) { penalised = true; G.fail('Time ran out — you paid full price. Lost a heart.'); }
         }
       }, 1000);
     };
@@ -161,9 +177,7 @@ const level6 = {
           G.fail(`${c.code} doesn't apply to your booking — lost a heart. Check the fine print.`);
         }
         if (msgEl) msgEl.innerHTML = `<span style="color:#A32D2D;font-size:11px">${c.code} doesn't apply to your booking. Read the conditions carefully.</span>`;
-        // Restart timer after penalty
         timeLeft = 60;
-        penalised = true;
         startTimer();
       }
     };
@@ -196,6 +210,14 @@ const level6 = {
 
       if (current.coupon) {
         const c = current.coupon;
+        // If coupon is a fallback dead node
+        if (c.dead) {
+          container.insertAdjacentHTML('beforeend', `
+            <div class="fh" style="font-size:13px">Offer Unavailable</div>
+            <div class="fs" style="color:#aaa">${c.deadMsg}</div>
+          `);
+          return;
+        }
         container.insertAdjacentHTML('beforeend', `
           <div style="border-radius:8px;border:0.5px solid #e0e0d8;background:#fff;padding:12px">
             <div style="font-size:13px;font-weight:500;color:#111;margin-bottom:4px">${c.headline}</div>
@@ -221,13 +243,15 @@ const level6 = {
       container.appendChild(list);
     };
 
-    // Initial render
     el.innerHTML = '';
     el.insertAdjacentHTML('beforeend', `
       <div style="padding:10px 12px;border-radius:8px;background:#f9f9f7;border:0.5px solid #e0e0d8;font-size:12px;margin-bottom:8px">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
           <div style="font-weight:500;color:#111">DriveEasy — Your Booking</div>
-          <div id="l6-timer" style="font-size:12px;font-weight:500;color:#555">⏱ 60s</div>
+          <div id="l6-timer" style="font-size:13px;font-weight:600;color:#555;font-variant-numeric:tabular-nums">⏱ 60s</div>
+        </div>
+        <div style="background:#eee;border-radius:4px;height:6px;overflow:hidden;margin-bottom:8px">
+          <div id="l6-timer-bar" style="height:100%;width:100%;background:#39d98a;border-radius:4px;transition:width 1s linear,background .3s"></div>
         </div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:3px;color:#555;margin-bottom:6px">
           <div>Car class: <strong>${carType}</strong></div>
