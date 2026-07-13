@@ -67,25 +67,22 @@ const level6 = {
         pct: 5,  applies: () => carType === 'Economy' && days < 7 && !hasMembership },
     ];
 
-    // Safe coupon lookup — never returns undefined
     const getCoupon = (id) => ALL_COUPONS.find(c => c.id === id) || {
       id, code: id, headline: 'Offer unavailable',
       fine: 'This offer is not available for your current booking.',
       pct: 0, dead: true, deadMsg: 'This offer is not available for your current booking.',
     };
 
-    // Guarantee exactly one valid coupon — if none match, force c3
     let validCoupons = ALL_COUPONS.filter(c => c.applies());
     if (validCoupons.length === 0) {
-      // Force a sensible fallback based on booking
       if (!hasMembership && !hasPartnerCard) {
-        ALL_COUPONS[2].applies = () => true; // STAY25 — no membership, no visa required
+        ALL_COUPONS[2].applies = () => true;
         validCoupons = [ALL_COUPONS[2]];
       } else if (hasMembership && carType !== 'Economy') {
-        ALL_COUPONS[4].applies = () => true; // COMPACT15 — relax day restriction
+        ALL_COUPONS[4].applies = () => true;
         validCoupons = [ALL_COUPONS[4]];
       } else {
-        ALL_COUPONS[0].applies = () => true; // MEMBER10 — relax car type restriction
+        ALL_COUPONS[0].applies = () => true;
         validCoupons = [ALL_COUPONS[0]];
       }
     }
@@ -94,8 +91,8 @@ const level6 = {
     const discount     = Math.round(subtotal * (validCoupon.pct / 100));
     const correctTotal = subtotal - discount;
 
-    let penalised    = false;
-    let timeLeft     = 60;
+    let penalised     = false;
+    let timeLeft      = 60;
     let timerInterval = null;
 
     const TREE = {
@@ -106,7 +103,7 @@ const level6 = {
           children: [
             { label: 'Add GPS',       dead: true, deadMsg: 'GPS rental — $8/day. This is a paid add-on, not a coupon.' },
             { label: 'Add insurance', dead: true, deadMsg: 'Insurance packages starting at $12/day. Not a coupon page.' },
-            { label: 'Prepay fuel',   dead: true, deadMsg: 'Prepay fuel at today\'s rate. This is a paid add-on.' },
+            { label: 'Prepay fuel',   dead: true, deadMsg: "Prepay fuel at today's rate. This is a paid add-on." },
             { label: 'Extra driver',  dead: true, deadMsg: 'Add an extra driver for $5/day. Not a coupon page.' },
           ],
         },
@@ -150,8 +147,8 @@ const level6 = {
         const pct     = (timeLeft / 60) * 100;
         if (timerEl) {
           timerEl.textContent = `⏱ ${timeLeft}s`;
-          if (timeLeft <= 10)      { timerEl.style.color = '#A32D2D'; timerEl.style.fontSize = '15px'; timerEl.style.animation = 'pulse 0.5s infinite'; }
-          else if (timeLeft <= 20) { timerEl.style.color = '#E24B4A'; timerEl.style.fontSize = '14px'; timerEl.style.animation = ''; }
+          if (timeLeft <= 10)      { timerEl.style.color = '#A32D2D'; timerEl.style.fontSize = '20px'; timerEl.style.animation = 'pulse 0.5s infinite'; }
+          else if (timeLeft <= 20) { timerEl.style.color = '#E24B4A'; timerEl.style.fontSize = '18px'; timerEl.style.animation = ''; }
           else if (timeLeft <= 30) { timerEl.style.color = '#BA7517'; timerEl.style.animation = ''; }
         }
         if (barEl) {
@@ -160,7 +157,13 @@ const level6 = {
         }
         if (timeLeft <= 0) {
           clearInterval(timerInterval);
-          if (!penalised) { penalised = true; G.fail('Time ran out — you paid full price. Lost a heart.'); }
+          if (!penalised) {
+            penalised = true;
+            G.fail('Time ran out — you paid full price. Lost a heart.');
+            setTimeout(() => G.succeed(), 1600);
+          } else {
+            G.succeed();
+          }
         }
       }, 1000);
     };
@@ -169,17 +172,17 @@ const level6 = {
       clearInterval(timerInterval);
       const msgEl = document.getElementById('l6-apply-msg');
       if (c.id === validId) {
-        if (msgEl) msgEl.innerHTML = `<span style="color:#2D7A3A;font-weight:500">✓ ${c.code} applied — ${c.pct}% off. New total: $${correctTotal}</span>`;
+        if (msgEl) msgEl.innerHTML = `<span style="color:#2D7A3A;font-weight:500;font-size:15px">✓ ${c.code} applied — ${c.pct}% off. New total: $${correctTotal}</span>`;
         setTimeout(() => G.succeed(), 1400);
       } else {
         if (!penalised) {
           penalised = true;
           G.fail(`${c.code} doesn't apply to your booking — lost a heart. Check the fine print.`);
         }
-        if (msgEl) msgEl.innerHTML = `<span style="color:#A32D2D;font-size:11px">${c.code} doesn't apply to your booking. Read the conditions carefully.</span>`;
-        timeLeft = 60;
-        startTimer();
+        if (msgEl) msgEl.innerHTML = `<span style="color:#A32D2D;font-size:14px">${c.code} doesn't apply to your booking. Read the conditions carefully.</span>`;
       }
+
+      startTimer();
     };
 
     const renderMenu = (container) => {
@@ -188,13 +191,13 @@ const level6 = {
       const isRoot  = stack.length === 1;
 
       container.insertAdjacentHTML('beforeend', `
-        <div style="font-size:10px;color:#aaa;margin-bottom:4px">${stack.map(n => n.label).join(' › ')}</div>
+        <div style="font-size:12px;color:#aaa;margin-bottom:8px">${stack.map(n => n.label).join(' › ')}</div>
       `);
 
       if (!isRoot) {
         const backBtn = document.createElement('button');
         backBtn.className = 'btn';
-        backBtn.style.cssText = 'font-size:11px;margin-bottom:8px;padding:4px 10px;color:#555';
+        backBtn.style.cssText = 'font-size:14px;margin-bottom:12px;padding:8px 16px;color:#555';
         backBtn.textContent = '← Back';
         backBtn.onclick = () => { stack.pop(); renderMenu(container); };
         container.appendChild(backBtn);
@@ -202,28 +205,27 @@ const level6 = {
 
       if (current.dead) {
         container.insertAdjacentHTML('beforeend', `
-          <div class="fh" style="font-size:13px">${current.label}</div>
-          <div class="fs" style="color:#aaa">${current.deadMsg}</div>
+          <div class="fh" style="font-size:18px;margin-bottom:10px">${current.label}</div>
+          <div class="fs" style="color:#aaa;font-size:15px">${current.deadMsg}</div>
         `);
         return;
       }
 
       if (current.coupon) {
         const c = current.coupon;
-        // If coupon is a fallback dead node
         if (c.dead) {
           container.insertAdjacentHTML('beforeend', `
-            <div class="fh" style="font-size:13px">Offer Unavailable</div>
-            <div class="fs" style="color:#aaa">${c.deadMsg}</div>
+            <div class="fh" style="font-size:18px;margin-bottom:10px">Offer Unavailable</div>
+            <div class="fs" style="color:#aaa;font-size:15px">${c.deadMsg}</div>
           `);
           return;
         }
         container.insertAdjacentHTML('beforeend', `
-          <div style="border-radius:8px;border:0.5px solid #e0e0d8;background:#fff;padding:12px">
-            <div style="font-size:13px;font-weight:500;color:#111;margin-bottom:4px">${c.headline}</div>
-            <div style="font-size:10px;color:#aaa;line-height:1.5;margin-bottom:8px">${c.fine}</div>
-            <div style="font-size:12px;color:#534AB7;font-weight:500;margin-bottom:8px">Code: ${c.code}</div>
-            <button class="btn btn-p" style="width:100%;font-size:12px" id="l6-apply-${c.id}">Apply ${c.code}</button>
+          <div style="border-radius:10px;border:0.5px solid #e0e0d8;background:#fff;padding:24px">
+            <div style="font-size:18px;font-weight:500;color:#111;margin-bottom:10px">${c.headline}</div>
+            <div style="font-size:14px;color:#aaa;line-height:1.7;margin-bottom:14px">${c.fine}</div>
+            <div style="font-size:16px;color:#534AB7;font-weight:500;margin-bottom:16px">Code: ${c.code}</div>
+            <button class="btn btn-p" id="l6-apply-${c.id}" style="width:100%;font-size:16px;padding:14px">Apply ${c.code}</button>
           </div>
         `);
         document.getElementById(`l6-apply-${c.id}`).onclick = () => applyCode(c);
@@ -231,11 +233,11 @@ const level6 = {
       }
 
       const list = document.createElement('div');
-      list.style.cssText = 'display:flex;flex-direction:column;gap:6px;margin-top:4px';
+      list.style.cssText = 'display:flex;flex-direction:column;gap:12px;margin-top:8px';
       current.children.forEach(child => {
         const btn = document.createElement('button');
         btn.className = 'btn';
-        btn.style.cssText = 'text-align:left;font-size:13px';
+        btn.style.cssText = 'text-align:left;font-size:16px;padding:16px 20px;width:100%';
         btn.textContent = child.label + ' ›';
         btn.onclick = () => { stack.push(child); renderMenu(container); };
         list.appendChild(btn);
@@ -245,15 +247,15 @@ const level6 = {
 
     el.innerHTML = '';
     el.insertAdjacentHTML('beforeend', `
-      <div style="padding:10px 12px;border-radius:8px;background:#f9f9f7;border:0.5px solid #e0e0d8;font-size:12px;margin-bottom:8px">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
-          <div style="font-weight:500;color:#111">DriveEasy — Your Booking</div>
-          <div id="l6-timer" style="font-size:13px;font-weight:600;color:#555;font-variant-numeric:tabular-nums">⏱ 60s</div>
+      <div style="padding:16px 20px;border-radius:10px;background:#f9f9f7;border:0.5px solid #e0e0d8;font-size:15px;margin-bottom:14px;min-height:195px">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+          <div style="font-weight:500;color:#111;font-size:19px">DriveEasy — Your Booking</div>
+          <div id="l6-timer" style="font-size:16px;font-weight:600;color:#555;font-variant-numeric:tabular-nums">⏱ 60s</div>
         </div>
-        <div style="background:#eee;border-radius:4px;height:6px;overflow:hidden;margin-bottom:8px">
+        <div style="background:#eee;border-radius:4px;height:7px;overflow:hidden;margin-bottom:12px">
           <div id="l6-timer-bar" style="height:100%;width:100%;background:#39d98a;border-radius:4px;transition:width 1s linear,background .3s"></div>
         </div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:3px;color:#555;margin-bottom:6px">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;color:#555;margin-bottom:8px">
           <div>Car class: <strong>${carType}</strong></div>
           <div>Duration: <strong>${days} days</strong></div>
           <div>Base rate: <strong>$${baseRate}/day</strong></div>
@@ -262,7 +264,7 @@ const level6 = {
           <div>Loyalty member: <strong>${hasMembership ? 'Yes' : 'No'}</strong></div>
           <div>Visa cardholder: <strong>${hasPartnerCard ? 'Yes' : 'No'}</strong></div>
         </div>
-        <div id="l6-apply-msg" style="font-size:11px;margin-top:2px"></div>
+        <div id="l6-apply-msg" style="font-size:14px;margin-top:4px"></div>
       </div>
     `);
 

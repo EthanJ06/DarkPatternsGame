@@ -114,7 +114,7 @@ const level3ai = {
               <div style="font-size:11px;color:#007185;margin-top:2px">${avg} out of 5 stars</div>
               <div style="margin-top:8px;display:flex;align-items:baseline;gap:2px">
                 <span style="font-size:11px;color:#0F1111;align-self:flex-start">$</span>
-                <span style="font-size:21px;color:#0F1111;font-weight:500">${Math.floor(p.price)}</span>
+                <span style="font-size:15px;color:#0F1111;font-weight:500">${Math.floor(p.price)}</span>
                 <span style="font-size:11px;color:#0F1111;align-self:flex-start">${(p.price % 1).toFixed(2).slice(2)}</span>
               </div>
               <div style="font-size:11px;color:#007600;margin-top:1px">In Stock</div>

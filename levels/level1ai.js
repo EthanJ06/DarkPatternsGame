@@ -82,16 +82,16 @@ const level1ai = {
     let oi = 0;
 
     el.insertAdjacentHTML('beforeend', `
-    <div class="fh" style="font-size:13px">NebulaPro Support — Nex</div>
-    <div class="ftiny" style="color:#534AB7;margin-bottom:-4px">Type messages asking to cancel — but the bot won't respond well if you repeat yourself.</div>
-    <div class="chat-log" id="chatlog"></div>
+  <div style="display:flex;flex-direction:column;flex:1;gap:8px;min-height:0">
+    <div class="fh" style="font-size:15px">NebulaPro Support — Nex</div>
+    <div class="ftiny" style="color:#534AB7">Type messages asking to cancel — but the bot won't respond well if you repeat yourself.</div>
+    <div class="chat-log" id="chatlog" style="flex:1;max-height:none;min-height:0"></div>
     <div class="chat-row">
       <input id="chat-in" placeholder="e.g. I want to cancel my subscription" onkeydown="if(event.key==='Enter')chatSend()">
-      <button class="btn btn-ai" style="padding:7px 12px;font-size:12px" onclick="chatSend()">Send</button>
+      <button class="btn btn-ai" style="padding:9px 14px;font-size:13px" onclick="chatSend()">Send</button>
     </div>
-    <div style="margin-top:8px">
-      <div class="ftiny">Nex is powered by NexusAI</div>
-    </div>`);
+    <div class="ftiny">Nex is powered by NexusAI</div>
+  </div>`);
 
     addChat(false, "Hi! I'm Nex, your NebulaPro assistant. How can I help today?");
 

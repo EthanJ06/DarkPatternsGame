@@ -86,9 +86,9 @@ const level5ai = {
       const aiBanner = el.querySelector('.ai-banner');
       el.innerHTML = aiBanner ? aiBanner.outerHTML : '';
       el.insertAdjacentHTML('beforeend', `
-        <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;flex:1;min-height:160px">
-          <div style="width:28px;height:28px;border:3px solid #e0dcff;border-top-color:#534AB7;border-radius:50%;animation:spin .8s linear infinite"></div>
-          <div style="font-size:12px;font-weight:500;color:#534AB7;text-align:center;max-width:220px">${msg}</div>
+        <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;flex:1;min-height:220px">
+          <div style="width:38px;height:38px;border:4px solid #e0dcff;border-top-color:#534AB7;border-radius:50%;animation:spin .8s linear infinite"></div>
+          <div style="font-size:16px;font-weight:500;color:#534AB7;text-align:center;max-width:300px">${msg}</div>
         </div>`);
       setTimeout(after, delay);
     };
@@ -124,78 +124,78 @@ const level5ai = {
 
     // Show a brief inline flash without stopping the timer or re-rendering
     const flashFail = (msg) => {
-      const existing = document.getElementById('l5ai-flash');
-      if (existing) existing.remove();
+  const existing = document.getElementById('l5ai-flash');
+  if (existing) existing.remove();
 
-      const flash = document.createElement('div');
-      flash.id = 'l5ai-flash';
-      flash.style.cssText = 'font-size:11px;color:#E24B4A;text-align:center;padding:4px 0';
-      flash.textContent = msg;
+  const flash = document.createElement('div');
+  flash.id = 'l5ai-flash';
+  flash.style.cssText = 'font-size:15px;color:#E24B4A;text-align:center;padding:6px 0';
+  flash.textContent = msg;
 
-      const btnRow = document.getElementById('l5ai-btn-row');
-      if (btnRow) btnRow.insertAdjacentElement('afterend', flash);
+  const btnRow = document.getElementById('l5ai-btn-row');
+  if (btnRow) btnRow.insertAdjacentElement('afterend', flash);
 
-      setTimeout(() => flash.remove(), 1400);
-    };
+  setTimeout(() => flash.remove(), 1400);
+};
 
     const show = () => {
-      clearTimer();
-      if (step >= UPSELLS.length) { succeed(); return; }
+  clearTimer();
+  if (step >= UPSELLS.length) { succeed(); return; }
 
-      const u = UPSELLS[step];
-      const aiBanner = el.querySelector('.ai-banner');
-      el.innerHTML = aiBanner ? aiBanner.outerHTML : '';
+  const u = UPSELLS[step];
+  const aiBanner = el.querySelector('.ai-banner');
+  el.innerHTML = aiBanner ? aiBanner.outerHTML : '';
 
-      const confidence = 91 - step * 4;
+  const confidence = 91 - step * 4;
 
-      el.insertAdjacentHTML('beforeend', `
-        <div style="overflow-y:auto;min-height:0;display:flex;flex-direction:column">
-        <div style="display:flex;align-items:center;gap:7px;margin-bottom:10px">
-          <div style="width:6px;height:6px;border-radius:50%;background:#534AB7;flex-shrink:0;animation:pulse 1.2s infinite"></div>
-          <div style="font-size:12px;color:#534AB7">NexusAI identified you as: <strong>${profile}</strong></div>
-        </div>
+  el.insertAdjacentHTML('beforeend', `
+    <div style="overflow-y:auto;min-height:0;display:flex;flex-direction:column">
+    <div style="display:flex;align-items:center;gap:9px;margin-bottom:14px">
+      <div style="width:8px;height:8px;border-radius:50%;background:#534AB7;flex-shrink:0;animation:pulse 1.2s infinite"></div>
+      <div style="font-size:16px;color:#534AB7">NexusAI identified you as: <strong>${profile}</strong></div>
+    </div>
 
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:3px">
-          <div style="font-size:10px;color:#aaa" id="l5ai-timer-label">Offer expires in</div>
-          <div style="font-size:10px;color:#aaa;font-weight:500;min-width:24px;text-align:right" id="l5ai-timer-num">${OFFER_SECS}s</div>
-        </div>
-        <div class="tbar-t" style="margin-bottom:14px">
-          <div class="tbar-f" id="l5ai-timer-bar" style="width:100%;background:#F5A623;transition:width 1s linear"></div>
-        </div>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+      <div style="font-size:14px;color:#aaa" id="l5ai-timer-label">Offer expires in</div>
+      <div style="font-size:14px;color:#aaa;font-weight:500;min-width:32px;text-align:right" id="l5ai-timer-num">${OFFER_SECS}s</div>
+    </div>
+    <div class="tbar-t" style="margin-bottom:20px">
+      <div class="tbar-f" id="l5ai-timer-bar" style="width:100%;background:#F5A623;transition:width 1s linear"></div>
+    </div>
 
-        <div style="padding:14px;border-radius:10px;border:1px solid #d8d2fb;background:linear-gradient(180deg,#ffffff,#fbfaff);box-shadow:0 1px 4px rgba(83,74,183,.08)">
-          <div style="display:flex;gap:12px;align-items:flex-start">
-            <div style="flex:1;min-width:0">
-              <div style="font-size:14px;font-weight:600;color:#111;line-height:1.3">${u.name}</div>
-              <div style="font-size:11px;color:#534AB7;font-weight:500;margin-top:1px">${u.sub}</div>
-            </div>
-            <div style="text-align:right;flex-shrink:0">
-              <div style="font-size:15px;font-weight:600;color:#111">$${u.price.toFixed(2)}</div>
-              <div style="font-size:10px;color:#999">/mo</div>
-            </div>
-          </div>
-          <div style="font-size:12px;color:#555;line-height:1.5;margin-top:8px;padding-top:8px;border-top:1px solid #ececea">${u.desc}</div>
+    <div style="padding:20px;border-radius:14px;border:1px solid #d8d2fb;background:linear-gradient(180deg,#ffffff,#fbfaff);box-shadow:0 1px 5px rgba(83,74,183,.08)">
+      <div style="display:flex;gap:16px;align-items:flex-start">
+        <div style="flex:1;min-width:0">
+          <div style="font-size:19px;font-weight:600;color:#111;line-height:1.3">${u.name}</div>
+          <div style="font-size:15px;color:#534AB7;font-weight:500;margin-top:2px">${u.sub}</div>
         </div>
+        <div style="text-align:right;flex-shrink:0">
+          <div style="font-size:21px;font-weight:600;color:#111">$${u.price.toFixed(2)}</div>
+          <div style="font-size:14px;color:#999">/mo</div>
+        </div>
+      </div>
+      <div style="font-size:16px;color:#555;line-height:1.5;margin-top:11px;padding-top:11px;border-top:1px solid #ececea">${u.desc}</div>
+    </div>
 
-        <div style="margin-top:10px;padding:10px 12px;background:#f0effe;border-radius:8px;border:1px solid #e0dcfb">
-          <div style="display:flex;align-items:center;gap:7px;margin-bottom:5px">
-            <span style="font-size:10px;font-weight:700;letter-spacing:.04em;color:#fff;background:#534AB7;padding:2px 7px;border-radius:999px;flex-shrink:0">${confidence}% MATCH</span>
-            <span style="font-size:10px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:#534AB7">Why NexusAI recommends this</span>
-          </div>
-          <div style="font-size:11px;color:#534AB7;line-height:1.5">${u.reason}</div>
-        </div>
+    <div style="margin-top:14px;padding:14px 17px;background:#f0effe;border-radius:11px;border:1px solid #e0dcfb">
+      <div style="display:flex;align-items:center;gap:9px;margin-bottom:7px">
+        <span style="font-size:14px;font-weight:700;letter-spacing:.04em;color:#fff;background:#534AB7;padding:3px 10px;border-radius:999px;flex-shrink:0">${confidence}% MATCH</span>
+        <span style="font-size:14px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:#534AB7">Why NexusAI recommends this</span>
+      </div>
+      <div style="font-size:15px;color:#534AB7;line-height:1.5">${u.reason}</div>
+    </div>
 
-        <div id="l5ai-btn-row" style="margin-top:16px;display:flex;flex-direction:column;align-items:stretch;gap:8px">
-          <button class="btn btn-ai" id="l5ai-add" style="width:100%;padding:11px;font-size:13px;font-weight:500;border-radius:9px">Add to my order</button>
-          <button id="l5ai-skip" class="btn-g" style="background:transparent;color:#aaa;font-size:11px;cursor:pointer;font-family:inherit;padding:4px 0;text-align:center">No thanks</button>
-        </div>
+    <div id="l5ai-btn-row" style="margin-top:22px;display:flex;flex-direction:column;align-items:stretch;gap:11px">
+      <button class="btn btn-ai" id="l5ai-add" style="width:100%;padding:15px;font-size:17px;font-weight:500;border-radius:9px">Add to my order</button>
+      <button id="l5ai-skip" class="btn-g" style="background:transparent;color:#aaa;font-size:15px;cursor:pointer;font-family:inherit;padding:6px 0;text-align:center">No thanks</button>
+    </div>
 
-        <div style="display:flex;justify-content:center;gap:5px;margin-top:10px">
-          ${UPSELLS.map((_, i) => `<div style="width:20px;height:4px;border-radius:2px;background:${i < step ? '#534AB7' : i === step ? '#9b93f0' : '#e0dcfb'}"></div>`).join('')}
-        </div>
-        <div class="ftiny" style="margin-top:5px;text-align:center">${step + 1} of ${UPSELLS.length} personalized recommendations</div>
-        </div>
-      `);
+    <div style="display:flex;justify-content:center;gap:7px;margin-top:14px">
+      ${UPSELLS.map((_, i) => `<div style="width:28px;height:5px;border-radius:3px;background:${i < step ? '#534AB7' : i === step ? '#9b93f0' : '#e0dcfb'}"></div>`).join('')}
+    </div>
+    <div class="ftiny" style="margin-top:7px;text-align:center">${step + 1} of ${UPSELLS.length} personalized recommendations</div>
+    </div>
+  `);
 
       document.getElementById('l5ai-add').onclick = () => {
         adds++;

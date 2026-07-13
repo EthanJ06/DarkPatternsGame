@@ -115,7 +115,7 @@ const level5 = {
     };
 
     const cartItemHtml = (c, i) => `
-      <div class="cart-item" style="align-items:flex-start;padding:10px 0">
+      <div class="cart-item" style="align-items:flex-start;padding:14px 0">
         <div style="flex:1;min-width:0">
           <div class="cart-nm" style="font-weight:500">${c.name}</div>
           <div class="cart-qty">Qty: 1</div>
@@ -123,7 +123,7 @@ const level5 = {
         </div>
         <div style="text-align:right;flex-shrink:0">
           <div class="cart-pr" style="font-weight:600;color:#111">${c.price === 0 ? 'Free' : '$' + c.price.toFixed(2)}</div>
-          ${c.rm ? `<button class="cart-rm" id="crm${i}" style="margin-top:5px">Remove</button>` : ''}
+          ${c.rm ? `<button class="cart-rm" id="crm${i}" style="margin-top:7px">Remove</button>` : ''}
         </div>
       </div>`;
 
@@ -133,15 +133,15 @@ const level5 = {
 
       el.insertAdjacentHTML('beforeend', `
         <div style="overflow-y:auto;min-height:0;display:flex;flex-direction:column">
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:2px">
-            <div style="font-size:10px;color:#aaa" id="l5-timer-label">Securing your cart...</div>
-            <div style="font-size:10px;color:#aaa;font-weight:500;min-width:24px;text-align:right" id="l5-timer-num">${secsLeft}s</div>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+            <div style="font-size:14px;color:#aaa" id="l5-timer-label">Securing your cart...</div>
+            <div style="font-size:14px;color:#aaa;font-weight:500;min-width:32px;text-align:right" id="l5-timer-num">${secsLeft}s</div>
           </div>
-          <div class="tbar-t" style="margin-bottom:14px">
+          <div class="tbar-t" style="margin-bottom:20px">
             <div class="tbar-f" id="l5-timer-bar" style="width:${(secsLeft / TOTAL_SECS) * 100}%;background:#f5a623;transition:width 1s linear"></div>
           </div>
 
-          <div class="store-header" style="padding-bottom:10px;border-bottom:1px solid #e8e8e4;margin-bottom:0">
+          <div class="store-header" style="padding-bottom:14px;border-bottom:1px solid #e8e8e4;margin-bottom:0">
             <div>
               <div class="store-title">NebulaPro Store</div>
               <div class="store-sub">Your cart &middot; ${cart.length} item${cart.length === 1 ? '' : 's'}</div>
@@ -152,16 +152,16 @@ const level5 = {
             ${cart.map((c, i) => cartItemHtml(c, i)).join('')}
           </div>
 
-          <div class="order-summary" style="margin-top:6px">
+          <div class="order-summary" style="margin-top:8px">
             <div class="order-summary-row"><span>Subtotal</span><span>$${subtotal().toFixed(2)}</span></div>
             <div class="order-summary-row"><span>Shipping</span><span>${shipping() === 0 ? 'Free' : '$' + shipping().toFixed(2)}</span></div>
             <div class="order-summary-total"><span>Estimated total</span><span>$${total().toFixed(2)}</span></div>
           </div>
 
-          <div class="btn-row" style="margin-top:10px">
-            <button class="btn btn-p" id="l5-co" style="width:100%;padding:11px;border-radius:9px">Proceed to secure checkout →</button>
+          <div class="btn-row" style="margin-top:14px">
+            <button class="btn btn-p" id="l5-co" style="width:100%;padding:15px;border-radius:9px">Proceed to secure checkout →</button>
           </div>
-          <div class="ftiny" style="margin-top:6px;text-align:center">Add-ons auto-renew. Free item becomes $9.99/mo after trial.</div>
+          <div class="ftiny" style="margin-top:8px;text-align:center">Add-ons auto-renew. Free item becomes $9.99/mo after trial.</div>
         </div>`);
 
       // Bind remove buttons

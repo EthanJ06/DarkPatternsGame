@@ -21,7 +21,7 @@ const level1 = {
   rw: {
     company: 'Amazon Prime',
     detail: 'Required navigating 5 separate screens to cancel. The FTC sued Amazon in 2023 specifically for this, calling it "illusory" cancellation.',
-    link: 'https://www.deceptive.design/hall-of-shame',
+    link: 'https://deceptive.design/at-images/deceptive-pattern-types/rec2O3MM3zq9oqWkE_att0f1tCxheAGLwRi.webp',
   },
   replay: [
     { trap: false, note: 'Sign-up: 2 clicks. Intentionally frictionless to maximize conversions.' },
@@ -93,12 +93,12 @@ const level1 = {
           ${cardIcon('<path d="M12 19l-7-7 7-7M5 12h14"/>')}
           <div>
             <div class="sub-title">Why are you leaving?</div>
-            <div class="sub-sub">Select one reason to continue</div>
+            <div class="sub-sub">Select all that apply to continue</div>
           </div>
         </div>
         <div class="reason-card">
           ${['Too expensive', 'Not using it', 'Missing features', 'Found a better option', 'Other']
-          .map(o => `<label class="reason-row"><input type="radio" name="l1w"> ${o}</label>`).join('')}
+          .map(o => `<label class="reason-row"><input type="checkbox" name="l1w"> ${o}</label>`).join('')}
         </div>
         <div class="btn-row" style="margin-top:14px">
           <button class="btn" id="l1-survey">Continue</button>
@@ -137,10 +137,10 @@ const level1 = {
         <div class="reason-card" style="padding:10px 12px">
           ${['How satisfied were you?', 'How easy was it to use?', 'Likelihood to return?', 'Would you recommend us?', 'Did you use mobile?', 'How did you find us?']
           .map((q, i) => `
-              <div style="padding:7px 0;${i < 5 ? 'border-bottom:1px solid #f0f0ee' : ''}">
+              <div style="padding:10px 0;${i < 5 ? 'border-bottom:1px solid #f0f0ee' : ''}">
                 <div class="fs" style="color:#333">${i + 1}. ${q}</div>
-                <div class="star-row" style="display:flex;gap:5px;margin-top:4px">
-                  ${'12345'.split('').map((_, si) => `<span class="star" data-i="${si}" style="font-size:15px;cursor:pointer">★</span>`).join('')}
+                <div class="star-row" style="display:flex;gap:6px;margin-top:6px">
+                  ${'12345'.split('').map((_, si) => `<span class="star" data-i="${si}" style="font-size:18px;cursor:pointer">★</span>`).join('')}
                 </div>
               </div>`).join('')}
         </div>
@@ -149,7 +149,7 @@ const level1 = {
         </div>`),
 
       () => el.insertAdjacentHTML('beforeend', `
-        <div style="text-align:center;padding:16px 0 6px;display:flex;flex-direction:column;gap:10px;align-items:center">
+        <div style="text-align:center;display:flex;flex-direction:column;gap:10px;align-items:center;justify-content:center;flex:1">
           <div class="confirm-icon">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1f7a44" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
           </div>
@@ -170,7 +170,7 @@ const level1 = {
       if (surveyBtn) surveyBtn.onclick = () => {
         const selected = document.querySelector('input[name="l1w"]:checked');
         if (!selected) {
-          almostGotYou(el, 'You must select a reason before continuing.');
+          almostGotYou(el, 'You must select at least one reason before continuing.');
           return;
         }
         advance();

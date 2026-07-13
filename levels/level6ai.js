@@ -175,8 +175,8 @@ const level6ai = {
         const pct     = (timeLeft / 60) * 100;
         if (timerEl) {
           timerEl.textContent = `⏱ ${timeLeft}s`;
-          if (timeLeft <= 10)      { timerEl.style.color = '#A32D2D'; timerEl.style.fontSize = '15px'; timerEl.style.animation = 'pulse 0.5s infinite'; }
-          else if (timeLeft <= 20) { timerEl.style.color = '#E24B4A'; timerEl.style.fontSize = '14px'; timerEl.style.animation = ''; }
+          if (timeLeft <= 10)      { timerEl.style.color = '#A32D2D'; timerEl.style.fontSize = '20px'; timerEl.style.animation = 'pulse 0.5s infinite'; }
+          else if (timeLeft <= 20) { timerEl.style.color = '#E24B4A'; timerEl.style.fontSize = '18px'; timerEl.style.animation = ''; }
           else if (timeLeft <= 30) { timerEl.style.color = '#BA7517'; timerEl.style.animation = ''; }
         }
         if (barEl) {
@@ -185,7 +185,13 @@ const level6ai = {
         }
         if (timeLeft <= 0) {
           clearInterval(timerInterval);
-          if (!penalised) { penalised = true; G.fail('Time ran out — you paid full price. Lost a heart.'); }
+          if (!penalised) {
+            penalised = true;
+            G.fail('Time ran out — you paid full price. Lost a heart.');
+            setTimeout(() => G.succeed(), 1600);
+          } else {
+            G.succeed();
+          }
         }
       }, 1000);
     };
@@ -196,13 +202,13 @@ const level6ai = {
 
       const msgDiv = document.createElement('div');
       msgDiv.className = 'chat-msg bot';
-      msgDiv.style.cssText = 'font-size:10px;line-height:1.5';
+      msgDiv.style.cssText = 'font-size:14px;line-height:1.6';
       msgDiv.textContent = offer.pitch;
       log.appendChild(msgDiv);
 
       const applyBtn = document.createElement('button');
       applyBtn.className = 'btn btn-ai';
-      applyBtn.style.cssText = 'font-size:10px;width:100%;margin-top:5px;padding:5px';
+      applyBtn.style.cssText = 'font-size:14px;width:100%;margin-top:8px;padding:10px';
       applyBtn.textContent = `Apply ${offer.code}`;
       applyBtn.onclick = () => {
         applyBtn.disabled = true;
@@ -244,7 +250,7 @@ const level6ai = {
 
         const revertBtn = document.createElement('button');
         revertBtn.className = 'btn';
-        revertBtn.style.cssText = 'font-size:10px;width:100%;margin-top:5px;padding:5px;color:#A32D2D;border-color:#A32D2D';
+        revertBtn.style.cssText = 'font-size:14px;width:100%;margin-top:8px;padding:10px;color:#A32D2D;border-color:#A32D2D';
         revertBtn.textContent = 'Revert to original price';
         revertBtn.onclick = () => {
           revertBtn.disabled = true;
@@ -344,11 +350,11 @@ const level6ai = {
       }
 
       const list = document.createElement('div');
-      list.style.cssText = 'display:flex;flex-direction:column;gap:6px;margin-top:4px';
+      list.style.cssText = 'display:flex;flex-direction:column;gap:12px;margin-top:8px';
       current.children.forEach(child => {
         const btn = document.createElement('button');
         btn.className = 'btn';
-        btn.style.cssText = 'text-align:left;font-size:13px';
+        btn.style.cssText = 'text-align:left;font-size:16px;padding:16px 20px;width:100%';
         btn.textContent = child.label + ' ›';
         btn.onclick = () => { stack.push(child); renderMenu(container); };
         list.appendChild(btn);
@@ -365,10 +371,10 @@ const level6ai = {
     el.insertAdjacentHTML('beforeend', `
       <div style="display:flex;height:100%;overflow:hidden;border-radius:inherit">
         <div style="flex:1;padding:14px;overflow-y:auto;display:flex;flex-direction:column;gap:8px;min-width:0">
-          <div style="padding:10px 12px;border-radius:8px;background:#f9f9f7;border:0.5px solid #e0e0d8;font-size:12px">
+          <div style="padding:16px 20px;border-radius:10px;background:#f9f9f7;border:0.5px solid #e0e0d8;font-size:15px;min-height:220px">
             <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
-              <div style="font-weight:500;color:#111">DriveEasy — Your Booking</div>
-              <div id="l6ai-timer" style="font-size:13px;font-weight:600;color:#555;font-variant-numeric:tabular-nums">⏱ 60s</div>
+              <div style="font-weight:500;color:#111;font-size:19px">DriveEasy — Your Booking</div>
+              <div id="l6ai-timer" style="font-size:16px;font-weight:600;color:#555;font-variant-numeric:tabular-nums">⏱ 60s</div>
             </div>
             <div style="background:#eee;border-radius:4px;height:6px;overflow:hidden;margin-bottom:8px">
               <div id="l6ai-timer-bar" style="height:100%;width:100%;background:#39d98a;border-radius:4px;transition:width 1s linear,background .3s"></div>
@@ -386,11 +392,11 @@ const level6ai = {
           </div>
           <div id="l6ai-menu"></div>
         </div>
-        <div style="width:190px;flex-shrink:0;border-left:0.5px solid #e0e0d8;background:#f0effe;display:flex;flex-direction:column;overflow:hidden">
-          <div style="padding:8px 10px;background:#c8c2f8;display:flex;align-items:center;gap:6px;font-size:11px;color:#26215C;font-weight:500;flex-shrink:0">
+        <div style="width:300px;flex-shrink:0;border-left:0.5px solid #e0e0d8;background:#f0effe;display:flex;flex-direction:column;overflow:hidden">
+          <div style="padding:8px 10px;background:#c8c2f8;display:flex;align-items:center;gap:6px;font-size:15px;color:#26215C;font-weight:500;flex-shrink:0">
             <div class="ai-pulse"></div>Nex — AI Savings
           </div>
-          <div class="chat-log" id="l6ai-chat-log" style="flex:1;border-radius:0;border:none;max-height:none;background:transparent;padding:8px;gap:6px;overflow-y:auto"></div>
+          <div class="chat-log" id="l6ai-chat-log" style="flex:1;border-radius:0;border:none;max-height:none;background:transparent;padding:14px;gap:10px;overflow-y:auto"></div>
         </div>
       </div>
     `);

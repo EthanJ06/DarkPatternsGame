@@ -135,11 +135,11 @@ function renderAchievements(containerEl, unlockedSet) {
     return `
       <div class="achievement${got ? '' : ' ach-locked'}">
         <div class="ach-icon">${a.icon}</div>
-        <div>
+        <div style="flex:1;min-width:0;text-align:left">
           <div class="ach-name">${a.name}</div>
           <div class="ach-desc">${a.desc}</div>
         </div>
-        ${got ? '<div style="font-size:11px;color:#3B6D11;font-weight:500;margin-left:auto;padding-left:8px">✓</div>' : ''}
+        <div style="font-size:11px;color:#3B6D11;font-weight:500;margin-left:auto;padding-left:8px;flex-shrink:0">${got ? '✓' : ''}</div>
       </div>`;
   }).join('');
 }
@@ -460,6 +460,36 @@ function showBrief() {
   } else {
     aiNote.style.display = 'none';
   }
+
+  const exWrap = document.getElementById('brief-example');
+  const exRow  = document.getElementById('brief-example-row');
+  const files  = getExampleImages(lv);
+  let failed   = 0;
+
+  exRow.innerHTML = files.map((f, i) => `
+    <img class="brief-example-img" id="brief-example-img-${i}" alt="Real-world example ${i + 1} of ${lv.pattern}">
+  `).join('');
+
+  exWrap.style.display = 'none';
+  files.forEach((f, i) => {
+    const img = document.getElementById(`brief-example-img-${i}`);
+    img.onload  = () => { exWrap.style.display = 'flex'; };
+    img.onerror = () => { failed++; if (failed === files.length) exWrap.style.display = 'none'; };
+    img.src = `assets/examples/${f}`;
+  });
+}
+
+const BRIEF_EXAMPLE_IMAGES = {
+  l1: ['l1-a.png', 'l1-b.png'],
+  l2: ['l2-a.png', 'l2-b.png'],
+  l4: ['l4-a.png', 'l4-b.png'],
+  l5: ['l5-a.png', 'l5-b.png'],
+  l7: ['l7-a.png', 'l7-b.png'],
+  // any other level needing 2+ images can be added here the same way
+};
+
+function getExampleImages(lv) {
+  return BRIEF_EXAMPLE_IMAGES[lv.id] || [`${lv.id}.png`];
 }
 
 // ── Level ──────────────────────────────────────────────────────────────────
@@ -660,7 +690,7 @@ function next() {
 function jumpTo(idx) {
   hearts = 5; score = 0; streak = 0; levelIdx = idx;
   hoverTimers = {};
-  showLevel();
+  showBrief();
 }
 
 // ── Game Over ──────────────────────────────────────────────────────────────
@@ -1051,7 +1081,7 @@ if (jumpEl) {
   LEVELS.forEach((lv, i) => {
     const b = document.createElement('button');
     b.className = 'btn btn-g';
-    b.style.cssText = 'font-size:11px;padding:4px 8px;border:0.5px solid #e0e0d8';
+    b.style.cssText = 'font-size:15px;padding:6px 12px;border:0.5px solid #e0e0d8';
     b.textContent = lv.title;
     b.onclick = () => jumpTo(i);
     jumpEl.appendChild(b);
