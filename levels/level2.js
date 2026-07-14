@@ -85,18 +85,18 @@ const level2 = {
           </div>
         </div>
         <!-- Modal overlay -->
-        <div id="l2-modal" style="position:absolute;inset:0;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;border-radius:inherit">
-          <div style="background:#fff;border-radius:10px;padding:20px;margin:14px;width:100%;box-shadow:0 8px 32px rgba(0,0,0,.18);display:flex;flex-direction:column;gap:12px">
-            <div id="l2-headline" style="font-size:15px;font-weight:600;color:#111;line-height:1.3"></div>
-            <div id="l2-sub" style="font-size:12px;color:#555;line-height:1.5"></div>
-            <div style="display:flex;flex-direction:column;gap:7px;margin-top:2px">
-              <button class="btn btn-p" id="l2-yes" style="width:100%;padding:10px"></button>
-              <button class="btn btn-g" id="l2-no" style="width:100%;padding:6px"></button>
-            </div>
-            <div id="l2-round" class="ftiny" style="text-align:center"></div>
+        <div id="l2-modal" style=" position:absolute; inset:0; background:rgba(0,0,0,.45); display:flex; align-items:center; justify-content:center; border-radius:inherit; padding:24px;">
+          <div style="background:#fff; border-radius:14px; padding:32px; width:min(700px,90%); box-shadow:0 12px 40px rgba(0,0,0,.22); display:flex; flex-direction:column; gap:20px;">
+          <div id="l2-headline" style=" font-size:22px; font-weight:700; color:#111; line-height:1.3; text-align:center;"></div>
+          <div id="l2-sub" style=" font-size:15px; color:#555; line-height:1.6; text-align:center; margin-top:-6px;"></div>
+          <div style=" display:flex; flex-direction:column; gap:12px; margin-top:8px;">
+            <button  class="btn btn-p" id="l2-yes" style=" width:100%; padding:14px; font-size:15px; font-weight:600; border-radius:10px;"></button>
+            <button class="btn btn-g" id="l2-no" style=" width:100%; padding:10px; font-size:12px; color:#777; background:transparent; border:none; text-decoration:underline; cursor:pointer;"></button>
           </div>
+          <div id="l2-round" class="ftiny" style=" text-align:center; color:#888; margin-top:4px;"></div>
         </div>
-      </div>`;
+      </div>
+    </div>`;
       
     el.innerHTML      = '';
     el.style.padding  = '0';

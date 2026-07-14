@@ -15,30 +15,122 @@ const level1 = {
     label: 'If you gave up and kept the plan',
     amount: 9.99,
     period: 'month',
-    note: '$119.88/year for a service you tried to cancel',
+    note: 'A recurring charge for a service you actively tried to cancel.',
   },
   desc: 'Easy to get in, impossible to get out. Cancellation is buried under detours, fake offers, and mandatory surveys — each one hoping you give up.',
   rw: {
-    company: 'Amazon Prime',
-    detail: 'Required navigating 5 separate screens to cancel. The FTC sued Amazon in 2023 specifically for this, calling it "illusory" cancellation.',
-    link: 'https://deceptive.design/at-images/deceptive-pattern-types/rec2O3MM3zq9oqWkE_att0f1tCxheAGLwRi.webp',
+    company: 'The New York Times',
+    detail: 'Sign-up takes a few clicks, but cancelling requires chatting with a "Customer Care Advocate" during limited hours or calling in — no online cancel button. A 2020 class-action suit and years of public complaints called it "exceedingly difficult."',
+    caption: "Left: the one-click subscribe offer. Right: the cancellation page, which routes you to a phone call or a chat window instead of a cancel button.",
+    link: 'https://www.deceptive.design/brands/new-york-times',
   },
   replay: [
     { trap: false, note: 'Sign-up: 2 clicks. Intentionally frictionless to maximize conversions.' },
-    { trap: true,  note: '"Pause instead?" — a detour disguised as a helpful alternative. The goal is to break your momentum.' },
-    { trap: true,  note: 'Mandatory survey: legally delays your cancellation and mines your reasons for retention scripts.' },
-    { trap: true,  note: '"Special offer" — triggered by your survey answer. A last-ditch retention loop.' },
-    { trap: true,  note: '6-question satisfaction survey, required. Exhaustion is the point.' },
+    { trap: true, note: '"Pause instead?" — a detour disguised as a helpful alternative. The goal is to break your momentum.' },
+    { trap: true, note: 'Mandatory survey: legally delays your cancellation and mines your reasons for retention scripts.' },
+    { trap: true, note: '"Special offer" — triggered by your survey answer. A last-ditch retention loop.' },
+    { trap: true, note: '6-question satisfaction survey, required. Exhaustion is the point.' },
     { trap: false, note: '"Allow 5–7 business days" — creates doubt. Will it actually cancel? Many people re-subscribe just in case.' },
   ],
 
   render(el) {
     let step = 0;
 
+    // Take over the whole fake-app surface so this reads as a real account
+    // settings page (sidebar + topbar) rather than a floating modal card.
+    el.innerHTML = '';
+    el.style.padding = '0';
+    el.style.gap = '0';
+    el.style.margin = '0';
+    el.style.flex = '1';
+    el.style.overflow = 'hidden';
+    el.style.borderRadius = '0';
+    el.style.background = 'var(--white)';
+
+    const navItem = (label, emoji, active) => `
+      <div class="l1-nav-item${active ? ' active' : ''}" style="
+        display:flex; align-items:center; gap:10px; padding:9px 10px; border-radius:7px;
+        font-size:13px; color:${active ? '#111' : '#777'}; font-weight:${active ? '600' : '400'};
+        background:${active ? '#efefe9' : 'transparent'}; cursor:default; white-space:nowrap;
+      ">
+        <span style="flex-shrink:0">${emoji}</span>
+        <span class="l1-nav-label">${label}</span>
+      </div>`;
+
+    el.insertAdjacentHTML('beforeend', `
+      <style>
+        @media (max-width:560px) {
+          .l1-sidebar   { width:52px !important; padding-left:6px !important; padding-right:6px !important; }
+          .l1-nav-label { display:none !important; }
+          .l1-brand     { display:none !important; }
+        }
+        #l1-content .sub-header  { margin-bottom: 20px; }
+        #l1-content .plan-card,
+        #l1-content .offer-card,
+        #l1-content .reason-card { margin-top: 18px; }
+        #l1-content .step-dots   { margin-bottom: 22px; }
+        #l1-content .step-dots > div:first-child { flex: 1; }
+        #l1-content .step-dot    { flex: 1; }
+        #l1-content .btn-row     { gap: 12px; margin-top: 24px !important; }
+        #l1-content .btn {
+          padding: 12px 22px;
+          border-radius: 9px;
+          font-size: 14px;
+          font-weight: 500;
+          border: 1.5px solid var(--fa-input-border);
+          transition: background .15s ease, border-color .15s ease, transform .1s ease;
+        }
+        #l1-content .btn:hover  { background: #f3f3f0; border-color: #b8b8b0; }
+        #l1-content .btn:active { transform: scale(.98); }
+        #l1-content .btn-p {
+          background: #111; color: #fff; border-color: transparent;
+          box-shadow: 0 1px 2px rgba(0,0,0,.15);
+        }
+        #l1-content .btn-p:hover { background: #000; border-color: transparent; }
+      </style>
+      <div style="display:flex; height:100%; min-height:0;">
+        <div class="l1-sidebar" style="
+          width:176px; flex-shrink:0; background:#faf9f7; border-right:1px solid var(--fa-line2);
+          padding:18px 10px; display:flex; flex-direction:column; gap:2px; overflow-y:auto;
+        ">
+          <div class="l1-brand" style="font-size:13px; font-weight:700; color:#111; letter-spacing:-.01em; padding:0 10px 14px;">NebulaPro</div>
+          ${navItem('Profile', '👤', false)}
+          ${navItem('Subscription', '💳', true)}
+          ${navItem('Payment methods', '🧾', false)}
+          ${navItem('Notifications', '🔔', false)}
+          ${navItem('Privacy', '🛡️', false)}
+          ${navItem('Security', '🔒', false)}
+        </div>
+        <div style="flex:1; min-width:0; display:flex; flex-direction:column; min-height:0;">
+          <div style="
+            display:flex; align-items:center; justify-content:space-between; flex-shrink:0;
+            padding:14px clamp(14px,3vw,22px); border-bottom:1px solid var(--fa-line2);
+          ">
+            <div style="font-size:12px; color:#999;">Account &rsaquo; <span style="color:#333; font-weight:500">Subscription</span></div>
+            <div style="display:flex; align-items:center; gap:8px;">
+              <div style="width:26px; height:26px; border-radius:50%; background:#e4e4e0; display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:600; color:#666; flex-shrink:0;">JE</div>
+              <span style="font-size:12px; color:#555; white-space:nowrap;">My Account</span>
+            </div>
+          </div>
+          <div id="l1-content" style="flex:1; min-height:0; overflow-y:auto; padding:clamp(20px,4vw,32px);">
+          <div id="l1-card" style="
+            width:min(900px,100%);
+            display:flex;
+            flex-direction:column;
+            min-height:100%;
+          "></div>
+          </div>
+        </div>
+      </div>`);
+
+    const card = document.getElementById('l1-card');
+
     const stepDots = (n) => `
-      <div class="step-dots" style="margin-bottom:10px">
-        ${Array.from({ length: 6 }).map((_, i) => `<div class="step-dot${i < n ? ' done' : ''}${i === n ? ' cur' : ''}"></div>`).join('')}
-        <span class="ftiny" style="margin-left:4px">Step ${n + 1} of 6</span>
+      <div class="step-dots" style="width:100%; justify-content:space-between;">
+        <div style="display:flex; gap:5px; align-items:center;">
+          ${Array.from({ length: 6 }).map((_, i) => `<div class="step-dot${i < n ? ' done' : ''}${i === n ? ' cur' : ''}"></div>`).join('')}
+        </div>
+        <span class="ftiny">Step ${n + 1} of 6</span>
       </div>`;
 
     const cardIcon = (paths) => `
@@ -47,7 +139,7 @@ const level1 = {
       </div>`;
 
     const steps = [
-      () => el.insertAdjacentHTML('beforeend', `
+      () => card.innerHTML = `
         ${stepDots(0)}
         <div class="sub-header">
           ${cardIcon('<rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/>')}
@@ -63,12 +155,12 @@ const level1 = {
           </div>
           <div class="status-pill">Active</div>
         </div>
-        <div class="btn-row" style="margin-top:14px">
+        <div class="btn-row">
           <button class="btn" id="l1-cancel">Cancel subscription</button>
           <button class="btn btn-p" onclick="G.fail('You kept the plan — lost a heart.')">Keep plan</button>
-        </div>`),
+        </div>`,
 
-      () => el.insertAdjacentHTML('beforeend', `
+      () => card.innerHTML = `
         ${stepDots(1)}
         <div class="sub-header">
           ${cardIcon('<path d="M10 8v8M14 8v8"/><rect x="4" y="3" width="16" height="18" rx="2"/>')}
@@ -82,12 +174,12 @@ const level1 = {
           <div style="font-size:13.5px;font-weight:600;color:#111">Pause your plan instead</div>
           <div class="fs" style="margin-top:3px">No charges for up to 3 months. Resume any time — your settings and history are kept exactly as they are.</div>
         </div>
-        <div class="btn-row" style="margin-top:14px">
+        <div class="btn-row">
           <button class="btn" id="l1-no">No, cancel</button>
           <button class="btn btn-p" onclick="G.fail('You paused instead of cancelling — your subscription continues. Lost a heart.')">Pause for free</button>
-        </div>`),
+        </div>`,
 
-      () => el.insertAdjacentHTML('beforeend', `
+      () => card.innerHTML = `
         ${stepDots(2)}
         <div class="sub-header">
           ${cardIcon('<path d="M12 19l-7-7 7-7M5 12h14"/>')}
@@ -100,11 +192,11 @@ const level1 = {
           ${['Too expensive', 'Not using it', 'Missing features', 'Found a better option', 'Other']
           .map(o => `<label class="reason-row"><input type="checkbox" name="l1w"> ${o}</label>`).join('')}
         </div>
-        <div class="btn-row" style="margin-top:14px">
+        <div class="btn-row">
           <button class="btn" id="l1-survey">Continue</button>
-        </div>`),
+        </div>`,
 
-      () => el.insertAdjacentHTML('beforeend', `
+      () => card.innerHTML = `
         ${stepDots(3)}
         <div class="sub-header">
           ${cardIcon('<path d="M12 2l2.4 6.6L21 10l-5.5 4.3L17 21l-5-3.5L7 21l1.5-6.7L3 10l6.6-1.4z"/>')}
@@ -120,12 +212,12 @@ const level1 = {
           </div>
           <div class="price-save">You save $15 over the next 3 months</div>
         </div>
-        <div class="btn-row" style="margin-top:14px">
+        <div class="btn-row">
           <button class="btn" id="l1-offer">No thanks, cancel</button>
           <button class="btn btn-p" onclick="G.fail('You accepted the offer — subscription continues at $4.99/mo. Lost a heart.')">Accept offer</button>
-        </div>`),
+        </div>`,
 
-      () => el.insertAdjacentHTML('beforeend', `
+      () => card.innerHTML = `
         ${stepDots(4)}
         <div class="sub-header">
           ${cardIcon('<path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h11"/>')}
@@ -144,19 +236,24 @@ const level1 = {
                 </div>
               </div>`).join('')}
         </div>
-        <div class="btn-row" style="margin-top:14px">
+        <div class="btn-row">
           <button class="btn" id="l1-done">Submit & cancel</button>
-        </div>`),
+        </div>`,
 
-      () => el.insertAdjacentHTML('beforeend', `
-        <div style="text-align:center;display:flex;flex-direction:column;gap:10px;align-items:center;justify-content:center;flex:1">
+      () => card.innerHTML = `
+        <div style="display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; height:100%; min-height:500px; gap:10px;">
           <div class="confirm-icon">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1f7a44" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1f7a44" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20 6L9 17l-5-5"/>
+          </svg>
           </div>
-          <div style="font-size:14px;font-weight:600;color:#111">Request received</div>
-          <div class="fs" style="max-width:280px">Allow 5–7 business days. Subscription stays active until then.</div>
-          <button class="btn btn-p" style="margin-top:4px" onclick="G.succeed()">Done</button>
-        </div>`),
+        <div style="font-size:14px;font-weight:600;color:#111">Request received</div>
+        <div class="fs" style="max-width:280px">
+          Allow 5–7 business days.<br>
+          Subscription stays active until then.
+        </div>
+        <button class="btn btn-p" onclick="G.succeed()">Done</button>
+      </div>`,
     ];
 
     const bind = () => {
@@ -198,7 +295,7 @@ const level1 = {
       });
     };
 
-    const advance = () => { el.innerHTML = ''; step++; steps[step](); bind(); };
+    const advance = () => { step++; steps[step](); bind(); };
     steps[0]();
     bind();
   },

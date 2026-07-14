@@ -12,23 +12,39 @@
   <!-- GLOSSARY OVERLAY -->
   <div class="glossary-overlay" id="glossary" style="display:none" onclick="Glossary.closeOnBackdrop(event)">
     <div class="glossary-panel" id="glossary-panel">
-      <div class="glossary-header">
-        <div class="glossary-title">Pattern glossary</div>
+      <div class="glossary-header" style="align-items:flex-start">
+        <div>
+          <div class="glossary-title">Pattern glossary</div>
+          <div style="font-size:13px;color:var(--text2);margin-top:2px" id="glossary-count"></div>
+        </div>
         <button class="glossary-close" onclick="Glossary.hide()">Close</button>
       </div>
       <div id="glossary-body"></div>
     </div>
   </div>
 
+  <!-- PATTERN INFO PAGE (opened from a glossary entry) -->
+  <div class="glossary-overlay" id="pattern-info" style="display:none" onclick="Glossary.closePatternInfoOnBackdrop(event)">
+    <div class="glossary-panel" id="pattern-info-panel">
+      <div class="glossary-header" style="align-items:flex-start">
+        <div>
+          <div class="glossary-title" id="pattern-info-title"></div>
+        </div>
+        <button class="glossary-close" onclick="Glossary.hidePatternInfo()">Close</button>
+      </div>
+      <div id="pattern-info-body" style="padding:0 clamp(16px,4vw,24px) 24px"></div>
+    </div>
+  </div>
+
   <!-- INTRO -->
-  <div class="scr active" id="scr-intro" style="padding:48px 40px;align-items:center;text-align:center;gap:20px;justify-content:center">
+  <div class="scr active" id="scr-intro" style="padding:clamp(32px, 6vw, 64px) clamp(24px, 6vw, 56px);align-items:center;text-align:center;gap:clamp(22px, 3.5vw, 32px);justify-content:center">
     <div style="font-size:13px;font-weight:500;letter-spacing:.1em;color:var(--text3);text-transform:uppercase">Educational game</div>
-    <div style="font-size:42px;font-weight:500;color:var(--text);line-height:1.2">You've Been<br>Opted In</div>
-    <div style="font-size:16px;color:var(--text2);max-width:600px;line-height:1.7">
+    <div style="font-size:clamp(34px, 6vw, 46px);font-weight:500;color:var(--text);line-height:1.2">You've Been<br>Opted In</div>
+    <div style="font-size:16px;color:var(--text2);max-width:640px;line-height:1.7">
       <strong>Dark patterns</strong> are tricks built into websites and apps to make you do things you didn't intend —
       stay subscribed, share your data, buy add-ons, or click ads by mistake.
     </div>
-    <div style="background:var(--bg3);border-radius:12px;padding:20px 24px;max-width:600px;text-align:left;border:1px solid var(--border);display:flex;flex-direction:column;gap:10px">
+    <div style="background:var(--bg3);border-radius:12px;padding:24px 28px;max-width:640px;text-align:left;border:1px solid var(--border);display:flex;flex-direction:column;gap:14px">
       <div style="font-size:14px;font-weight:500;color:var(--text)">How to play</div>
       <div style="font-size:14px;color:var(--text2);line-height:1.6">
         Each level gives you a <strong>clear goal</strong> — like "cancel your subscription" or "buy only what you want."
@@ -38,15 +54,18 @@
         After each level, a debrief explains exactly what the dark pattern was and shows real-world examples.
       </div>
     </div>
-    <div style="display:flex;gap:12px;font-size:14px;color:var(--text3);flex-wrap:wrap;justify-content:center">
+    <div style="display:flex;gap:16px;font-size:14px;color:var(--text3);flex-wrap:wrap;justify-content:center">
       <span>13 levels</span><span>·</span><span>5 hearts</span><span>·</span><span>debrief after each</span>
     </div>
-    <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center">
+    <div style="display:flex;gap:14px;flex-wrap:wrap;justify-content:center;align-items:center">
+      <button class="gbtn gbtn-glossary" onclick="Glossary.show()">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+         Glossary
+      </button>
       <button class="gbtn gbtn-green" onclick="G.start()">Start →</button>
     </div>
     <div style="display:flex;flex-direction:column;gap:10px;align-items:center">
-      <button class="gbtn gbtn-ghost" onclick="Glossary.show()">Pattern glossary</button>
-      <details style="font-size:13px;color:#aaa;cursor:pointer;text-align:center">
+      <details style="font-size:13px;color:var(--fa-faint);cursor:pointer;text-align:center">
         <summary style="list-style:none;outline:none;cursor:pointer">Jump to level</summary>
         <div style="display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-top:8px" id="level-jump"></div>
       </details>
@@ -74,6 +93,7 @@
       <div class="brief-example" id="brief-example" style="display:none">
         <div class="brief-example-label">A real-world example</div>
         <div class="brief-example-row" id="brief-example-row"></div>
+        <div class="brief-example-caption" id="brief-example-caption"></div>
       </div>
       <button class="gbtn gbtn-green" onclick="G.beginLevel()" id="brief-start-btn">Let's go →</button>
     </div>
@@ -85,7 +105,7 @@
     <div class="hud">
       <div style="display:flex;align-items:center;gap:9px;flex-wrap:wrap">
         <span class="hud-lvl" id="h-lvl">Level 1 of 10</span>
-        <span style="font-size:13px;color:#888;font-style:italic" id="h-goal"></span>
+        <span style="font-size:13px;color:var(--fa-muted);font-style:italic" id="h-goal"></span>
       </div>
       <div style="display:flex;align-items:center;gap:8px">
         <span class="streak-pill" id="h-streak" style="display:none"></span>
@@ -108,8 +128,11 @@
         <div class="db-name" id="db-name"></div>
       </div>
       <div class="btn-row" style="flex-shrink:0">
+        <button class="gbtn gbtn-glossary" onclick="Glossary.show()">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+          Glossary
+        </button>
         <button class="gbtn gbtn-green" id="db-next" onclick="G.next()">Next level →</button>
-        <button class="gbtn gbtn-ghost" onclick="Glossary.show()">Glossary</button>
       </div>
     </div>
     <div class="debrief-scroll">
@@ -119,16 +142,16 @@
           <div class="manip-row">
             <div class="manip-lbl">Manipulativeness</div>
             <div class="bar-t"><div class="bar-f" id="db-bar"></div></div>
-            <div style="font-size:12px;color:#666;min-width:28px" id="db-score-lbl"></div>
+            <div style="font-size:12px;color:var(--fa-muted-alt);min-width:28px" id="db-score-lbl"></div>
           </div>
-          <div style="display:flex;align-items:center;gap:10px">
+          <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
             <div id="db-grade" class="grade-badge"></div>
             <div id="db-result"></div>
           </div>
+          <div id="db-cost" style="display:none"></div>
         </div>
         <div class="rw-card" id="db-rw"></div>
         <div class="ai-card" id="db-ai-card" style="display:none"></div>
-        <div id="db-dollars" style="display:none"></div>
         <div class="replay-card" id="db-replay"></div>
       </div>
     </div>
@@ -146,8 +169,8 @@
     </div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:0;height:100%">
       <!-- Controls -->
-      <div style="padding:18px;border-right:0.5px solid #e0e0d8;display:flex;flex-direction:column;gap:14px;overflow-y:auto">
-        <div style="font-size:14px;font-weight:500;color:#111">Choose your weapons</div>
+      <div style="padding:18px;border-right:0.5px solid var(--fa-line);display:flex;flex-direction:column;gap:14px;overflow-y:auto">
+        <div style="font-size:14px;font-weight:500;color:var(--fa-ink)">Choose your weapons</div>
 
         <div class="d-section">
           <div class="d-label">Decline button style</div>
@@ -210,17 +233,17 @@
 
       <!-- Live preview -->
       <div style="padding:18px;display:flex;flex-direction:column;gap:12px;overflow-y:auto;background:#f9f9f7">
-        <div style="font-size:14px;font-weight:500;color:#111">Live preview</div>
-        <div id="d-preview" style="background:#fff;border-radius:10px;border:0.5px solid #e0e0d8;padding:16px;display:flex;flex-direction:column;gap:12px;font-size:14px"></div>
-        <div style="background:#fff;border-radius:10px;border:0.5px solid #e0e0d8;padding:14px;display:flex;flex-direction:column;gap:10px">
+        <div style="font-size:14px;font-weight:500;color:var(--fa-ink)">Live preview</div>
+        <div id="d-preview" style="background:var(--white);border-radius:10px;border:0.5px solid var(--fa-line);padding:16px;display:flex;flex-direction:column;gap:12px;font-size:14px"></div>
+        <div style="background:var(--white);border-radius:10px;border:0.5px solid var(--fa-line);padding:14px;display:flex;flex-direction:column;gap:10px">
           <div style="display:flex;justify-content:space-between;align-items:center">
-            <div style="font-size:13px;font-weight:500;color:#111">Manipulativeness score</div>
+            <div style="font-size:13px;font-weight:500;color:var(--fa-ink)">Manipulativeness score</div>
             <div style="font-size:20px;font-weight:500" id="d-score-num">0</div>
           </div>
           <div class="bar-t" style="height:7px"><div id="d-score-bar" style="height:100%;border-radius:3px;background:#E24B4A;transition:width .4s ease;width:0%"></div></div>
-          <div style="font-size:13px;color:#666" id="d-verdict">Your form is clean — honest design.</div>
+          <div style="font-size:13px;color:var(--fa-muted-alt)" id="d-verdict">Your form is clean — honest design.</div>
           <div style="display:flex;flex-direction:column;gap:5px" id="d-breakdown"></div>
-          <div style="font-size:12px;color:#aaa;border-top:0.5px solid #e0e0d8;padding-top:8px" id="d-regulator"></div>
+          <div style="font-size:12px;color:var(--fa-faint);border-top:0.5px solid var(--fa-line);padding-top:8px" id="d-regulator"></div>
         </div>
       </div>
     </div>
@@ -234,8 +257,8 @@
       <div style="font-size:26px;font-weight:500;color:var(--text)" id="win-title"></div>
       <div style="font-size:15px;color:var(--text2);max-width:480px;line-height:1.6" id="win-sub"></div>
       <div class="receipt-card" id="win-receipt"></div>
-      <div style="width:100%;max-width:480px;background:#f5f5f2;border-radius:12px;padding:16px;border:0.5px solid #e0e0d8;display:flex;flex-direction:column;gap:12px">
-        <div style="font-size:14px;font-weight:500;color:#111">Before you go</div>
+      <div style="width:100%;max-width:480px;background:#f5f5f2;border-radius:12px;padding:16px;border:0.5px solid var(--fa-line);display:flex;flex-direction:column;gap:12px">
+        <div style="font-size:14px;font-weight:500;color:var(--fa-ink)">Before you go</div>
         <label class="fakeout-cb" id="fo-share-label">
           <input type="checkbox" id="fo-share" checked>
           <span>Share my score and email me NebulaPro tips &amp; offers (uncheck to opt out)</span>
@@ -244,7 +267,7 @@
           <input type="checkbox" id="fo-data" checked>
           <span>Do not prevent NebulaPro from sharing my results with partners</span>
         </label>
-        <div style="font-size:11px;color:#ccc;line-height:1.5" id="fo-countdown"></div>
+        <div style="font-size:11px;color:var(--fa-input-border);line-height:1.5" id="fo-countdown"></div>
         <div style="display:flex;flex-direction:column;gap:8px">
           <button class="btn btn-p" id="fo-claim">Claim your completion badge →</button>
           <button class="btn btn-g" id="fo-decline">No thanks, I don't care about my achievements</button>
@@ -257,12 +280,12 @@
     <div id="win-real" style="display:none;flex-direction:column;align-items:center;gap:16px;text-align:center">
       <div style="font-size:42px">🎉</div>
       <div style="font-size:24px;font-weight:500;color:#acacac">You caught us.</div>
-      <div style="font-size:15px;color:#555;max-width:480px;line-height:1.6">
+      <div style="font-size:15px;color:var(--fa-text);max-width:480px;line-height:1.6">
         That "Before you go" box was a dark pattern. Two pre-checked opt-ins (one with a double negative),
         a fake countdown, a confirmshamed exit, and a "claim your badge" button that went nowhere.
         <strong>You just played the game one more time without realising it.</strong>
       </div>
-      <div style="font-size:14px;color:#aaa;max-width:460px;line-height:1.6">
+      <div style="font-size:14px;color:var(--fa-faint);max-width:460px;line-height:1.6">
         Real companies deploy these on millions of people every day. Now you know what to look for —
         coined by Harry Brignull in 2010, tracked at
         <a href="https://www.deceptive.design" style="color:#185FA5">deceptive.design</a>.

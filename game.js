@@ -222,16 +222,29 @@ const GLOSSARY = [
   },
 ];
 
+// Only these patterns are wired up to the info page for now — the rest of
+// the glossary stays static until we build out the rest of the content.
+const PATTERN_INFO_PAIRS = ['Roach Motel', 'AI Roach Motel'];
+
 function showGlossary() {
-  document.getElementById('glossary-body').innerHTML = GLOSSARY.map(g => `
-    <div class="glossary-item">
+  const countEl = document.getElementById('glossary-count');
+  if (countEl) {
+    const aiCount = GLOSSARY.filter(g => g.ai).length;
+    countEl.textContent = `${GLOSSARY.length} patterns · ${aiCount} AI-amplified`;
+  }
+  document.getElementById('glossary-body').innerHTML = GLOSSARY.map(g => {
+    const clickable = PATTERN_INFO_PAIRS.includes(g.name);
+    return `
+    <div class="glossary-item${clickable ? ' clickable' : ''}"${clickable ? ` onclick="Glossary.showPatternInfo('${g.name.replace(/'/g, "\\'")}')"` : ''}>
       <div class="glossary-item-name${g.ai ? ' is-ai' : ''}">
         ${g.name}
         ${g.ai ? '<span style="font-size:11px;font-weight:400;color:#AFA9EC"> AI-amplified</span>' : ''}
+        ${clickable ? '<span class="glossary-more-toggle">More info →</span>' : ''}
       </div>
       <div class="glossary-item-desc">${g.desc}</div>
       <div class="glossary-coined">${g.coined}</div>
-    </div>`).join('');
+    </div>`;
+  }).join('');
   document.getElementById('glossary').style.display = 'flex';
 }
 
@@ -241,6 +254,205 @@ function hideGlossary() {
 
 function closeGlossaryOnBackdrop(e) {
   if (e.target === document.getElementById('glossary')) hideGlossary();
+}
+
+// ── Pattern info page ───────────────────────────────────────────────────
+// Opened from a glossary entry. Currently only wired up for the Roach
+// Motel / AI Roach Motel pair.
+
+// General, pattern-level content — not tied to the fictional NebulaPro
+// level. This is about the pattern as it exists in the wild.
+const PATTERN_INFO_CONTENT = {
+  'Roach Motel': {
+    why: "Subscription businesses run on recurring revenue, so every cancellation is lost lifetime value — retention gets treated as a core product metric, not just a support function. Adobe, for example, draws roughly 97% of its revenue from subscriptions, which is part of why regulators believe it had such a strong incentive to bury cancellation terms. A cancellation flow that's slightly harder to finish converts some fraction of would-be leavers into people who simply give up.",
+    flags: [
+      "The cancel button is hard to find — buried in settings, behind a support ticket, or reachable only by phone.",
+      "Cancelling takes more steps than signing up did.",
+      "You're shown a retention offer or a 'pause instead' alternative before you're allowed to actually cancel.",
+      "A survey or feedback form is required before the cancellation will proceed.",
+      "Online cancellation isn't available — you're told to call, then put on hold or transferred.",
+      "You get a vague 'processing' message with no immediate confirmation, leaving you unsure whether it actually worked.",
+    ],
+    tactics: [
+      { trap: false, note: 'Sign-up is reduced to one or two clicks — deliberately asymmetric with how cancellation is designed.' },
+      { trap: true,  note: "A 'pause' or 'downgrade' option is surfaced as a friendly alternative before the actual cancel path is reachable, breaking your momentum." },
+      { trap: true,  note: 'A mandatory feedback survey delays the cancellation and doubles as data collection for retention scripts.' },
+      { trap: true,  note: "A discount or 'special offer' only appears once you've committed to leaving — a last-ditch retention loop." },
+      { trap: true,  note: 'Cancellation requires phone or live chat during limited hours instead of a same-page button, adding wait time as friction.' },
+      { trap: false, note: "A vague confirmation ('allow 5–7 business days') creates doubt about whether it actually worked, prompting some people to re-subscribe just in case." },
+    ],
+    moreExamples: [
+      { company: 'Zoom', detail: 'Uses obstruction and misdirection in its subscription cancellation journey — burying the cancel path behind extra steps and steering attention toward staying subscribed rather than a clear exit.', images: ['l1-c.png', 'l1-d.png'], caption: 'Left: the cancel confirmation, with "Accept" (switch to a pricier plan) styled as the prominent choice over "Cancel Subscription." Right: a follow-up discount offer shown before cancellation completes.' },
+    ],
+  },
+  'AI Roach Motel': {
+    why: "The retention economics are identical — AI just removes the human limits. A support rep can only work a shift; a chatbot runs continuously and never tires of repeating a deflection script. It's now standard for customer-support platforms to sell \"deflection rate\" and \"save rate\" as core product metrics: literally, how many cancellation requests never reach a human, and how many of those people get talked out of leaving.",
+    flags: [
+      "The bot keeps redirecting you toward \"helping\" with something else instead of processing the cancellation.",
+      "It claims to have \"lost your session\" or asks you to repeat information you already gave it.",
+      "It surfaces a manufactured obstacle — an \"unpaid balance\" or \"pending review\" — that conveniently blocks cancellation.",
+      "It offers a discount or pause option that references your account history to sound personalized.",
+      "After enough back-and-forth, it declares your request \"resolved\" without ever confirming that's the outcome you wanted.",
+      "There's no visible way to escalate to a human once the bot starts deflecting.",
+    ],
+    tactics: [
+      { trap: false, note: 'A friendly greeting builds rapport with the bot before you have even stated your intent to cancel.' },
+      { trap: true,  note: 'Repeating your request in different words triggers a "verification" step, adding friction even to an already-logged-in account.' },
+      { trap: true,  note: 'The bot cites your account tenure or usage history to make a personalized-sounding emotional appeal against leaving.' },
+      { trap: true,  note: 'A "transfer to retention team" message resets the conversation rather than actually escalating it.' },
+      { trap: true,  note: 'A claimed "lost session" forces you to restate your request, exhausting patience rather than technical failure.' },
+      { trap: true,  note: 'A manufactured obstacle — an unpaid invoice, a pending review — is raised right as cancellation nears completion.' },
+    ],
+    moreExamples: [
+      { company: 'Customer-support industry', detail: 'Vendors including Decagon, Fini, and Forethought now market AI cancellation agents that explicitly track "save rate" alongside "deflection rate" — the same incentive as a human retention team, running at chatbot scale and speed.' },
+      { company: 'Regulatory outlook', detail: "The FTC's ROSCA enforcement doesn't distinguish between a human and a bot — a cancellation flow that's needlessly hard to complete is still a violation whether or not AI is involved." },
+    ],
+  },
+};
+
+function loadImagesInto(files, wrapId, altText) {
+  const wrap = document.getElementById(wrapId);
+  if (!wrap) return;
+  let failed = 0;
+  wrap.style.display = 'none';
+  wrap.innerHTML = files.map((f, i) => `<img class="rw-example-img" id="${wrapId}-${i}" alt="${altText}">`).join('');
+  files.forEach((f, i) => {
+    const img = document.getElementById(`${wrapId}-${i}`);
+    img.onload  = () => { wrap.style.display = 'flex'; };
+    img.onerror = () => { failed++; if (failed === files.length) wrap.style.display = 'none'; };
+    img.src = `assets/examples/${f}`;
+  });
+}
+
+function loadPatternInfoImages(lv, wrapId) {
+  loadImagesInto(getExampleImages(lv), wrapId, `${lv.rw.company} — ${lv.pattern}`);
+}
+
+function renderPatternTactics(tactics, isAI) {
+  if (!tactics || !tactics.length) return '';
+  return `
+    <div class="pattern-info-subhead">Tactics used by companies</div>
+    <div class="replay-card" style="margin-bottom: 16px;">
+      ${tactics.map(s => `
+        <div class="replay-step">
+          <span class="replay-annotation${isAI ? ' ai' : ''}">${s.trap ? 'Trap' : 'Note'}</span>
+          <div class="replay-arrow">${s.trap ? '⚑' : '→'}</div>
+          <div class="replay-step-body">${s.note}</div>
+        </div>`).join('')}
+    </div>`;
+}
+
+function renderPatternWhy(text) {
+  if (!text) return '';
+  return `
+    <div class="pattern-info-subhead">Why companies do this</div>
+    <div class="pattern-info-text">${text}</div>`;
+}
+
+function renderPatternFlags(flags) {
+  if (!flags || !flags.length) return '';
+  return `
+    <div class="pattern-info-subhead">Red flags to watch for</div>
+    <ul class="pattern-info-flags">
+      ${flags.map(f => `<li>${f}</li>`).join('')}
+    </ul>`;
+}
+
+function renderPatternMoreExamples(examples, prefix) {
+  if (!examples || !examples.length) return '';
+  return `
+    <div class="pattern-info-more-examples">
+      ${examples.map((e, i) => `
+        <div class="pattern-info-more-ex">
+          <div class="pattern-info-more-ex-text">
+            <span class="pattern-info-more-ex-company">${e.company}</span> — ${e.detail}
+          </div>
+          ${e.images && e.images.length ? `
+            <div class="rw-example-row pattern-info-more-ex-imgs" id="${prefix}-more-imgs-${i}" style="margin-top: 10px;"></div>
+            ${e.caption ? `<div class="pattern-info-img-caption">${e.caption}</div>` : ''}` : ''}
+        </div>`).join('')}
+    </div>`;
+}
+
+function loadPatternMoreExampleImages(examples, prefix) {
+  if (!examples) return;
+  examples.forEach((e, i) => {
+    if (e.images && e.images.length) {
+      loadImagesInto(e.images, `${prefix}-more-imgs-${i}`, e.company);
+    }
+  });
+}
+
+function showPatternInfo(name) {
+  const titleEl = document.getElementById('pattern-info-title');
+  const bodyEl  = document.getElementById('pattern-info-body');
+
+  const baseLv = LEVELS.find(l => l.pattern === 'Roach Motel');
+  const aiLv   = LEVELS.find(l => l.pattern === 'AI Roach Motel');
+  const baseC  = PATTERN_INFO_CONTENT['Roach Motel'];
+  const aiC    = PATTERN_INFO_CONTENT['AI Roach Motel'];
+
+  if (titleEl) titleEl.textContent = name;
+
+  const section = (lv, content, aiWhyHtml) => `
+    <div class="pattern-info-section${lv.isAI ? ' pattern-info-divider' : ''}">
+      <div class="pattern-info-kicker${lv.isAI ? ' ai' : ''}">${lv.pattern}</div>
+      <div class="pattern-info-text">${lv.brief}</div>
+      <div class="pattern-info-stat">
+        <span class="pattern-info-stat-label">Manipulativeness</span>
+        <span class="pattern-info-stat-val${lv.isAI ? ' ai' : ''}">${lv.manip}%</span>
+      </div>
+      ${aiWhyHtml || ''}
+      ${content}
+    </div>`;
+
+  const cardsFor = (lv, c) => `
+    ${(c.why || (c.flags && c.flags.length)) ? `
+      <div class="pattern-info-card">
+        ${renderPatternWhy(c.why)}
+        ${renderPatternFlags(c.flags)}
+      </div>` : ''}
+    ${c.tactics && c.tactics.length ? `
+      <div class="pattern-info-card">
+        ${renderPatternTactics(c.tactics, lv.isAI)}
+      </div>` : ''}
+    <div class="pattern-info-card">
+      <div class="pattern-info-subhead">Real-world example</div>
+      <div class="pattern-info-company">${lv.rw.company}</div>
+      <div class="pattern-info-detail">${lv.rw.detail}</div>
+      <div class="rw-example-row" id="pattern-info-imgs-${lv.isAI ? 'ai' : 'base'}"></div>
+      ${lv.rw.caption ? `<div class="pattern-info-img-caption">${lv.rw.caption}</div>` : ''}
+      ${c.moreExamples && c.moreExamples.length ? renderPatternMoreExamples(c.moreExamples, lv.isAI ? 'ai' : 'base') : ''}
+    </div>`;
+
+  if (bodyEl && baseLv && aiLv) {
+    bodyEl.innerHTML =
+      section(baseLv, cardsFor(baseLv, baseC)) +
+      section(aiLv, cardsFor(aiLv, aiC), aiLv.aiWhy ? `
+        <div class="ai-card" style="margin-bottom: 4px;">
+          <div class="ai-card-label">Why AI makes this worse</div>
+          <div class="ai-card-text">${aiLv.aiWhy}</div>
+        </div>` : '');
+
+    loadPatternInfoImages(baseLv, 'pattern-info-imgs-base');
+    loadPatternInfoImages(aiLv, 'pattern-info-imgs-ai');
+    loadPatternMoreExampleImages(baseC.moreExamples, 'base');
+    loadPatternMoreExampleImages(aiC.moreExamples, 'ai');
+  } else if (bodyEl) {
+    bodyEl.innerHTML = '';
+  }
+
+  const overlay = document.getElementById('pattern-info');
+  if (overlay) overlay.style.display = 'flex';
+}
+
+function hidePatternInfo() {
+  const overlay = document.getElementById('pattern-info');
+  if (overlay) overlay.style.display = 'none';
+}
+
+function closePatternInfoOnBackdrop(e) {
+  if (e.target === document.getElementById('pattern-info')) hidePatternInfo();
 }
 
 // ======== designer.js ========
@@ -461,14 +673,21 @@ function showBrief() {
     aiNote.style.display = 'none';
   }
 
-  const exWrap = document.getElementById('brief-example');
-  const exRow  = document.getElementById('brief-example-row');
-  const files  = getExampleImages(lv);
-  let failed   = 0;
+  const exWrap    = document.getElementById('brief-example');
+  const exRow     = document.getElementById('brief-example-row');
+  const exCaption = document.getElementById('brief-example-caption');
+  const files     = getExampleImages(lv);
+  let failed      = 0;
 
   exRow.innerHTML = files.map((f, i) => `
-    <img class="brief-example-img" id="brief-example-img-${i}" alt="Real-world example ${i + 1} of ${lv.pattern}">
+    <img class="brief-example-img" id="brief-example-img-${i}" alt="${lv.rw.company} — ${lv.pattern}">
   `).join('');
+
+  if (exCaption) {
+    exCaption.innerHTML = lv.rw
+      ? `<strong>${lv.rw.company}</strong> — ${lv.rw.detail}`
+      : '';
+  }
 
   exWrap.style.display = 'none';
   files.forEach((f, i) => {
@@ -521,11 +740,6 @@ function showLevel() {
   if (lv.isAI) {
     lc.innerHTML = '<div class="ai-banner"><div class="ai-pulse"></div>NexusAI personalization engine — active</div>';
   }
-
-  const goalBanner = document.createElement('div');
-  goalBanner.style.cssText = 'background:#fff;border-radius:8px;padding:8px 12px;border:1.5px solid #111;display:flex;align-items:center;gap:8px;font-size:12px';
-  goalBanner.innerHTML = `<span style="font-weight:500;color:#111;white-space:nowrap">Your goal:</span><span style="color:#555">${lv.goal}</span>`;
-  lc.appendChild(goalBanner);
 
   lv.render(lc);
 
@@ -868,8 +1082,8 @@ function showDebrief(won) {
   document.getElementById('db-next').textContent =
     levelIdx < LEVELS.length - 1 ? 'Next level →' : 'See results →';
 
-  // Dollar cost card
-  const dc = document.getElementById('db-dollars');
+  // Dollar cost — folded into the score card
+  const dc = document.getElementById('db-cost');
   if (lv.dollars) {
     dc.style.display = 'flex';
     const d      = lv.dollars;
@@ -877,19 +1091,36 @@ function showDebrief(won) {
       ? (d.period === 'month' ? `$${(d.amount * 12).toFixed(2)}/year` : `$${d.amount.toFixed(2)}`)
       : null;
     dc.innerHTML = `
-      <div class="rw-label">Real cost if this worked on you</div>
-      ${bigNum ? `<div style="font-size:18px;font-weight:500;color:#A32D2D">${bigNum}</div>` : ''}
-      <div class="fs">${d.note}</div>`;
+      ${bigNum ? `
+        <div style="display:flex; align-items:baseline; gap:6px; flex-wrap:wrap;">
+          <span style="font-size:12px; color:var(--text3);">Real cost if this worked on you:</span>
+          <span style="font-size:14px; font-weight:500; color:#ff9090;">${bigNum}</span>
+        </div>` : ''}
+      <div style="font-size:12px; color:var(--text3); line-height:1.5; margin-top:2px;">${d.note}</div>`;
   } else {
     dc.style.display = 'none';
   }
 
   // Real-world card
-  document.getElementById('db-rw').innerHTML = `
+  const rwEl    = document.getElementById('db-rw');
+  const rwFiles = getExampleImages(lv);
+
+  rwEl.innerHTML = `
     <div class="rw-label">Real-world example</div>
     <div class="rw-company">${lv.rw.company}</div>
     <div class="rw-detail">${lv.rw.detail}</div>
-    <a class="rw-link" href="${lv.rw.link}" target="_blank">More examples → deceptive.design</a>`;
+    <div class="rw-example-row" id="db-rw-imgs" style="display:none">
+      ${rwFiles.map((f, i) => `<img class="rw-example-img" id="db-rw-img-${i}" alt="${lv.rw.company} — ${lv.pattern}">`).join('')}
+    </div>`;
+
+  const rwImgsWrap = document.getElementById('db-rw-imgs');
+  let rwFailed = 0;
+  rwFiles.forEach((f, i) => {
+    const img = document.getElementById(`db-rw-img-${i}`);
+    img.onload  = () => { rwImgsWrap.style.display = 'flex'; };
+    img.onerror = () => { rwFailed++; if (rwFailed === rwFiles.length) rwImgsWrap.style.display = 'none'; };
+    img.src = `assets/examples/${f}`;
+  });
 
   // AI card (hyper only)
   const aic = document.getElementById('db-ai-card');
@@ -1070,7 +1301,14 @@ window.almostGotYou   = almostGotYou;
 window.trackHover     = trackHover;
 window.setLevelGrade  = setLevelGrade;
 Object.defineProperty(window, 'levelIdx', { get: () => levelIdx });
-window.Glossary = { show: showGlossary, hide: hideGlossary, closeOnBackdrop: closeGlossaryOnBackdrop };
+window.Glossary = {
+  show: showGlossary,
+  hide: hideGlossary,
+  closeOnBackdrop: closeGlossaryOnBackdrop,
+  showPatternInfo,
+  hidePatternInfo,
+  closePatternInfoOnBackdrop,
+};
 window.setScr = setScr;
 window.initDesigner = initDesigner;
 window.dpick = dpick;
