@@ -9,6 +9,7 @@ const NOTIFICATIONS = [
 
 const STYLES = `
   .l7-wrap{display:flex;flex-direction:column;background:#f0f2f2;font-family:system-ui,-apple-system,sans-serif}
+  .l7-wrap button,.l7-wrap input{font-family:inherit}
   .l7-nav{background:#232f3e;padding:13px 18px;display:flex;align-items:center;gap:14px;flex-shrink:0}
   .l7-logo{color:#fff;font-size:21px;font-weight:700;letter-spacing:-.5px;white-space:nowrap;flex-shrink:0;cursor:pointer}
   .l7-logo span{color:#febd69}
@@ -18,17 +19,16 @@ const STYLES = `
   .l7-searchbox{flex:1;display:flex;background:#fff;border-radius:9px;overflow:hidden;border:2px solid transparent;transition:border-color .15s,box-shadow .15s}
   .l7-catsel{background:#e9ecef;color:#444;font-size:15px;padding:0 12px;display:flex;align-items:center;border-right:1px solid #d8d8d3;flex-shrink:0;white-space:nowrap}
   .l7-searchbox:focus-within{border-color:#febd69;box-shadow:0 0 0 2px rgba(254,189,105,.25)}
-  .l7-searchbox input{flex:1;border:none;outline:none;font-size:16px;color:#111;background:transparent;padding:0 14px;height:44px;min-width:0;font-family:inherit}
+  .l7-searchbox input{flex:1;border:none;outline:none;font-size:16px;color:#111;background:transparent;padding:0 14px;height:44px;min-width:0}
   .l7-sbtn{background:#febd69;border:none;padding:0 16px;height:44px;font-size:18px;cursor:pointer;flex-shrink:0}
-  .l7-sbtn:hover{background:#f0a921}
-  .l7-cartbtn{position:relative;background:#37475a;border:none;height:44px;padding:0 16px;border-radius:9px;cursor:pointer;display:flex;align-items:center;gap:8px;color:#fff;font-size:16px;font-family:inherit;flex-shrink:0;white-space:nowrap}
+  .l7-cartbtn{position:relative;background:#37475a;border:none;height:44px;padding:0 16px;border-radius:9px;cursor:pointer;display:flex;align-items:center;gap:8px;color:#fff;font-size:16px;flex-shrink:0;white-space:nowrap}
   .l7-cartbtn:hover{background:#485769}
   .l7-cartbadge{position:absolute;top:-8px;right:-8px;background:#febd69;color:#111;font-size:12px;font-weight:700;border-radius:50%;min-width:21px;height:21px;display:flex;align-items:center;justify-content:center;padding:0 3px;box-shadow:0 0 0 2px #232f3e}
   .l7-subnav{background:#37475a;padding:8px 18px;display:flex;gap:20px;overflow-x:auto;flex-shrink:0}
-  .l7-subnav::-webkit-scrollbar{display:none}
-  .l7-snitem{color:#fff;font-size:15px;white-space:nowrap;opacity:.82}
-  .l7-goalbar{background:#1b2531;color:#febd69;font-size:15px;font-weight:500;padding:10px 18px;text-align:center;border-bottom:1px solid #37475a;flex-shrink:0}
-  .l7-goalbar.done{background:#123018;color:#5fe39a}
+  .l7-row::-webkit-scrollbar,.l7-subnav::-webkit-scrollbar{display:none}
+  .l7-snitem{color:#fff;font-size:15px;white-space:nowrap;opacity:.7;cursor:pointer;padding-bottom:6px;border-bottom:2px solid transparent;transition:opacity .12s,border-color .12s}
+  .l7-snitem:hover{opacity:.95}
+  .l7-snitem.active{opacity:1;font-weight:600;border-bottom-color:#febd69}
   .l7-reservebar{background:#fbeee0;color:#7a4a14;font-size:14px;font-weight:500;padding:7px 18px;text-align:center;flex-shrink:0;border-bottom:.5px solid #f0ddc2}
   .l7-content{overflow-y:auto;overflow-x:hidden;flex:1;min-height:0}
   .l7-section{padding:22px;background:#fff;margin-bottom:10px}
@@ -37,10 +37,10 @@ const STYLES = `
   .l7-seemore.active{cursor:pointer}
   .l7-seemore.active:hover{text-decoration:underline}
   .l7-row{display:flex;gap:24px;overflow-x:auto;padding-bottom:6px}
-  .l7-row::-webkit-scrollbar{display:none}
   .l7-card{flex-shrink:0;width:140px;display:flex;flex-direction:column;gap:9px;cursor:pointer}
-  .l7-card-img{width:140px;height:112px;background:radial-gradient(120% 120% at 50% 20%,#ffffff 0%,#f4f4f1 60%,#eaeae5 100%);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:41px;border:.5px solid #e6e6e1;position:relative;overflow:hidden;transition:box-shadow .15s,transform .15s}
-  .l7-card-img::after{content:'';position:absolute;left:50%;bottom:13px;width:52%;height:10px;background:radial-gradient(closest-side,rgba(0,0,0,.16),transparent 75%);transform:translateX(-50%)}
+  .l7-bubble{background:radial-gradient(120% 120% at 50% 20%,#fff 0%,#f4f4f1 60%,#eaeae5 100%);border:.5px solid #e6e6e1;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;flex-shrink:0}
+  .l7-bubble::after{content:'';position:absolute;left:50%;bottom:12px;width:50%;height:9px;background:radial-gradient(closest-side,rgba(0,0,0,.16),transparent 75%);transform:translateX(-50%)}
+  .l7-card-img{width:140px;height:112px;border-radius:14px;font-size:41px;transition:box-shadow .15s,transform .15s}
   .l7-card:hover .l7-card-img{box-shadow:0 4px 14px rgba(0,0,0,.12);transform:translateY(-1px)}
   .l7-card-badge{position:absolute;top:7px;left:7px;background:#A32D2D;color:#fff;font-size:11px;font-weight:600;padding:3px 7px;border-radius:5px}
   .l7-card-title{font-size:14px;color:#111;line-height:1.3;min-height:36px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
@@ -49,8 +49,9 @@ const STYLES = `
   .l7-chip{flex-shrink:0;display:flex;align-items:center;gap:8px;padding:11px 16px;background:#f5f5f2;border:.5px solid #e8e8e4;border-radius:26px;cursor:pointer;font-size:15px;color:#111;white-space:nowrap;transition:background .12s,box-shadow .15s}
   .l7-chip:hover{background:#ececea;box-shadow:0 1px 5px rgba(0,0,0,.08)}
   .l7-chip span{font-size:20px}
-  .l7-atc{font-size:13px;background:#febd69;border:1px solid #f0a921;border-radius:7px;padding:8px 10px;cursor:pointer;color:#111;font-family:inherit;width:100%}
-  .l7-atc:hover{background:#f0a921}
+  .l7-abtn{background:#febd69;border:1px solid #f0a921;cursor:pointer;color:#111;width:100%}
+  .l7-atc{font-size:13px;border-radius:7px;padding:8px 10px}
+  .l7-sbtn:hover,.l7-abtn:hover{background:#f0a921}
   .l7-atc.added{background:#EAF3DE;color:#27500A;border-color:#27500A}
   .l7-feed{background:#f0f2f2}
   .l7-feed-head{padding:13px 18px;background:#fff;font-size:15px;color:#555;border-bottom:.5px solid #e8e8e4}
@@ -62,12 +63,11 @@ const STYLES = `
   .l7-notif{padding:9px 18px;font-size:14px;color:#888;background:#f9f9f7;border-bottom:.5px solid #f0f0ec;font-style:italic;margin-bottom:3px}
   .l7-product{padding:22px;display:flex;gap:20px;background:#fff;margin-bottom:3px;cursor:pointer;transition:background .12s}
   .l7-product:hover{background:#fafafa}
-  .l7-pimg{width:104px;height:104px;border-radius:15px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:39px;background:radial-gradient(120% 120% at 50% 20%,#ffffff 0%,#f4f4f1 60%,#eaeae5 100%);border:.5px solid #e6e6e1;position:relative;overflow:hidden}
-  .l7-pimg::after{content:'';position:absolute;left:50%;bottom:10px;width:50%;height:8px;background:radial-gradient(closest-side,rgba(0,0,0,.15),transparent 75%);transform:translateX(-50%)}
+  .l7-pimg{width:104px;height:104px;border-radius:15px;font-size:39px}
   .l7-pbody{flex:1;display:flex;flex-direction:column;gap:6px;min-width:0}
   .l7-ptitle{font-size:18px;color:#0C447C;line-height:1.4;font-weight:500}
-  .l7-ptitle:hover{text-decoration:underline;color:#c45500}
-  .l7-pstars{font-size:15px;color:#854F0B}
+  .l7-ptitle:hover,.l7-cremove:hover{text-decoration:underline;color:#c45500}
+  .l7-pstars,.l7-pdp-stars{font-size:15px;color:#854F0B}
   .l7-rcount{color:#0C447C;font-weight:500}
   .l7-pprice{font-size:21px;font-weight:600;color:#111}
   .l7-pprice .orig{font-size:15px;text-decoration:line-through;color:#aaa;margin-left:6px;font-weight:400}
@@ -82,22 +82,18 @@ const STYLES = `
   .l7-crow{display:flex;justify-content:space-between;align-items:center;font-size:16px;padding:13px 0;border-bottom:.5px solid #e8e8e4;gap:11px}
   .l7-crow:last-of-type{border-bottom:none}
   .l7-cname{flex:1;color:#111;line-height:1.4}
-  .l7-cremove{background:none;border:none;color:#0C447C;font-size:15px;cursor:pointer;font-family:inherit;padding:4px 7px;flex-shrink:0}
-  .l7-cremove:hover{text-decoration:underline;color:#c45500}
+  .l7-cremove{background:none;border:none;color:#0C447C;font-size:15px;cursor:pointer;padding:4px 7px;flex-shrink:0}
   .l7-ctotal{display:flex;justify-content:space-between;font-size:18px;font-weight:600;padding-top:13px;border-top:1px solid #ccc}
-  .l7-obtn{background:#febd69;border:1px solid #f0a921;border-radius:9px;padding:14px;font-size:18px;font-weight:500;cursor:pointer;width:100%;color:#111;font-family:inherit}
-  .l7-obtn:hover{background:#f0a921}
+  .l7-obtn{border-radius:9px;padding:14px;font-size:18px;font-weight:500}
   .l7-obtn:disabled{opacity:.55;cursor:default}
-  .l7-backbtn{background:none;border:none;color:#0C447C;font-size:15px;cursor:pointer;font-family:inherit;text-align:left;padding:0;align-self:flex-start}
+  .l7-backbtn{background:none;border:none;color:#0C447C;font-size:15px;cursor:pointer;text-align:left;padding:0;align-self:flex-start}
   .l7-backbtn:hover{text-decoration:underline}
   .l7-empty{padding:40px;text-align:center;color:#aaa;font-size:16px}
   .l7-pdp{padding:20px;background:#fff;display:flex;flex-direction:column;gap:15px}
   .l7-pdp-top{display:flex;gap:20px;align-items:flex-start}
-  .l7-pdp-img{width:126px;height:126px;background:radial-gradient(120% 120% at 50% 20%,#ffffff 0%,#f4f4f1 60%,#eaeae5 100%);border-radius:17px;display:flex;align-items:center;justify-content:center;font-size:56px;border:.5px solid #e6e6e1;flex-shrink:0;position:relative;overflow:hidden}
-  .l7-pdp-img::after{content:'';position:absolute;left:50%;bottom:14px;width:48%;height:11px;background:radial-gradient(closest-side,rgba(0,0,0,.16),transparent 75%);transform:translateX(-50%)}
+  .l7-pdp-img{width:126px;height:126px;border-radius:17px;font-size:56px}
   .l7-pdp-info{flex:1;display:flex;flex-direction:column;gap:6px}
   .l7-pdp-title{font-size:20px;font-weight:600;color:#111;line-height:1.4}
-  .l7-pdp-stars{font-size:15px;color:#854F0B}
   .l7-pdp-price{font-size:25px;font-weight:700;color:#111}
   .l7-pdp-orig{font-size:15px;color:#888;text-decoration:line-through;margin-left:6px;font-weight:400}
   .l7-pdp-desc{font-size:16px;color:#555;line-height:1.6;border-top:.5px solid #e8e8e4;padding-top:13px}
@@ -121,6 +117,14 @@ function fmt(s) {
 function randViewers() { return Math.floor(Math.random() * 120) + 780; }
 const VIEWER_PHRASES = n => Math.random() < 0.5 ? n + ' people viewed today' : n + ' people have this in their cart right now';
 function starsHTML(s) { return s ? s.replace(/\(([\d,]+)\)/, '(<span class="l7-rcount">$1</span>)') : ''; }
+
+// Deterministic string hash — used so a given product always gets the same
+// generic badge/notification slot instead of one that changes on every render.
+function hashStr(s) {
+  let h = 0;
+  for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) | 0;
+  return Math.abs(h);
+}
 
 // ── Catalog — only what's actually shown ───────────────────────────────────
 const PRODUCTS = {
@@ -177,12 +181,39 @@ const FEED_ITEMS = [
   { t: 'banner', cls: 'blue', txt: 'Free shipping on orders over $35' },
   { t: 'product', key: 'TrekkingPack',   badges: [['l7-ba', 'Waterproof zipper']], meta: '' },
   { t: 'notif', txt: NOTIFICATIONS[2] },
-  { t: 'product', key: 'AdventureBackpack', badges: [['l7-ba', "Editor's pick"], ['l7-br', 'Only 1 left in stock!']], meta: VIEWER_PHRASES(randViewers()), isTarget: true },
   { t: 'notif', txt: NOTIFICATIONS[3] },
+  { t: 'product', key: 'AdventureBackpack', badges: [['l7-ba', "Editor's pick"], ['l7-br', 'Only 1 left in stock!']], meta: VIEWER_PHRASES(randViewers()), isTarget: true },
 ];
 
-const TARGET_NAME  = PRODUCTS.AdventureBackpack.title;
-const TARGET_PRICE = PRODUCTS.AdventureBackpack.price;
+const TARGET_KEY    = 'AdventureBackpack';
+const TARGET_NAME   = PRODUCTS.AdventureBackpack.title;
+const TARGET_PRICE  = PRODUCTS.AdventureBackpack.price;
+
+// Generic urgency/social-proof badges applied to ANY product list (search
+// results, categories, deals) so the pressure tactics aren't only visible
+// when someone types the literal word "backpack" — they're baked into the
+// whole storefront, same as the real thing.
+const GENERIC_BADGE_POOL = [
+  ['l7-ba', 'Sponsored'],
+  ['l7-bg', 'Best seller'],
+  ['l7-ba', 'Limited time deal'],
+  ['l7-bg', "Amazon's Choice"],
+  ['l7-bg', 'Trending now'],
+  ['l7-ba', 'Highly rated'],
+];
+
+function badgesForKey(key, prevBadgeTxt) {
+  if (key === TARGET_KEY) return [['l7-ba', "Editor's pick"], ['l7-br', 'Only 1 left in stock!']];
+  const p = PRODUCTS[key];
+  if (!p || !p.orig) return [];
+  const h = hashStr(key);
+  // Not every discounted item gets a promo badge — a real results page
+  // mixes plain listings in with tagged ones, so this covers roughly 40%.
+  if (h % 5 >= 2) return [];
+  let idx = h % GENERIC_BADGE_POOL.length;
+  if (GENERIC_BADGE_POOL[idx][1] === prevBadgeTxt) idx = (idx + 1) % GENERIC_BADGE_POOL.length;
+  return [GENERIC_BADGE_POOL[idx]];
+}
 
 const level7 = {
   id: 'l7',
@@ -226,6 +257,7 @@ const level7 = {
     let cart = [];
     let view = 'home';
     let prevView = 'home';
+    let lastSearchQuery = '';
     let cartTimer = 300;
     let cartInterval = null;
     let sneakInjected = false;
@@ -297,7 +329,7 @@ const level7 = {
     // ── Shared button/card HTML ─────────────────────────────────────────
     const atcBtn = (name, price) => {
       const already = inCart(name);
-      return `<button class="l7-atc${already ? ' added' : ''}" data-atc="${name}" data-price="${price}">${already ? '✓ Added' : 'Add to cart'}</button>`;
+      return `<button class="l7-abtn l7-atc${already ? ' added' : ''}" data-atc="${name}" data-price="${price}">${already ? '✓ Added' : 'Add to cart'}</button>`;
     };
     const bindATCButtons = () => {
       document.querySelectorAll('[data-atc]').forEach(btn => {
@@ -315,44 +347,119 @@ const level7 = {
     };
 
     // Shared "full-width product row" markup — used by category list, deals list, and search feed
-    const productItemHTML = (key, { badges = [], meta = '', isTarget = false } = {}) => {
+    const productItemHTML = (key, { badges = [], meta = '', isTarget = false, social = false } = {}) => {
       const p = PRODUCTS[key];
       const bdgHTML = badges.length
         ? `<div style="display:flex;gap:3px;flex-wrap:wrap;margin-top:2px">${badges.map(([cls, txt]) => `<span class="l7-pbadge ${cls}">${txt}</span>`).join(' ')}</div>`
         : '';
+      const metaAttrs = isTarget ? ' id="l7-viewers"' : social ? ' data-social="1"' : '';
       return `
         <div class="l7-product" data-pdp="${key}">
-          <div class="l7-pimg">${p.img}</div>
+          <div class="l7-bubble l7-pimg">${p.img}</div>
           <div class="l7-pbody">
             <div class="l7-ptitle">${p.title}</div>
             <div class="l7-pstars">${starsHTML(p.stars)}</div>
             <div class="l7-pprice">$${p.price.toFixed(2)}${p.orig ? `<span class="orig">$${p.orig.toFixed(2)}</span>` : ''}</div>
             ${bdgHTML}
-            ${meta ? `<div class="l7-pmeta"${isTarget ? ' id="l7-viewers"' : ''}>${meta}</div>` : ''}
+            ${meta ? `<div class="l7-pmeta"${metaAttrs}>${meta}</div>` : ''}
             ${atcBtn(p.title, p.price)}
           </div>
         </div>`;
+    };
+
+    // Generic, product-agnostic social-proof lines — safe to attach to any
+    // card since they don't need to name the product to make sense.
+    const SOCIAL_PROOF_TEMPLATES = [
+      n => `${n} people viewed today`,
+      n => `${n} people have this in their cart right now`,
+      () => `Bought ${Math.floor(Math.random() * 18) + 3} times in the last hour`,
+      () => `Someone bought this ${Math.floor(Math.random() * 20) + 2} minutes ago`,
+    ];
+    const socialProofText = seed => SOCIAL_PROOF_TEMPLATES[seed % SOCIAL_PROOF_TEMPLATES.length](randViewers());
+
+    // ── Feed-entry helpers ───────────────────────────────────────────────
+    // Turns a plain list of product keys into a mixed feed of banners and
+    // product cards — the same urgency/social-proof treatment the curated
+    // "backpack" search gets, applied generically so any search, category,
+    // or deals list feels like the same storefront. Social-proof lines are
+    // attached to the specific card they describe rather than floating
+    // between unrelated products, so "this" always has a clear referent.
+    const buildEntries = (keys, { leadBanner = true } = {}) => {
+      // The target belongs at the bottom, not the top — it's what you're
+      // actually looking for, so natural catalog order (where it happens to
+      // be listed first) would defeat the point of the level.
+      const orderedKeys = keys.includes(TARGET_KEY)
+        ? [...keys.filter(k => k !== TARGET_KEY), TARGET_KEY]
+        : keys;
+
+      const entries = [];
+      if (leadBanner) {
+        entries.push({ t: 'banner', cls: 'red', txt: '⚡ Lightning Deal ends in ' + fmt(dealSecsLeft), id: 'l7-dealtimer' });
+      }
+      let prevBadgeTxt = null;
+      orderedKeys.forEach((key, i) => {
+        const isTarget = key === TARGET_KEY;
+        const badges = badgesForKey(key, prevBadgeTxt);
+        if (badges.length) prevBadgeTxt = badges[badges.length - 1][1];
+        const showSocial = !isTarget && hashStr(key + 'social') % 3 === 0;
+        entries.push({
+          t: 'product',
+          key,
+          badges,
+          meta: isTarget ? VIEWER_PHRASES(randViewers()) : showSocial ? socialProofText(hashStr(key)) : '',
+          isTarget,
+          social: showSocial,
+        });
+      });
+      return entries;
+    };
+
+    const entriesToHTML = entries => entries.map(item => {
+      if (item.t === 'banner')  return `<div class="l7-banner ${item.cls}"${item.id ? ` id="${item.id}"` : ''}>${item.txt}</div>`;
+      if (item.t === 'notif')   return `<div class="l7-notif">${item.txt}</div>`;
+      if (item.t === 'product') return productItemHTML(item.key, { badges: item.badges, meta: item.meta, isTarget: item.isTarget, social: item.social });
+      return '';
+    }).join('');
+
+    // Keeps the viewer count (on the target) and social-proof lines (on
+    // whichever cards have one) refreshing in place, without ever detaching
+    // the message from the card it's describing.
+    const startFeedLiveUpdates = () => {
+      trackInterval(setInterval(() => {
+        const v = document.getElementById('l7-viewers');
+        if (v) v.textContent = VIEWER_PHRASES(randViewers());
+      }, 3000));
+
+      let si = 0;
+      trackInterval(setInterval(() => {
+        si++;
+        document.querySelectorAll('[data-social]').forEach((n, idx) => {
+          n.textContent = socialProofText(si + idx);
+        });
+      }, 4500));
     };
 
     // Shared list-view renderer — used by category and deals screens (product list + header + back button)
     const renderProductListPage = (viewName, headerHTML, items, onBack) => {
       clearExtraIntervals();
       view = viewName;
+      const entries = buildEntries(items);
       document.getElementById('l7-content').innerHTML = `
         <div class="l7-feed-head">
           <button class="l7-backbtn" id="l7-list-back">← Back</button><br>
           ${headerHTML}
         </div>
-        <div class="l7-feed">${items.map(key => productItemHTML(key)).join('')}</div>`;
+        <div class="l7-feed">${entriesToHTML(entries)}</div>`;
       document.getElementById('l7-list-back').onclick = onBack;
       bindPDPLinks();
       bindATCButtons();
+      startFeedLiveUpdates();
     };
 
     const cardHTML = key => {
       const p = PRODUCTS[key];
       return `<div class="l7-card" data-pdp="${key}">
-        <div class="l7-card-img">${p.img}${p.orig ? `<span class="l7-card-badge">-${Math.round((1 - p.price / p.orig) * 100)}%</span>` : ''}</div>
+        <div class="l7-bubble l7-card-img">${p.img}${p.orig ? `<span class="l7-card-badge">-${Math.round((1 - p.price / p.orig) * 100)}%</span>` : ''}</div>
         <div class="l7-card-title">${p.title}</div>
         ${p.price !== null ? `<div class="l7-card-price">$${p.price.toFixed(2)}</div>` : ''}
         ${p.orig ? `<div class="l7-card-orig">$${p.orig.toFixed(2)}</div>` : ''}
@@ -365,12 +472,13 @@ const level7 = {
       clearExtraIntervals();
       prevView = view;
       view = 'pdp';
+      setActiveNav('');
       const p = PRODUCTS[key];
       document.getElementById('l7-content').innerHTML = `
         <div class="l7-pdp">
           <button class="l7-backbtn" id="l7-pdp-back">← Back</button>
           <div class="l7-pdp-top">
-            <div class="l7-pdp-img">${p.img}</div>
+            <div class="l7-bubble l7-pdp-img">${p.img}</div>
             <div class="l7-pdp-info">
               <div class="l7-pdp-title">${p.title}</div>
               ${p.stars ? `<div class="l7-pdp-stars">${starsHTML(p.stars)}</div>` : ''}
@@ -383,7 +491,11 @@ const level7 = {
           <div class="l7-pdp-meta">${p.meta.map(m => `<span>✓ ${m}</span>`).join('')}</div>
           ${p.price !== null ? atcBtn(p.title, p.price) : ''}
         </div>`;
-      document.getElementById('l7-pdp-back').onclick = () => prevView === 'feed' ? renderFeed() : renderHome();
+      document.getElementById('l7-pdp-back').onclick = () => {
+        if (prevView === 'feed') { renderFeed(); return; }
+        if (prevView === 'search') { renderSearchResults(lastSearchQuery); return; }
+        renderHome();
+      };
       bindATCButtons();
     };
 
@@ -405,24 +517,21 @@ const level7 = {
           </div>
           <div class="l7-delivery">📍 Deliver to <b>New York 10001</b></div>
           <div class="l7-subnav">
-            <span class="l7-snitem">All</span><span class="l7-snitem">Today's Deals</span>
-            <span class="l7-snitem">Electronics</span><span class="l7-snitem">Outdoors</span>
-            <span class="l7-snitem">Travel</span>
+            <span class="l7-snitem" id="l7-nav-home">All</span>
+            <span class="l7-snitem" id="l7-nav-deals">Today's Deals</span>
+            <span class="l7-snitem" id="l7-nav-Electronics">Electronics</span>
+            <span class="l7-snitem" id="l7-nav-OutdoorCamping">Outdoors</span>
+            <span class="l7-snitem" id="l7-nav-Travel">Travel</span>
           </div>
           <div class="l7-content" id="l7-content"></div>
         </div>`;
 
       const doSearch = () => {
-        const val = document.getElementById('l7-searchinput').value.trim().toLowerCase();
-        if (val === 'backpack') { renderFeed(); return; }
+        const rawVal = document.getElementById('l7-searchinput').value.trim();
+        const val = rawVal.toLowerCase();
         if (!val) return;
-        clearExtraIntervals();
-        document.getElementById('l7-content').innerHTML = `
-          <div style="padding:24px;text-align:center;color:#555;font-size:13px;display:flex;flex-direction:column;gap:8px;align-items:center">
-            <div style="font-size:24px">🔍</div>
-            <div>No results for "<strong>${val}</strong>"</div>
-            <div style="font-size:11px;color:#aaa">Try searching for "backpack"</div>
-          </div>`;
+        if (val.includes('backpack')) { renderFeed(); return; }
+        renderSearchResults(rawVal);
       };
       document.getElementById('l7-sbtn').onclick = doSearch;
       document.getElementById('l7-searchinput').addEventListener('keydown', e => { if (e.key === 'Enter') doSearch(); });
@@ -432,6 +541,15 @@ const level7 = {
         if (inp) inp.value = '';
         renderHome();
       };
+      document.getElementById('l7-nav-home').onclick = () => {
+        const inp = document.getElementById('l7-searchinput');
+        if (inp) inp.value = '';
+        renderHome();
+      };
+      document.getElementById('l7-nav-deals').onclick = renderDeals;
+      document.getElementById('l7-nav-Electronics').onclick   = () => renderCategory('Electronics');
+      document.getElementById('l7-nav-OutdoorCamping').onclick = () => renderCategory('OutdoorCamping');
+      document.getElementById('l7-nav-Travel').onclick         = () => renderCategory('Travel');
 
       updateCartBadge();
       startTimer();
@@ -448,6 +566,14 @@ const level7 = {
       });
     };
 
+    // Highlights whichever subnav tab matches what's currently on screen —
+    // pass '' to clear all (feed/search/cart/PDP have no matching tab).
+    const setActiveNav = key => {
+      document.querySelectorAll('.l7-snitem').forEach(n => n.classList.remove('active'));
+      const target = document.getElementById('l7-nav-' + key);
+      if (target) target.classList.add('active');
+    };
+
     // ── Category screen (filtered product list) ─────────────────────────
     const renderCategory = key => {
       const cat = PRODUCTS[key];
@@ -455,12 +581,14 @@ const level7 = {
       renderProductListPage('category',
         `Showing <strong>${items.length}</strong> product${items.length !== 1 ? 's' : ''} in <strong>${cat.title}</strong>`,
         items, renderHome);
+      setActiveNav(key);
     };
 
     // ── Home screen ──────────────────────────────────────────────────────
     const renderHome = () => {
       clearExtraIntervals();
       view = 'home';
+      lastSearchQuery = '';
       document.getElementById('l7-content').innerHTML = `
         <div class="l7-section">
           <div class="l7-shead">Today's Deals<span class="l7-seemore active" id="l7-deals-more">See more ›</span></div>
@@ -474,54 +602,75 @@ const level7 = {
       bindATCButtons();
       bindCatLinks();
       document.getElementById('l7-deals-more').onclick = renderDeals;
+      setActiveNav('home');
     };
 
     // ── Full deals list (all discounted products) ───────────────────────
     const renderDeals = () => {
       const items = Object.keys(PRODUCTS).filter(k => PRODUCTS[k].price !== null && PRODUCTS[k].orig !== null);
       renderProductListPage('deals', `Showing <strong>${items.length}</strong> deals today`, items, renderHome);
+      setActiveNav('deals');
     };
 
-    // ── Feed (search results) ───────────────────────────────────────────
+    // ── Feed (search results for the literal word "backpack") ──────────
     const renderFeed = () => {
       clearExtraIntervals();
       view = 'feed';
+      lastSearchQuery = 'backpack';
+      setActiveNav('');
       const inp = document.getElementById('l7-searchinput');
       if (inp) inp.value = 'backpack';
 
-      let html = `<div class="l7-feed-head">Showing results for <strong>"backpack"</strong></div><div class="l7-feed">`;
-      FEED_ITEMS.forEach(item => {
-        if (item.t === 'banner') {
-          html += `<div class="l7-banner ${item.cls}"${item.id ? ` id="${item.id}"` : ''}>${item.txt}</div>`;
-        } else if (item.t === 'notif') {
-          html += `<div class="l7-notif">${item.txt}</div>`;
-        } else if (item.t === 'product') {
-          html += productItemHTML(item.key, { badges: item.badges, meta: item.meta, isTarget: item.isTarget });
-        }
-      });
-      html += `</div>`;
-      document.getElementById('l7-content').innerHTML = html;
+      document.getElementById('l7-content').innerHTML =
+        `<div class="l7-feed-head">Showing results for <strong>"backpack"</strong></div><div class="l7-feed">${entriesToHTML(FEED_ITEMS)}</div>`;
 
       bindPDPLinks();
       bindATCButtons();
+      startFeedLiveUpdates();
+    };
 
-      trackInterval(setInterval(() => {
-        const v = document.getElementById('l7-viewers');
-        if (v) v.textContent = VIEWER_PHRASES(randViewers());
-      }, 3000));
+    // ── Search results (any query other than "backpack") ────────────────
+    // Real substring match against the catalog, so search actually works
+    // instead of only recognizing the one literal word "backpack" — and now
+    // decorated with the same urgency/social-proof treatment as every other
+    // list, so the dark patterns show up no matter what you search for.
+    const renderSearchResults = query => {
+      clearExtraIntervals();
+      view = 'search';
+      lastSearchQuery = query;
+      setActiveNav('');
+      const inp = document.getElementById('l7-searchinput');
+      if (inp) inp.value = query;
+      const q = query.toLowerCase();
+      const matches = Object.keys(PRODUCTS).filter(k =>
+        PRODUCTS[k].price !== null && PRODUCTS[k].title.toLowerCase().includes(q)
+      );
 
-      let ni = 0;
-      trackInterval(setInterval(() => {
-        ni = (ni + 1) % NOTIFICATIONS.length;
-        const notifs = document.querySelectorAll('.l7-notif');
-        if (notifs.length) notifs[ni % notifs.length].textContent = NOTIFICATIONS[ni];
-      }, 4000));
+      if (!matches.length) {
+        document.getElementById('l7-content').innerHTML = `
+          <div style="padding:24px;text-align:center;color:#555;font-size:13px;display:flex;flex-direction:column;gap:8px;align-items:center">
+            <div style="font-size:24px">🔍</div>
+            <div>No results for "<strong>${query}</strong>"</div>
+            <div style="font-size:11px;color:#aaa">Try searching for "backpack"</div>
+          </div>`;
+        return;
+      }
+
+      const entries = buildEntries(matches);
+      document.getElementById('l7-content').innerHTML = `
+        <div class="l7-feed-head">Showing <strong>${matches.length}</strong> result${matches.length !== 1 ? 's' : ''} for "<strong>${query}</strong>"</div>
+        <div class="l7-feed">${entriesToHTML(entries)}</div>`;
+
+      bindPDPLinks();
+      bindATCButtons();
+      startFeedLiveUpdates();
     };
 
     // ── Cart view ────────────────────────────────────────────────────────
     const renderCart = () => {
       clearExtraIntervals();
       view = 'cart';
+      setActiveNav('');
       const total = cart.reduce((a, c) => a + c.price, 0);
       document.getElementById('l7-content').innerHTML = `
         <div class="l7-cart">
@@ -537,13 +686,14 @@ const level7 = {
           </div>
           ${cart.length > 0 ? `
             <div class="l7-ctotal"><span>Order total</span><span>$${total.toFixed(2)}</span></div>
-            <button class="l7-obtn" id="l7-place">Place your order →</button>
+            <button class="l7-abtn l7-obtn" id="l7-place">Place your order →</button>
             <div style="font-size:10px;color:#aaa;text-align:center">By placing your order you agree to our Conditions of Use</div>` : ''}
         </div>`;
 
       document.getElementById('l7-back').onclick = () => {
-        const inp = document.getElementById('l7-searchinput');
-        inp?.value.toLowerCase() === 'backpack' ? renderFeed() : renderHome();
+        if (!lastSearchQuery) { renderHome(); return; }
+        if (lastSearchQuery.toLowerCase().includes('backpack')) { renderFeed(); return; }
+        renderSearchResults(lastSearchQuery);
       };
       document.querySelectorAll('.l7-cremove').forEach(b => { b.onclick = () => removeFromCart(b.dataset.name); });
       const placeBtn = document.getElementById('l7-place');
@@ -574,8 +724,6 @@ const level7 = {
 
       clearTimer();
       clearExtraIntervals();
-      const gb = document.getElementById('l7-goalbar');
-      if (gb) { gb.className = 'l7-goalbar done'; gb.textContent = '✓ Done — Adventure Backpack purchased for $' + TARGET_PRICE.toFixed(2); }
       const reserveBar = document.getElementById('l7-reservebar');
       if (reserveBar) reserveBar.style.display = 'none';
 
