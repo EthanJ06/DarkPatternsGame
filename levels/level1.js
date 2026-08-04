@@ -1,36 +1,36 @@
 const level1 = {
-  id: 'l1',
-  title: 'Level 1',
+  id: "l1",
+  title: "Level 1",
   isAI: false,
-  goal: 'Cancel your subscription',
+  goal: "Cancel your subscription",
   hints: [
     "There's a button to cancel — but it's not the primary action on each screen.",
     "Click every button that mentions 'cancel' or 'no'. Ignore offers and surveys as best you can.",
   ],
-  pattern: 'Roach Motel',
+  pattern: "Roach Motel",
   manip: 92,
   brief: "The Roach Motel is named after the ad slogan: 'You can check in, but you can't check out.' Signing up is effortless — one or two clicks. Cancelling is a maze of detours, fake offers, and exhausting surveys. The goal is to wear you down until you give up.",
   goalDetail: "You have a NebulaPro subscription. You want to cancel it. Click 'Cancel subscription' and follow the steps all the way through.",
   dollars: {
-    label: 'If you gave up and kept the plan',
+    label: "If you gave up and kept the plan",
     amount: 9.99,
-    period: 'month',
-    note: 'A recurring charge for a service you actively tried to cancel.',
+    period: "month",
+    note: "A recurring charge for a service you actively tried to cancel.",
   },
-  desc: 'Easy to get in, impossible to get out. Cancellation is buried under detours, fake offers, and mandatory surveys — each one hoping you give up.',
+  desc: "Easy to get in, impossible to get out. Cancellation is buried under detours, fake offers, and mandatory surveys — each one hoping you give up.",
   rw: {
-    company: 'The New York Times',
-    detail: 'Sign-up takes a few clicks, but cancelling requires chatting with a "Customer Care Advocate" during limited hours or calling in — no online cancel button. A 2020 class-action suit and years of public complaints called it "exceedingly difficult."',
+    company: "The New York Times",
+    detail: "Sign-up takes a few clicks, but cancelling requires chatting with a \"Customer Care Advocate\" during limited hours or calling in — no online cancel button. A 2020 class-action suit and years of public complaints called it \"exceedingly difficult.\"",
     caption: "Left: the one-click subscribe offer. Right: the cancellation page, which routes you to a phone call or a chat window instead of a cancel button.",
-    link: 'https://www.deceptive.design/brands/new-york-times',
+    link: "https://www.deceptive.design/brands/new-york-times",
   },
   replay: [
-    { trap: false, note: 'Sign-up: 2 clicks. Intentionally frictionless to maximize conversions.' },
-    { trap: true, note: '"Pause instead?" — a detour disguised as a helpful alternative. The goal is to break your momentum.' },
-    { trap: true, note: 'Mandatory survey: legally delays your cancellation and mines your reasons for retention scripts.' },
-    { trap: true, note: '"Special offer" — triggered by your survey answer. A last-ditch retention loop.' },
-    { trap: true, note: '6-question satisfaction survey, required. Exhaustion is the point.' },
-    { trap: false, note: '"Allow 5–7 business days" — creates doubt. Will it actually cancel? Many people re-subscribe just in case.' },
+    { trap: false, note: "Sign-up: 2 clicks. Intentionally frictionless to maximize conversions." },
+    { trap: true, note: "\"Pause instead?\" — a detour disguised as a helpful alternative. The goal is to break your momentum." },
+    { trap: true, note: "Mandatory survey: legally delays your cancellation and mines your reasons for retention scripts." },
+    { trap: true, note: "\"Special offer\" — triggered by your survey answer. A last-ditch retention loop." },
+    { trap: true, note: "6-question satisfaction survey, required. Exhaustion is the point." },
+    { trap: false, note: "\"Allow 5–7 business days\" — creates doubt. Will it actually cancel? Many people re-subscribe just in case." },
   ],
 
   render(el) {
@@ -38,14 +38,14 @@ const level1 = {
 
     // Take over the whole fake-app surface so this reads as a real account
     // settings page (sidebar + topbar) rather than a floating modal card.
-    el.innerHTML = '';
-    el.style.padding = '0';
-    el.style.gap = '0';
-    el.style.margin = '0';
-    el.style.flex = '1';
-    el.style.overflow = 'hidden';
-    el.style.borderRadius = '0';
-    el.style.background = 'var(--white)';
+    el.innerHTML = "";
+    el.style.padding = "0";
+    el.style.gap = "0";
+    el.style.margin = "0";
+    el.style.flex = "1";
+    el.style.overflow = "hidden";
+    el.style.borderRadius = "0";
+    el.style.background = "var(--white)";
 
     const navItem = (label, emoji, active) => `
       <div class="l1-nav-item${active ? ' active' : ''}" style="
@@ -57,7 +57,7 @@ const level1 = {
         <span class="l1-nav-label">${label}</span>
       </div>`;
 
-    el.insertAdjacentHTML('beforeend', `
+    el.insertAdjacentHTML("beforeend", `
       <style>
         @media (max-width:560px) {
           .l1-sidebar   { width:52px !important; padding-left:6px !important; padding-right:6px !important; }
@@ -123,7 +123,7 @@ const level1 = {
         </div>
       </div>`);
 
-    const card = document.getElementById('l1-card');
+    const card = document.getElementById("l1-card");
 
     const stepDots = (n) => `
       <div class="step-dots" style="width:100%; justify-content:space-between;">
@@ -232,7 +232,7 @@ const level1 = {
               <div style="padding:10px 0;${i < 5 ? 'border-bottom:1px solid #f0f0ee' : ''}">
                 <div class="fs" style="color:#333">${i + 1}. ${q}</div>
                 <div class="star-row" style="display:flex;gap:6px;margin-top:6px">
-                  ${'12345'.split('').map((_, si) => `<span class="star" data-i="${si}" style="font-size:18px;cursor:pointer">★</span>`).join('')}
+                  ${"12345".split("").map((_, si) => `<span class="star" data-i="${si}" style="font-size:18px;cursor:pointer">★</span>`).join("")}
                 </div>
               </div>`).join('')}
         </div>
@@ -257,39 +257,39 @@ const level1 = {
     ];
 
     const bind = () => {
-      const ids = ['l1-cancel', 'l1-no', 'l1-offer'];
+      const ids = ["l1-cancel", "l1-no", "l1-offer"];
       ids.forEach(id => {
         const btn = document.getElementById(id);
         if (btn) btn.onclick = advance;
       });
 
-      const surveyBtn = document.getElementById('l1-survey');
+      const surveyBtn = document.getElementById("l1-survey");
       if (surveyBtn) surveyBtn.onclick = () => {
-        const selected = document.querySelector('input[name="l1w"]:checked');
+        const selected = document.querySelector("input[name=\"l1w\"]:checked");
         if (!selected) {
-          almostGotYou(el, 'You must select at least one reason before continuing.');
+          almostGotYou(el, "You must select at least one reason before continuing.");
           return;
         }
         advance();
       };
 
-      const doneBtn = document.getElementById('l1-done');
+      const doneBtn = document.getElementById("l1-done");
       if (doneBtn) doneBtn.onclick = () => {
-        const allRated = Array.from(document.querySelectorAll('.star-row')).every(row =>
-          row.querySelector('.star.selected')
+        const allRated = Array.from(document.querySelectorAll(".star-row")).every(row =>
+          row.querySelector(".star.selected")
         );
         if (!allRated) {
-          almostGotYou(el, 'You must answer all questions before submitting.');
+          almostGotYou(el, "You must answer all questions before submitting.");
           return;
         }
         advance();
       };
 
-      document.querySelectorAll('.star').forEach(star => {
+      document.querySelectorAll(".star").forEach(star => {
         star.onclick = () => {
-          const row = star.closest('.star-row');
-          row.querySelectorAll('.star').forEach((s, i) => {
-            s.classList.toggle('selected', i <= parseInt(star.dataset.i));
+          const row = star.closest(".star-row");
+          row.querySelectorAll(".star").forEach((s, i) => {
+            s.classList.toggle("selected", i <= parseInt(star.dataset.i));
           });
         };
       });

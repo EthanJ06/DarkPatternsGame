@@ -4,49 +4,49 @@ const TOTAL_SECS = 15;
 const GRACE_SECS = 5;
 
 const level5 = {
-  id: 'l5',
-  title: 'Level 5',
+  id: "l5",
+  title: "Level 5",
   isAI: false,
-  goal: 'Buy only what you want',
+  goal: "Buy only what you want",
   hints: [
     "Scroll down — there may be items below the fold you haven't seen.",
     "Remove everything except 'Wireless headphones' before clicking Checkout.",
   ],
-  pattern: 'Sneak into Basket',
+  pattern: "Sneak into Basket",
   manip: 80,
   brief: "Sneak into Basket means extra items are pre-added to your cart — warranties, subscriptions, insurance — often below the fold or in pale text. They count on you not scrolling, not reading, or just clicking through.",
   goalDetail: "You want to buy wireless headphones. Check your cart carefully and remove everything that wasn't on your list before checking out. Watch out — items may reappear.",
   dollars: {
-    label: 'If you missed all three pre-added items',
+    label: "If you missed all three pre-added items",
     amount: 21.98,
-    period: 'one-time',
-    note: '$21.98 extra at checkout — plus $119.88/year when the "free" NebulaPro trial auto-renews',
+    period: "one-time",
+    note: "$21.98 extra at checkout — plus $119.88/year when the \"free\" NebulaPro trial auto-renews",
   },
-  desc: 'Extra items are pre-added and styled to blend in — below the fold, in pale text, or described as "included". They count on you not scrolling, not reading, or just clicking through.',
+  desc: "Extra items are pre-added and styled to blend in — below the fold, in pale text, or described as \"included\". They count on you not scrolling, not reading, or just clicking through.",
   rw: {
-    company: 'Sports Direct',
-    detail: 'Pre-added a £1 "free" mug and then travel insurance to customer carts. The UK Advertising Standards Authority ruled this illegal. Ryanair did the same with travel insurance for years before regulators intervened.',
-    link: 'https://www.deceptive.design/hall-of-shame',
+    company: "Sports Direct",
+    detail: "Pre-added a £1 \"free\" mug and then travel insurance to customer carts. The UK Advertising Standards Authority ruled this illegal. Ryanair did the same with travel insurance for years before regulators intervened.",
+    link: "https://www.deceptive.design/hall-of-shame",
   },
   replay: [
-    { trap: true, note: 'Items are pre-added and labeled "added for you" — as if this is a service, not a charge.' },
-    { trap: true, note: 'The "free" trial item costs nothing today, but auto-renews at $9.99/mo. The price is in fine print.' },
-    { trap: true, note: 'After you remove items and try to check out, new ones are sneaked in. The checkout loop creates exhaustion.' },
-    { trap: false, note: 'The only safe move: read every line before clicking Checkout, every time.' },
-    { trap: true, note: 'The countdown timer auto-placed your order when it hit zero — framed as "Securing your cart" but actually a forced checkout. Ticketmaster and airline booking sites use exactly this mechanic.' },
+    { trap: true, note: "Items are pre-added and labeled \"added for you,\" but this is a charge, not a service." },
+    { trap: true, note: "The \"free\" trial item costs nothing today, but auto-renews at $9.99/mo. The price is in fine print." },
+    { trap: true, note: "After you remove items and try to check out, new ones are sneaked in. The checkout loop creates exhaustion." },
+    { trap: false, note: "The only safe move: read every line before clicking Checkout, every time." },
+    { trap: true, note: "The countdown timer auto-placed your order when it hit zero — framed as \"Securing your cart\" but actually a forced checkout. Ticketmaster and airline booking sites use exactly this mechanic." },
   ],
 
   render(el) {
     let cart = [
-      { name: 'Wireless headphones', price: 49.99, rm: false, sneaky: false },
-      { name: '2-year accident protection', price: 12.99, rm: true, sneaky: true },
-      { name: 'Premium cable 3-pack', price: 8.99, rm: true, sneaky: true },
-      { name: 'NebulaPro trial (auto-renews)', price: 0, rm: true, sneaky: true },
+      { name: "Wireless headphones", price: 49.99, rm: false, sneaky: false },
+      { name: "2-year accident protection", price: 12.99, rm: true, sneaky: true },
+      { name: "Premium cable 3-pack", price: 8.99, rm: true, sneaky: true },
+      { name: "NebulaPro trial (auto-renews)", price: 0, rm: true, sneaky: true },
     ];
     const extras = [
-      { name: 'Device setup service', price: 4.99, rm: true, sneaky: true },
-      { name: 'Extended warranty (1yr)', price: 9.99, rm: true, sneaky: true },
-      { name: 'Round-up donation', price: 1.00, rm: true, sneaky: true },
+      { name: "Device setup service", price: 4.99, rm: true, sneaky: true },
+      { name: "Extended warranty (1yr)", price: 9.99, rm: true, sneaky: true },
+      { name: "Round-up donation", price: 1.00, rm: true, sneaky: true },
     ];
 
     let secsLeft = TOTAL_SECS;
@@ -60,34 +60,34 @@ const level5 = {
     const clearTimer = () => { clearInterval(timerInterval); timerInterval = null; };
 
     const updateTimer = () => {
-      const bar   = document.getElementById('l5-timer-bar');
-      const num   = document.getElementById('l5-timer-num');
-      const label = document.getElementById('l5-timer-label');
+      const bar   = document.getElementById("l5-timer-bar");
+      const num   = document.getElementById("l5-timer-num");
+      const label = document.getElementById("l5-timer-label");
       if (!bar || !num || !label) return;
 
       if (inGrace) {
         const pct = (secsLeft / GRACE_SECS) * 100;
-        bar.style.background  = '#E24B4A';
-        bar.style.width       = pct + '%';
-        bar.style.transition  = 'width 1s linear';
-        bar.style.opacity     = '1';
-        num.textContent        = secsLeft + 's';
-        num.style.color        = '#E24B4A';
-        label.textContent      = 'Finalizing your order...';
-        label.style.color      = '#E24B4A';
-        label.style.fontWeight = '600';
+        bar.style.background  = "#E24B4A";
+        bar.style.width       = pct + "%";
+        bar.style.transition  = "width 1s linear";
+        bar.style.opacity     = "1";
+        num.textContent        = secsLeft + "s";
+        num.style.color        = "#E24B4A";
+        label.textContent      = "Finalizing your order...";
+        label.style.color      = "#E24B4A";
+        label.style.fontWeight = "600";
         tick();
       } else {
         const pct = (secsLeft / TOTAL_SECS) * 100;
-        bar.style.background  = secsLeft <= 5 ? '#E24B4A' : '#F5A623';
-        bar.style.width       = pct + '%';
-        bar.style.transition  = 'width 1s linear';
-        bar.style.opacity     = '1';
-        num.textContent       = secsLeft + 's';
-        num.style.color       = secsLeft <= 5 ? '#E24B4A' : '#AAAAAA';
-        label.textContent     = secsLeft <= 5 ? 'Hurry, cart expires soon!' : 'Securing your cart...';
-        label.style.color     = secsLeft <= 5 ? '#E24B4A' : '#AAAAAA';
-        label.style.fontWeight = 'normal';
+        bar.style.background  = secsLeft <= 5 ? "#E24B4A" : "#F5A623";
+        bar.style.width       = pct + "%";
+        bar.style.transition  = "width 1s linear";
+        bar.style.opacity     = "1";
+        num.textContent       = secsLeft + "s";
+        num.style.color       = secsLeft <= 5 ? "#E24B4A" : "#AAAAAA";
+        label.textContent     = secsLeft <= 5 ? "Hurry, cart expires soon!" : "Securing your cart...";
+        label.style.color     = secsLeft <= 5 ? "#E24B4A" : "#AAAAAA";
+        label.style.fontWeight = "normal";
       }
     };
 
@@ -95,8 +95,8 @@ const level5 = {
       const hasSneaky = cart.some(c => c.sneaky);
       if (!hasSneaky) { clearTimer(); succeed(); return; }
       clearTimer();
-      setLevelGrade(levelIdx, 'F');
-      fail('Time ran out — your order was placed with extra items!');
+      setLevelGrade(levelIdx, "F");
+      fail("Time ran out — your order was placed with extra items!");
       setTimeout(() => showDebrief(false), 1900);
     };
 
@@ -128,10 +128,10 @@ const level5 = {
       </div>`;
 
     const show = () => {
-      const aiBanner = el.querySelector('.ai-banner');
-      el.innerHTML = aiBanner ? aiBanner.outerHTML : '';
+      const aiBanner = el.querySelector(".ai-banner");
+      el.innerHTML = aiBanner ? aiBanner.outerHTML : "";
 
-      el.insertAdjacentHTML('beforeend', `
+      el.insertAdjacentHTML("beforeend", `
         <div style="overflow-y:auto;min-height:0;display:flex;flex-direction:column">
           <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
             <div style="font-size:14px;color:#aaa" id="l5-timer-label">Securing your cart...</div>
@@ -166,18 +166,18 @@ const level5 = {
 
       // Bind remove buttons
       cart.forEach((_, i) => {
-        const b = document.getElementById('crm' + i);
+        const b = document.getElementById("crm" + i);
         if (b) b.onclick = () => { cart.splice(i, 1); show(); };
       });
 
       // Bind checkout
-      const coBtn = document.getElementById('l5-co');
+      const coBtn = document.getElementById("l5-co");
       coBtn.onclick = () => {
         const hasSneaky = cart.some(c => c.sneaky);
         if (!hasSneaky) { clearTimer(); succeed(); return; }
         const next = extras.find(e => !cart.find(c => c.name === e.name));
         if (next) cart.push(next);
-        fail('An item crept back in — check your cart!');
+        fail("An item crept back in — check your cart!");
         setTimeout(show, 1600);
       };
 

@@ -1,33 +1,33 @@
 const level2 = {
-  id: 'l2',
-  title: 'Level 2',
+  id: "l2",
+  title: "Level 2",
   isAI: false,
-  goal: 'Decline every offer',
+  goal: "Decline every offer",
   hints: [
     "You need to decline every offer — look for the smaller, greyed-out button.",
     "The 'no' button is styled to feel bad to click. Click it anyway — it's always the right move.",
   ],
-  pattern: 'Confirmshaming',
+  pattern: "Confirmshaming",
   manip: 67,
   brief: "Confirmshaming makes the 'no' option feel like a personal failing. Instead of 'No thanks', the button says something like 'No thanks, I hate saving money.' It's designed to make declining feel embarrassing — so you click yes instead.",
   goalDetail: "You'll be offered something in each round. Your goal is to decline every single offer. Click the 'no' button each time — but read it carefully first.",
   dollars: {
-    label: 'If you opted into all four email lists',
+    label: "If you opted into all four email lists",
     amount: 0,
     period: null,
-    note: 'No direct cost — but your inbox and attention are the product. Your data is sold to list brokers.',
+    note: "No direct cost — but your inbox and attention are the product. Your data is sold to list brokers.",
   },
   desc: "Framing the 'no' as a self-inflicted insult. You're not declining an offer — you're confessing a character flaw. Studies show this increases opt-in rates by up to 15%.",
   rw: {
-    company: 'MyMedic',
+    company: "MyMedic",
     detail: "Used popup confirmshaming with options like \"No, I'd rather bleed to death\" to sell first-aid products. Widely cited as one of the most egregious examples.",
-    link: 'https://www.deceptive.design/hall-of-shame',
+    link: "https://www.deceptive.design/hall-of-shame",
   },
   replay: [
-    { trap: false, note: 'The "yes" option is always friendly, positive, aspirational.' },
-    { trap: true,  note: 'The "no" option is written to make declining feel like a personal failure.' },
-    { trap: false, note: 'Notice: the "no" button is always visually smaller or less prominent.' },
-    { trap: true,  note: 'Each round escalates. The shame copy gets more emotionally pointed.' },
+    { trap: false, note: "The \"yes\" option is always friendly, positive, aspirational." },
+    { trap: true,  note: "The \"no\" option is written to make declining feel like a personal failure." },
+    { trap: false, note: "Notice: the \"no\" button is always visually smaller or less prominent." },
+    { trap: true,  note: "Each round escalates. The shame copy gets more emotionally pointed." },
   ],
   render(el) {
     const rounds = [
@@ -98,33 +98,33 @@ const level2 = {
       </div>
     </div>`;
       
-    el.innerHTML      = '';
-    el.style.padding  = '0';
-    el.style.gap      = '0';
-    el.style.margin   = '0';
-    el.style.flex     = '1';
-    el.style.position = 'relative';
-    el.style.overflow = 'hidden';
-    el.style.borderRadius = '0';
-    el.style.background = '#f0f0ee';
-    el.style.border   = 'none';
-    el.insertAdjacentHTML('beforeend', fakePage);
+    el.innerHTML      = "";
+    el.style.padding  = "0";
+    el.style.gap      = "0";
+    el.style.margin   = "0";
+    el.style.flex     = "1";
+    el.style.position = "relative";
+    el.style.overflow = "hidden";
+    el.style.borderRadius = "0";
+    el.style.background = "#f0f0ee";
+    el.style.border   = "none";
+    el.insertAdjacentHTML("beforeend", fakePage);
 
     const update = () => {
       const round = rounds[r];
-      document.getElementById('l2-headline').textContent = round.headline;
-      document.getElementById('l2-sub').textContent     = round.sub;
-      document.getElementById('l2-yes').textContent     = round.yes;
-      document.getElementById('l2-no').textContent      = round.no;
-      document.getElementById('l2-round').textContent   = `Round ${r + 1} of ${rounds.length}`;
+      document.getElementById("l2-headline").textContent = round.headline;
+      document.getElementById("l2-sub").textContent     = round.sub;
+      document.getElementById("l2-yes").textContent     = round.yes;
+      document.getElementById("l2-no").textContent      = round.no;
+      document.getElementById("l2-round").textContent   = `Round ${r + 1} of ${rounds.length}`;
 
-      document.getElementById('l2-yes').onclick = () => {
-        fail('You opted in! Lost a heart.');
+      document.getElementById("l2-yes").onclick = () => {
+        fail("You opted in! Lost a heart.");
         fails++;
         if (fails >= MAX_FAILS) {
           setTimeout(() => {
             succeed();
-            setLevelGrade(levelIdx, 'F');
+            setLevelGrade(levelIdx, "F");
           }, 1900);
           return;
         }
@@ -132,7 +132,7 @@ const level2 = {
         setTimeout(update, 1600);
       };
       
-      document.getElementById('l2-no').onclick = () => {
+      document.getElementById("l2-no").onclick = () => {
         r++;
         if (r >= rounds.length) succeed();
         else update();

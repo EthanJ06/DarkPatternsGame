@@ -1,10 +1,10 @@
 // js/levels/level7.js — Fake Scarcity / Urgency
 
 const NOTIFICATIONS = [
-  'Someone bought this 6 minutes ago',
-  '14 people bought this in the last hour',
-  'Someone just checked out with Wireless Earbuds',
-  'M. in Austin added this to their cart just now',
+  "Someone bought this 6 minutes ago",
+  "14 people bought this in the last hour",
+  "Someone just checked out with Wireless Earbuds",
+  "M. in Austin added this to their cart just now",
 ];
 
 const STYLES = `
@@ -103,20 +103,20 @@ const STYLES = `
 `;
 
 function injectStyles() {
-  document.getElementById('l7-style')?.remove();
-  const s = document.createElement('style');
-  s.id = 'l7-style';
+  document.getElementById("l7-style")?.remove();
+  const s = document.createElement("style");
+  s.id = "l7-style";
   s.textContent = STYLES;
   document.head.appendChild(s);
 }
 
 function fmt(s) {
   const m = Math.floor(s / 60), sec = s % 60;
-  return m + ':' + (sec < 10 ? '0' : '') + sec;
+  return m + ":" + (sec < 10 ? "0" : "") + sec;
 }
 function randViewers() { return Math.floor(Math.random() * 120) + 780; }
-const VIEWER_PHRASES = n => Math.random() < 0.5 ? n + ' people viewed today' : n + ' people have this in their cart right now';
-function starsHTML(s) { return s ? s.replace(/\(([\d,]+)\)/, '(<span class="l7-rcount">$1</span>)') : ''; }
+const VIEWER_PHRASES = n => Math.random() < 0.5 ? n + " people viewed today" : n + " people have this in their cart right now";
+function starsHTML(s) { return s ? s.replace(/\(([\d,]+)\)/, "(<span class=\"l7-rcount\">$1</span>)") : ""; }
 
 // Deterministic string hash — used so a given product always gets the same
 // generic badge/notification slot instead of one that changes on every render.
@@ -128,61 +128,61 @@ function hashStr(s) {
 
 // ── Catalog — only what's actually shown ───────────────────────────────────
 const PRODUCTS = {
-  AdventureBackpack: { img: '🎒', title: 'Adventure Backpack — 40L', price: 39.99, orig: null,   stars: '★★★★☆ (4,892)', desc: 'Versatile 40L adventure backpack with padded back panel, laptop sleeve, rain cover, and multiple organizer pockets. Built for weekend trips and everyday carry.', meta: ['Ships today', 'Eligible for free shipping'] },
-  MiniDaypack:       { img: '🎒', title: 'Mini Daypack — 12L',        price: 17.99, orig: null,   stars: '★★★☆☆ (1,447)', desc: 'Compact 12L daypack for day hikes, city commutes, or gym visits. Lightweight at 0.4 lbs.', meta: ['Usually ships within 2 days'] },
-  SchoolBackpack:    { img: '🎒', title: 'School Backpack — 20L',     price: 16.49, orig: null,   stars: '★★★☆☆ (980)',   desc: 'Roomy 20L school backpack with padded straps, organizer pocket, and laptop sleeve up to 15".', meta: ['Usually ships within 2 days'] },
-  LaptopBackpack:    { img: '🎒', title: 'Laptop Backpack — 25L',     price: 28.99, orig: 34.99,  stars: '★★★★☆ (3,310)', desc: '25L backpack with padded sleeve up to 16", USB charging port, TSA-friendly layout.', meta: ['Ships today'] },
-  TrekkingPack:      { img: '🎒', title: 'Trekking Backpack — 35L',   price: 32.99, orig: 44.99,  stars: '★★★★☆ (2,105)', desc: '35L trekking pack with waterproof zipper, adjustable hip belt, integrated rain cover.', meta: ['Ships today'] },
-  WirelessEarbuds:   { img: '🎧', title: 'Wireless Earbuds',          price: 24.99, orig: 49.99,  stars: '★★★★☆ (12,481)', desc: 'True wireless earbuds with ANC, 8-hour battery, and a charging case.', meta: ['Ships today'] },
-  Smartwatch:        { img: '⌚', title: 'Smartwatch',                 price: 149.99, orig: 199.99, stars: '★★★★☆ (5,820)', desc: 'Heart rate monitoring, GPS, sleep tracking, 7-day battery life.', meta: ['Sold by TechGear Direct'] },
-  Charger65W:        { img: '🔌', title: '65W Charger',                price: 14.99, orig: 29.99,  stars: '★★★★☆ (8,320)', desc: 'Universal 65W GaN charger with 3 ports.', meta: ['Ships today'] },
-  SmartBulb:         { img: '💡', title: 'Smart Bulb 4-pack',          price: 12.99, orig: 24.99,  stars: '★★★★☆ (6,540)', desc: 'Works with Alexa and Google Home. 16 million colors, dimmable.', meta: ['Sold by SmartHome Co'] },
-  OutdoorCamping:    { img: '🏕️', title: 'Outdoor & Camping',          price: null,  orig: null,   stars: null, desc: 'Tents, sleeping bags, camp stoves, and more.', meta: ['Browse hundreds of products'] },
-  Travel:            { img: '🧳', title: 'Travel',                     price: null,  orig: null,   stars: null, desc: 'Suitcases, travel pillows, packing cubes, passport holders.', meta: ['Browse hundreds of products'] },
-  Electronics:       { img: '🔌', title: 'Electronics',                price: null,  orig: null,   stars: null, desc: 'Headphones, wearables, chargers, and smart home gadgets.', meta: ['Browse hundreds of products'] },
-  Tent2Person:       { img: '⛺', title: '2-Person Tent',               price: 79.99, orig: 99.99,  stars: '★★★★☆ (2,240)', desc: 'Weatherproof 2-person tent with rainfly and a freestanding pole design. Sets up in under 5 minutes.', meta: ['Ships today'] },
-  HikingBoots:       { img: '🥾', title: 'Waterproof Hiking Boots',    price: 64.99, orig: 89.99,  stars: '★★★★☆ (3,105)', desc: 'Waterproof hiking boots with ankle support and a grippy outsole built for rocky trails.', meta: ['Ships today'] },
-  SleepingBag:       { img: '🛌', title: '3-Season Sleeping Bag',      price: 44.99, orig: 59.99,  stars: '★★★★☆ (1,830)', desc: 'Rated to 20°F and compresses down to the size of a football for easy packing.', meta: ['Usually ships within 2 days'] },
-  CampStove:         { img: '🔥', title: 'Portable Camp Stove',        price: 29.99, orig: null,   stars: '★★★★☆ (960)',   desc: 'Compact folding stove with piezo ignition. Boils a liter of water in under 3 minutes.', meta: ['Ships today'] },
-  Headlamp:          { img: '🔦', title: 'Rechargeable Headlamp',      price: 18.99, orig: 24.99,  stars: '★★★★☆ (2,510)', desc: '350-lumen rechargeable headlamp with a red night-vision mode and adjustable strap.', meta: ['Ships today'] },
-  CampChair:         { img: '🪑', title: 'Folding Camp Chair',         price: 34.99, orig: 44.99,  stars: '★★★★☆ (1,675)', desc: 'Lightweight folding camp chair with a cup holder and side pocket. Packs into its own bag.', meta: ['Ships today'] },
-  WaterFilter:       { img: '💧', title: 'Portable Water Filter',      price: 24.99, orig: null,   stars: '★★★★☆ (3,920)', desc: 'Filters up to 1,500 gallons of water, removing 99.9% of bacteria and protozoa.', meta: ['Ships today'] },
-  Hammock:           { img: '🪢', title: 'Camping Hammock',            price: 27.99, orig: 34.99,  stars: '★★★★☆ (2,240)', desc: 'Parachute-nylon hammock with tree straps included. Holds up to 400 lbs.', meta: ['Usually ships within 2 days'] },
-  Cooler:            { img: '🧊', title: '20-Quart Cooler',            price: 49.99, orig: 64.99,  stars: '★★★★☆ (1,340)', desc: 'Keeps ice for up to 3 days. Bear-resistant latch and non-slip feet.', meta: ['Ships today'] },
-  PackingCubes:      { img: '🧳', title: 'Packing Cubes (6-Set)',      price: 19.99, orig: 26.99,  stars: '★★★★☆ (4,410)', desc: 'Compress and organize a suitcase with six zippered cubes in graduated sizes.', meta: ['Ships today'] },
-  TravelPillow:      { img: '💤', title: 'Memory Foam Travel Pillow',  price: 15.99, orig: 22.99,  stars: '★★★☆☆ (2,780)', desc: 'Ergonomic memory foam neck pillow with a washable cover. Compresses for storage.', meta: ['Ships today'] },
-  PassportHolder:    { img: '🛂', title: 'RFID Passport Holder',       price: 12.99, orig: 16.99,  stars: '★★★★☆ (2,860)', desc: 'RFID-blocking passport wallet with card slots and a pen holder.', meta: ['Ships today'] },
-  LuggageScale:      { img: '⚖️', title: 'Digital Luggage Scale',      price: 9.99,  orig: 14.99,  stars: '★★★★☆ (5,120)', desc: 'Handheld digital scale for weighing checked bags before you get to the airport.', meta: ['Ships today'] },
-  TSALocks:          { img: '🔒', title: 'TSA-Approved Locks (2-Pack)', price: 8.99, orig: 12.99,  stars: '★★★★☆ (3,340)', desc: 'TSA-approved combination locks for zippered luggage. Airport security can open them without cutting.', meta: ['Ships today'] },
-  ToiletryBag:       { img: '🧴', title: 'Hanging Toiletry Bag',       price: 17.99, orig: 23.99,  stars: '★★★★☆ (2,110)', desc: 'Water-resistant hanging toiletry bag with a metal hook and a clear TSA-friendly pouch.', meta: ['Ships today'] },
-  PowerBank:         { img: '🔋', title: '10,000mAh Power Bank',       price: 19.99, orig: 29.99,  stars: '★★★★☆ (7,230)', desc: 'Slim 10,000mAh power bank with USB-C fast charging. Fits in a pocket.', meta: ['Ships today'] },
-  BluetoothSpeaker:  { img: '🔊', title: 'Portable Bluetooth Speaker', price: 22.99, orig: 34.99,  stars: '★★★★☆ (4,050)', desc: 'Waterproof portable speaker with a 12-hour battery and punchy bass.', meta: ['Ships today'] },
-  PhoneCase:         { img: '📱', title: 'Shockproof Phone Case',      price: 11.99, orig: 16.99,  stars: '★★★★☆ (3,610)', desc: 'Shockproof case with raised edges to protect the screen and camera.', meta: ['Ships today'] },
-  USBCHub:           { img: '🖧', title: '7-in-1 USB-C Hub',           price: 26.99, orig: 34.99,  stars: '★★★★☆ (2,470)', desc: '7-in-1 USB-C hub with HDMI, an SD card reader, and 100W pass-through charging.', meta: ['Ships today'] },
+  AdventureBackpack: { img: "🎒", title: "Adventure Backpack — 40L", price: 39.99, orig: null,   stars: "★★★★☆ (4,892)", desc: "Versatile 40L adventure backpack with padded back panel, laptop sleeve, rain cover, and multiple organizer pockets. Built for weekend trips and everyday carry.", meta: ["Ships today", "Eligible for free shipping"] },
+  MiniDaypack:       { img: "🎒", title: "Mini Daypack — 12L",        price: 17.99, orig: null,   stars: "★★★☆☆ (1,447)", desc: "Compact 12L daypack for day hikes, city commutes, or gym visits. Lightweight at 0.4 lbs.", meta: ["Usually ships within 2 days"] },
+  SchoolBackpack:    { img: "🎒", title: "School Backpack — 20L",     price: 16.49, orig: null,   stars: "★★★☆☆ (980)",   desc: "Roomy 20L school backpack with padded straps, organizer pocket, and laptop sleeve up to 15\".", meta: ["Usually ships within 2 days"] },
+  LaptopBackpack:    { img: "🎒", title: "Laptop Backpack — 25L",     price: 28.99, orig: 34.99,  stars: "★★★★☆ (3,310)", desc: "25L backpack with padded sleeve up to 16\", USB charging port, TSA-friendly layout.", meta: ["Ships today"] },
+  TrekkingPack:      { img: "🎒", title: "Trekking Backpack — 35L",   price: 32.99, orig: 44.99,  stars: "★★★★☆ (2,105)", desc: "35L trekking pack with waterproof zipper, adjustable hip belt, integrated rain cover.", meta: ["Ships today"] },
+  WirelessEarbuds:   { img: "🎧", title: "Wireless Earbuds",          price: 24.99, orig: 49.99,  stars: "★★★★☆ (12,481)", desc: "True wireless earbuds with ANC, 8-hour battery, and a charging case.", meta: ["Ships today"] },
+  Smartwatch:        { img: "⌚", title: "Smartwatch",                 price: 149.99, orig: 199.99, stars: "★★★★☆ (5,820)", desc: "Heart rate monitoring, GPS, sleep tracking, 7-day battery life.", meta: ["Sold by TechGear Direct"] },
+  Charger65W:        { img: "🔌", title: "65W Charger",                price: 14.99, orig: 29.99,  stars: "★★★★☆ (8,320)", desc: "Universal 65W GaN charger with 3 ports.", meta: ["Ships today"] },
+  SmartBulb:         { img: "💡", title: "Smart Bulb 4-pack",          price: 12.99, orig: 24.99,  stars: "★★★★☆ (6,540)", desc: "Works with Alexa and Google Home. 16 million colors, dimmable.", meta: ["Sold by SmartHome Co"] },
+  OutdoorCamping:    { img: "🏕️", title: "Outdoor & Camping",          price: null,  orig: null,   stars: null, desc: "Tents, sleeping bags, camp stoves, and more.", meta: ["Browse hundreds of products"] },
+  Travel:            { img: "🧳", title: "Travel",                     price: null,  orig: null,   stars: null, desc: "Suitcases, travel pillows, packing cubes, passport holders.", meta: ["Browse hundreds of products"] },
+  Electronics:       { img: "🔌", title: "Electronics",                price: null,  orig: null,   stars: null, desc: "Headphones, wearables, chargers, and smart home gadgets.", meta: ["Browse hundreds of products"] },
+  Tent2Person:       { img: "⛺", title: "2-Person Tent",               price: 79.99, orig: 99.99,  stars: "★★★★☆ (2,240)", desc: "Weatherproof 2-person tent with rainfly and a freestanding pole design. Sets up in under 5 minutes.", meta: ["Ships today"] },
+  HikingBoots:       { img: "🥾", title: "Waterproof Hiking Boots",    price: 64.99, orig: 89.99,  stars: "★★★★☆ (3,105)", desc: "Waterproof hiking boots with ankle support and a grippy outsole built for rocky trails.", meta: ["Ships today"] },
+  SleepingBag:       { img: "🛌", title: "3-Season Sleeping Bag",      price: 44.99, orig: 59.99,  stars: "★★★★☆ (1,830)", desc: "Rated to 20°F and compresses down to the size of a football for easy packing.", meta: ["Usually ships within 2 days"] },
+  CampStove:         { img: "🔥", title: "Portable Camp Stove",        price: 29.99, orig: null,   stars: "★★★★☆ (960)",   desc: "Compact folding stove with piezo ignition. Boils a liter of water in under 3 minutes.", meta: ["Ships today"] },
+  Headlamp:          { img: "🔦", title: "Rechargeable Headlamp",      price: 18.99, orig: 24.99,  stars: "★★★★☆ (2,510)", desc: "350-lumen rechargeable headlamp with a red night-vision mode and adjustable strap.", meta: ["Ships today"] },
+  CampChair:         { img: "🪑", title: "Folding Camp Chair",         price: 34.99, orig: 44.99,  stars: "★★★★☆ (1,675)", desc: "Lightweight folding camp chair with a cup holder and side pocket. Packs into its own bag.", meta: ["Ships today"] },
+  WaterFilter:       { img: "💧", title: "Portable Water Filter",      price: 24.99, orig: null,   stars: "★★★★☆ (3,920)", desc: "Filters up to 1,500 gallons of water, removing 99.9% of bacteria and protozoa.", meta: ["Ships today"] },
+  Hammock:           { img: "🪢", title: "Camping Hammock",            price: 27.99, orig: 34.99,  stars: "★★★★☆ (2,240)", desc: "Parachute-nylon hammock with tree straps included. Holds up to 400 lbs.", meta: ["Usually ships within 2 days"] },
+  Cooler:            { img: "🧊", title: "20-Quart Cooler",            price: 49.99, orig: 64.99,  stars: "★★★★☆ (1,340)", desc: "Keeps ice for up to 3 days. Bear-resistant latch and non-slip feet.", meta: ["Ships today"] },
+  PackingCubes:      { img: "🧳", title: "Packing Cubes (6-Set)",      price: 19.99, orig: 26.99,  stars: "★★★★☆ (4,410)", desc: "Compress and organize a suitcase with six zippered cubes in graduated sizes.", meta: ["Ships today"] },
+  TravelPillow:      { img: "💤", title: "Memory Foam Travel Pillow",  price: 15.99, orig: 22.99,  stars: "★★★☆☆ (2,780)", desc: "Ergonomic memory foam neck pillow with a washable cover. Compresses for storage.", meta: ["Ships today"] },
+  PassportHolder:    { img: "🛂", title: "RFID Passport Holder",       price: 12.99, orig: 16.99,  stars: "★★★★☆ (2,860)", desc: "RFID-blocking passport wallet with card slots and a pen holder.", meta: ["Ships today"] },
+  LuggageScale:      { img: "⚖️", title: "Digital Luggage Scale",      price: 9.99,  orig: 14.99,  stars: "★★★★☆ (5,120)", desc: "Handheld digital scale for weighing checked bags before you get to the airport.", meta: ["Ships today"] },
+  TSALocks:          { img: "🔒", title: "TSA-Approved Locks (2-Pack)", price: 8.99, orig: 12.99,  stars: "★★★★☆ (3,340)", desc: "TSA-approved combination locks for zippered luggage. Airport security can open them without cutting.", meta: ["Ships today"] },
+  ToiletryBag:       { img: "🧴", title: "Hanging Toiletry Bag",       price: 17.99, orig: 23.99,  stars: "★★★★☆ (2,110)", desc: "Water-resistant hanging toiletry bag with a metal hook and a clear TSA-friendly pouch.", meta: ["Ships today"] },
+  PowerBank:         { img: "🔋", title: "10,000mAh Power Bank",       price: 19.99, orig: 29.99,  stars: "★★★★☆ (7,230)", desc: "Slim 10,000mAh power bank with USB-C fast charging. Fits in a pocket.", meta: ["Ships today"] },
+  BluetoothSpeaker:  { img: "🔊", title: "Portable Bluetooth Speaker", price: 22.99, orig: 34.99,  stars: "★★★★☆ (4,050)", desc: "Waterproof portable speaker with a 12-hour battery and punchy bass.", meta: ["Ships today"] },
+  PhoneCase:         { img: "📱", title: "Shockproof Phone Case",      price: 11.99, orig: 16.99,  stars: "★★★★☆ (3,610)", desc: "Shockproof case with raised edges to protect the screen and camera.", meta: ["Ships today"] },
+  USBCHub:           { img: "🖧", title: "7-in-1 USB-C Hub",           price: 26.99, orig: 34.99,  stars: "★★★★☆ (2,470)", desc: "7-in-1 USB-C hub with HDMI, an SD card reader, and 100W pass-through charging.", meta: ["Ships today"] },
 };
 
-const HOME_DEALS = ['WirelessEarbuds', 'Smartwatch', 'Charger65W', 'SmartBulb', 'PowerBank', 'BluetoothSpeaker', 'Tent2Person', 'HikingBoots'];
-const HOME_CATS  = ['OutdoorCamping', 'Travel', 'Electronics'];
+const HOME_DEALS = ["WirelessEarbuds", "Smartwatch", "Charger65W", "SmartBulb", "PowerBank", "BluetoothSpeaker", "Tent2Person", "HikingBoots"];
+const HOME_CATS  = ["OutdoorCamping", "Travel", "Electronics"];
 const CATEGORY_PRODUCTS = {
-  OutdoorCamping: ['TrekkingPack', 'Tent2Person', 'HikingBoots', 'SleepingBag','MiniDaypack', 'CampStove', 'Headlamp', 'CampChair', 'WaterFilter', 'Hammock', 'Cooler'],
-  Travel:         ['LaptopBackpack', 'SchoolBackpack', 'TrekkingPack', 'PackingCubes', 'TravelPillow', 'PassportHolder', 'LuggageScale', 'TSALocks', 'ToiletryBag'],
-  Electronics:    ['WirelessEarbuds', 'Smartwatch', 'Charger65W', 'SmartBulb', 'PowerBank', 'BluetoothSpeaker', 'PhoneCase', 'USBCHub'],
+  OutdoorCamping: ["TrekkingPack", "Tent2Person", "HikingBoots", "SleepingBag","MiniDaypack", "CampStove", "Headlamp", "CampChair", "WaterFilter", "Hammock", "Cooler"],
+  Travel:         ["LaptopBackpack", "SchoolBackpack", "TrekkingPack", "PackingCubes", "TravelPillow", "PassportHolder", "LuggageScale", "TSALocks", "ToiletryBag"],
+  Electronics:    ["WirelessEarbuds", "Smartwatch", "Charger65W", "SmartBulb", "PowerBank", "BluetoothSpeaker", "PhoneCase", "USBCHub"],
 };
 
 const FEED_ITEMS = [
-  { t: 'banner', cls: 'red', txt: '⚡ Lightning Deal ends in 02:13', id: 'l7-dealtimer' },
-  { t: 'product', key: 'WirelessEarbuds', badges: [['l7-ba', 'Sponsored']], meta: '' },
-  { t: 'notif', txt: NOTIFICATIONS[0] },
-  { t: 'banner', cls: 'amber', txt: 'Results for "backpack" — 1,284 items' },
-  { t: 'product', key: 'MiniDaypack',    badges: [['l7-bg', 'Compact & lightweight']], meta: '' },
-  { t: 'product', key: 'SchoolBackpack', badges: [['l7-bg', 'Budget pick']], meta: '' },
-  { t: 'notif', txt: NOTIFICATIONS[1] },
-  { t: 'product', key: 'LaptopBackpack', badges: [['l7-ba', 'Padded laptop sleeve']], meta: '' },
-  { t: 'banner', cls: 'blue', txt: 'Free shipping on orders over $35' },
-  { t: 'product', key: 'TrekkingPack',   badges: [['l7-ba', 'Waterproof zipper']], meta: '' },
-  { t: 'notif', txt: NOTIFICATIONS[2] },
-  { t: 'notif', txt: NOTIFICATIONS[3] },
-  { t: 'product', key: 'AdventureBackpack', badges: [['l7-ba', "Editor's pick"], ['l7-br', 'Only 1 left in stock!']], meta: VIEWER_PHRASES(randViewers()), isTarget: true },
+{ t: "banner", cls: "red", txt: "⚡ Lightning Deal ends in 02:13", id: "l7-dealtimer" },
+  { t: "product", key: "WirelessEarbuds", badges: [["l7-ba", "Sponsored"]], meta: "" },
+  { t: "notif", txt: NOTIFICATIONS[0] },
+  { t: "banner", cls: "amber", txt: "Results for \"backpack\" — 1,284 items" },
+  { t: "product", key: "MiniDaypack",    badges: [["l7-bg", "Compact & lightweight"]], meta: "" },
+  { t: "product", key: "SchoolBackpack", badges: [["l7-bg", "Budget pick"]], meta: "" },
+  { t: "notif", txt: NOTIFICATIONS[1] },
+  { t: "product", key: "LaptopBackpack", badges: [["l7-ba", "Padded laptop sleeve"]], meta: "" },
+  { t: "banner", cls: "blue", txt: "Free shipping on orders over $35" },
+  { t: "product", key: "TrekkingPack",   badges: [["l7-ba", "Waterproof zipper"]], meta: "" },
+  { t: "notif", txt: NOTIFICATIONS[2] },
+  { t: "notif", txt: NOTIFICATIONS[3] },
+  { t: "product", key: "AdventureBackpack", badges: [["l7-ba", "Editor's pick"], ["l7-br", "Only 1 left in stock!"]], meta: VIEWER_PHRASES(randViewers()), isTarget: true },
 ];
 
 const TARGET_KEY    = 'AdventureBackpack';
@@ -216,48 +216,48 @@ function badgesForKey(key, prevBadgeTxt) {
 }
 
 const level7 = {
-  id: 'l7',
-  title: 'Level 7',
+  id: "l7",
+  title: "Level 7",
   isAI: false,
-  goal: 'Buy only the Adventure Backpack — 40L',
+  goal: "Buy only the Adventure Backpack — 40L",
   hints: [
     "Search for 'backpack' using the search bar at the top to find what you need.",
     "Several backpacks are in the results — only one is the exact target: 'Adventure Backpack — 40L'. Read titles carefully.",
     "Add it to your cart, then open your cart from the top-right and remove anything that snuck in before placing your order.",
   ],
-  pattern: 'Fake Scarcity / Urgency',
+  pattern: "Fake Scarcity / Urgency",
   manip: 82,
   brief: "Fake scarcity and urgency are designed to impair your decision-making with a false deadline to rush you into decisions. Countdown timers, 'Only 1 left!', and 'X people viewing' create a sense of panic that makes you act before you think. Almost none of it is real.",
   goalDetail: "You want to buy one specific item: the Adventure Backpack — 40L. Start from the home screen and search for it. Several other backpacks are mixed into the results as decoys. Add the right one to your cart and check out with only that item.",
   dollars: {
-    label: 'If every urgency signal worked on you',
+    label: "If every urgency signal worked on you",
     amount: 47.97,
-    period: 'one-time',
-    note: "$47.97 in impulse purchases triggered by fake scarcity — plus a sneaked warranty you never agreed to",
+    period: "one-time",
+    note: "The final bill: $47.97 in extras you were nudged into buying, plus a warranty you didn't ask for.",
   },
-  desc: 'Countdown timers, fake stock warnings, and social proof pressure combine to make you act before you think. Studies show urgency increases conversion by up to 332% — almost none of the scarcity is real.',
+  desc: "Countdown timers, fake stock warnings, and social proof pressure combine to make you act before you think. Studies show urgency increases conversion by up to 332% — almost none of the scarcity is real.",
   rw: {
-    company: 'Booking.com',
-    detail: 'Fined by the UK CMA in 2019 for fake "Only 1 room left!" and "8 people looking at this" messages. Internal data showed the stock counts were fabricated. The practice remains widespread.',
-    link: 'https://www.deceptive.design/hall-of-shame',
+    company: "Booking.com",
+    detail: "Fined by the UK CMA in 2019 for fake \"Only 1 room left!\" and \"8 people looking at this\" messages. Internal data showed the stock counts were fabricated. The practice remains widespread.",
+    link: "https://www.deceptive.design/hall-of-shame",
   },
   replay: [
-    { trap: true,  note: 'The "Lightning Deal ends in 02:13" banner ticks down then quietly resets. It never expires into anything — the urgency is manufactured.' },
-    { trap: true,  note: '"Only 1 left in stock!" on the target item is a static number that never changes regardless of how many people add it to their cart.' },
-    { trap: true,  note: 'The viewer count ("X people viewed today") fluctuates randomly. No real data underlies it.' },
-    { trap: true,  note: '"Items reserved for X:XX" implies your cart will be released to someone else. Nothing is actually being held.' },
-    { trap: true,  note: 'Multiple near-identical backpacks fill the results. Picking any except the exact target counts as a miss — read titles fully, not just the icon.' },
-    { trap: true,  note: 'A warranty item sneaks into your cart automatically once you add the backpack. You have to actively notice and remove it.' },
-    { trap: false, note: 'The winning move: ignore all timers and counters, read each title in full, and double-check your cart contents before placing the order.' },
+    { trap: true,  note: "The timer runs out, then starts over. The deal never really ends; the countdown is just creating pressure." },
+    { trap: true,  note: "\"Only 1 left in stock!\" on the target item is a static number that never changes regardless of how many people add it to their cart." },
+    { trap: true,  note: "The viewer count (\"X people viewed today\") fluctuates randomly. No real data underlies it." },
+    { trap: true,  note: "\"Items reserved for X:XX\" implies your cart will be released to someone else. Nothing is actually being held." },
+    { trap: true,  note: "Multiple near-identical backpacks fill the results. Picking any except the exact target counts as a miss — read titles fully, not just the icon." },
+    { trap: true,  note: "A warranty item sneaks into your cart automatically once you add the backpack. You have to actively notice and remove it." },
+    { trap: false, note: "The winning move: ignore all timers and counters, read each title in full, and double-check your cart contents before placing the order." },
   ],
 
   render(el) {
     injectStyles();
 
     let cart = [];
-    let view = 'home';
-    let prevView = 'home';
-    let lastSearchQuery = '';
+    let view = "home";
+    let prevView = "home";
+    let lastSearchQuery = " ";
     let cartTimer = 300;
     let cartInterval = null;
     let sneakInjected = false;
@@ -271,23 +271,23 @@ const level7 = {
     const inCart = name => cart.some(c => c.name === name);
 
     const updateCartBadge = () => {
-      const b = document.getElementById('l7-cartbadge');
+      const b = document.getElementById("l7-cartbadge");
       if (!b) return;
       b.textContent = cart.length;
-      b.style.display = cart.length > 0 ? 'flex' : 'none';
+      b.style.display = cart.length > 0 ? "flex" : "none";
     };
 
     const updateReserveBar = () => {
-      const r = document.getElementById('l7-reservebar');
+      const r = document.getElementById("l7-reservebar");
       if (!r) return;
-      r.style.display = cart.length ? 'block' : 'none';
-      if (cart.length) r.textContent = '⏳ Items in your cart are reserved for ' + fmt(cartTimer);
+      r.style.display = cart.length ? "block" : "none";
+      if (cart.length) r.textContent = "⏳ Items in your cart are reserved for " + fmt(cartTimer);
     };
 
     const refreshATCButtons = (name, added) => {
       document.querySelectorAll(`[data-atc="${CSS.escape(name)}"]`).forEach(btn => {
-        btn.textContent = added ? '✓ Added' : 'Add to cart';
-        btn.classList.toggle('added', added);
+        btn.textContent = added ? "✓ Added" : "Add to cart";
+        btn.classList.toggle("added", added);
       });
     };
 
@@ -301,7 +301,7 @@ const level7 = {
     const removeFromCart = name => {
       cart = cart.filter(c => c.name !== name);
       updateCartBadge(); updateReserveBar(); refreshATCButtons(name, false);
-      if (view === 'cart') renderCart();
+      if (view === "cart") renderCart();
     };
 
     // ── Timer ────────────────────────────────────────────────────────────
@@ -310,8 +310,8 @@ const level7 = {
       clearTimer();
       cartInterval = setInterval(() => {
         dealSecsLeft = dealSecsLeft <= 1 ? 133 : dealSecsLeft - 1;
-        const dealEl = document.getElementById('l7-dealtimer');
-        if (dealEl) dealEl.textContent = '⚡ Lightning Deal ends in ' + fmt(dealSecsLeft);
+        const dealEl = document.getElementById("l7-dealtimer");
+        if (dealEl) dealEl.textContent = "⚡ Lightning Deal ends in " + fmt(dealSecsLeft);
 
         if (cart.length) {
           cartTimer = cartTimer <= 1 ? 300 : cartTimer - 1;
@@ -319,9 +319,9 @@ const level7 = {
         }
         if (!sneakInjected && inCart(TARGET_NAME)) {
           sneakInjected = true;
-          cart.push({ name: 'Extended warranty (1yr)', price: 9.99, sneaky: true });
+          cart.push({ name: "Extended warranty (1yr)", price: 9.99, sneaky: true });
           updateCartBadge(); updateReserveBar();
-          if (view === 'cart') renderCart();
+          if (view === "cart") renderCart();
         }
       }, 1000);
     };
@@ -332,7 +332,7 @@ const level7 = {
       return `<button class="l7-abtn l7-atc${already ? ' added' : ''}" data-atc="${name}" data-price="${price}">${already ? '✓ Added' : 'Add to cart'}</button>`;
     };
     const bindATCButtons = () => {
-      document.querySelectorAll('[data-atc]').forEach(btn => {
+      document.querySelectorAll("[data-atc]").forEach(btn => {
         btn.onclick = e => {
           e.stopPropagation();
           const name = btn.dataset.atc, price = parseFloat(btn.dataset.price);
@@ -341,8 +341,8 @@ const level7 = {
       });
     };
     const bindPDPLinks = () => {
-      document.querySelectorAll('[data-pdp]').forEach(node => {
-        node.onclick = e => { if (!e.target.closest('[data-atc]')) openPDP(node.dataset.pdp); };
+      document.querySelectorAll("[data-pdp]").forEach(node => {
+        node.onclick = e => { if (!e.target.closest("[data-atc]")) openPDP(node.dataset.pdp); };
       });
     };
 
@@ -474,7 +474,7 @@ const level7 = {
       view = 'pdp';
       setActiveNav('');
       const p = PRODUCTS[key];
-      document.getElementById('l7-content').innerHTML = `
+      document.getElementById("l7-content").innerHTML = `
         <div class="l7-pdp">
           <button class="l7-backbtn" id="l7-pdp-back">← Back</button>
           <div class="l7-pdp-top">
@@ -483,7 +483,7 @@ const level7 = {
               <div class="l7-pdp-title">${p.title}</div>
               ${p.stars ? `<div class="l7-pdp-stars">${starsHTML(p.stars)}</div>` : ''}
               ${p.price !== null
-                ? `<div class="l7-pdp-price">$${p.price.toFixed(2)}${p.orig ? `<span class="l7-pdp-orig">$${p.orig.toFixed(2)}</span>` : ''}</div>`
+                ? `<div class="l7-pdp-price">$${p.price.toFixed(2)}${p.orig ? `<span class="l7-pdp-orig">$${p.orig.toFixed(2)}</span>` : ""}</div>`
                 : '<div style="font-size:12px;color:#555;margin-top:4px">Browse category</div>'}
             </div>
           </div>
@@ -533,12 +533,12 @@ const level7 = {
         if (val.includes('backpack')) { renderFeed(); return; }
         renderSearchResults(rawVal);
       };
-      document.getElementById('l7-sbtn').onclick = doSearch;
-      document.getElementById('l7-searchinput').addEventListener('keydown', e => { if (e.key === 'Enter') doSearch(); });
-      document.getElementById('l7-cartbtn').onclick = () => { clearExtraIntervals(); prevView = view; renderCart(); };
-      document.getElementById('l7-logo').onclick = () => {
-        const inp = document.getElementById('l7-searchinput');
-        if (inp) inp.value = '';
+      document.getElementById("l7-sbtn").onclick = doSearch;
+      document.getElementById("l7-searchinput").addEventListener("keydown", e => { if (e.key === "Enter") doSearch(); });
+      document.getElementById("l7-cartbtn").onclick = () => { clearExtraIntervals(); prevView = view; renderCart(); };
+      document.getElementById("l7-logo").onclick = () => {
+        const inp = document.getElementById("l7-searchinput");
+        if (inp) inp.value = "";
         renderHome();
       };
       document.getElementById('l7-nav-home').onclick = () => {
@@ -561,7 +561,7 @@ const level7 = {
       return `<div class="l7-chip" data-cat="${key}"><span>${p.img}</span>${p.title}</div>`;
     };
     const bindCatLinks = () => {
-      document.querySelectorAll('[data-cat]').forEach(node => {
+      document.querySelectorAll("[data-cat]").forEach(node => {
         node.onclick = () => renderCategory(node.dataset.cat);
       });
     };
@@ -578,7 +578,7 @@ const level7 = {
     const renderCategory = key => {
       const cat = PRODUCTS[key];
       const items = CATEGORY_PRODUCTS[key] || [];
-      renderProductListPage('category',
+      renderProductListPage("category",
         `Showing <strong>${items.length}</strong> product${items.length !== 1 ? 's' : ''} in <strong>${cat.title}</strong>`,
         items, renderHome);
       setActiveNav(key);
@@ -672,14 +672,14 @@ const level7 = {
       view = 'cart';
       setActiveNav('');
       const total = cart.reduce((a, c) => a + c.price, 0);
-      document.getElementById('l7-content').innerHTML = `
+      document.getElementById("l7-content").innerHTML = `
         <div class="l7-cart">
           <button class="l7-backbtn" id="l7-back">← Continue shopping</button>
           <div class="l7-cart-head">Shopping Cart (${cart.length} item${cart.length !== 1 ? 's' : ''})</div>
           <div>
             ${cart.length === 0 ? '<div class="l7-empty">Your cart is empty.</div>' : cart.map(c => `
               <div class="l7-crow">
-                <span class="l7-cname">${c.name}${c.sneaky ? ' <span style="color:#A32D2D;font-size:10px;display:block">(added for you)</span>' : ''}</span>
+                <span class="l7-cname">${c.name}${c.sneaky ? " <span style=\"color:#A32D2D;font-size:10px;display:block\">(added for you)</span>" : ""}</span>
                 <span style="font-weight:600;flex-shrink:0;margin-right:4px">$${c.price.toFixed(2)}</span>
                 <button class="l7-cremove" data-name="${c.name}">Remove</button>
               </div>`).join('')}
@@ -695,8 +695,8 @@ const level7 = {
         if (lastSearchQuery.toLowerCase().includes('backpack')) { renderFeed(); return; }
         renderSearchResults(lastSearchQuery);
       };
-      document.querySelectorAll('.l7-cremove').forEach(b => { b.onclick = () => removeFromCart(b.dataset.name); });
-      const placeBtn = document.getElementById('l7-place');
+      document.querySelectorAll(".l7-cremove").forEach(b => { b.onclick = () => removeFromCart(b.dataset.name); });
+      const placeBtn = document.getElementById("l7-place");
       if (placeBtn) placeBtn.onclick = placeOrder;
 
       updateReserveBar();
@@ -704,7 +704,7 @@ const level7 = {
 
     // ── Order validation ────────────────────────────────────────────────
     const placeOrder = () => {
-      const placeBtn = document.getElementById('l7-place');
+      const placeBtn = document.getElementById("l7-place");
       if (placeBtn) placeBtn.disabled = true;
 
       const hasBackpack = cart.some(c => c.name === TARGET_NAME);
@@ -717,7 +717,7 @@ const level7 = {
       }
     
       if (!onlyBackpack) {
-        G.fail('Extra items snuck into your order — check your cart before placing it!');
+        G.fail("Extra items snuck into your order — check your cart before placing it!");
         setTimeout(renderCart, 1700);
         return;
       }
@@ -727,7 +727,7 @@ const level7 = {
       const reserveBar = document.getElementById('l7-reservebar');
       if (reserveBar) reserveBar.style.display = 'none';
 
-      document.getElementById('l7-content').innerHTML = `
+      document.getElementById("l7-content").innerHTML = `
         <div style="padding:32px 12px;text-align:center;display:flex;flex-direction:column;gap:10px;align-items:center;background:#fff">
           <div style="font-size:32px">✓</div>
           <div style="font-size:15px;font-weight:600;color:#111">Order placed!</div>
