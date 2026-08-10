@@ -62,7 +62,6 @@ const level2ai = {
     "Look for the ghost/grey button on each round and click it regardless of what it says.",
   ],
   pattern: "AI Confirmshaming",
-  manip: 88,
   brief: "Same trick, but the shame is personalized. Pseudo-AI 'analyses your behavior' and generates a decline button that targets your specific psychology. Generic guilt has limits — personalized guilt doesn't.",
   goalDetail: "Decline every AI-personalized offer. The shame copy will try to make you feel like the 'no' option reflects badly on you. Ignore it and click it anyway.",
   aiIntro: "The AI has 'profiled' you and will generate shame copy tailored to your apparent personality. The profile is fake — but the discomfort is real.",
@@ -80,12 +79,12 @@ const level2ai = {
   },
   aiWhy: "Generic confirmshaming has a ceiling — \"I hate saving money\" works on some people and feels absurd to others. AI removes that ceiling by personalizing the shame to each user's inferred profile. Someone flagged as \"price-sensitive\" gets financial shame; someone flagged as \"health-focused\" gets health shame. The insult is customized.",
   replay: [
-    { trap: false, note: "The profile banner appears before you've even seen the offer, signaling that the AI already knows who you are." },
-    { trap: false, note: "NexusAI analysis block is visible from the start — confidence percentage and behavioral label prime you before any choice is presented." },
-    { trap: true, note: "The yes button appears alone first. No alternative exists yet — you're being asked to agree before you can see what disagreeing looks like." },
-    { trap: true, note: " For the first four seconds, it's just the \"Yes\" button. The shame copy only shows up after that." },
-    { trap: true, note: "\"AI confidence: X%\" in the round label — a number with no statistical basis, designed to make your refusal feel like arguing with data." },
-    { trap: false, note: "The profile is randomly assigned from 4 types. The shame copy is written for that profile — financial shame, health shame, social shame, or efficiency shame." },
+    { trap: false, note: "A profile banner appears immediately — algorithmic confidence stated before any choice is presented." },
+    { trap: false, note: "An analysis block shows a confidence percentage and a behavioral label, priming you before you can respond." },
+    { trap: true,  note: "The accept button appears alone at first — there is no visible way to disagree yet." },
+    { trap: true,  note: "The decline option is revealed only after a delay, by which point you have been sitting with just the accept button." },
+    { trap: true,  note: "The stated \"confidence\" percentage has no real statistical basis — it exists to make refusal feel like arguing with data." },
+    { trap: false, note: "The underlying \"profile\" is typically assigned from a handful of clicks, not deep analysis, even though it is presented as established fact." },
   ],
 
   render(el) {

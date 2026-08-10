@@ -35,7 +35,6 @@ const level4ai = {
     "Ignore the first two options each round — the last one is always the genuine opt-out.",
   ],
   pattern: "AI A/B Gaslighting",
-  manip: 95,
   brief: "The same trick, now with an AI twist: every time you try to opt out, the form reshuffles with new label wording. One option always genuinely protects your privacy — but it's disguised differently each time. Real consent management platforms A/B test their forms this way.",
   goalDetail: "Three rounds, one shot each — the form relabels itself every round. Get at least 2 of 3 right to clear the level.",
   aiIntro: "The form reshuffles each time you get it wrong. Look for the option that straightforwardly says 'opt out' or 'privacy control: on' — that's always the right one, no matter how it's dressed up.",
@@ -53,10 +52,10 @@ const level4ai = {
   },
   aiWhy: "A/B testing consent UI has existed for years. AI accelerates the iteration cycle from weeks to hours, auto-generating new variants and retiring underperformers. Every time you \"save\" incorrect preferences, the system learns which phrasing caught you and serves it more often.",
   replay: [
-    { trap: false, note: "\"Variant X — A/B testing active\" - Real cookie consent banners are A/B tested too. They just don't tell you." },
-    { trap: true, note: "Each variant uses a different grammatical structure to describe the same choices." },
-    { trap: true, note: "Timer + reshuffling = double pressure. Your mental model of the form resets every round." },
-    { trap: false, note: "The winning move: read each checkbox independently and ask \"what does checking this DO?\" before saving." },
+    { trap: false, note: "\"Variant X — A/B testing active\" is an honest disclosure — real consent management platforms do this, they just rarely admit it." },
+    { trap: true,  note: "Each variant uses a different grammatical structure to describe the same underlying choices." },
+    { trap: true,  note: "A timer plus reshuffled wording combine to reset your mental model of the form on every attempt." },
+    { trap: false, note: "The reliable move: read each checkbox independently and ask \"what does checking this DO?\" before saving, regardless of phrasing." },
   ],
 
   render(el) {

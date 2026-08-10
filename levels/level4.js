@@ -35,7 +35,6 @@ const level4 = {
     "Uncheck boxes 1 and 4, check boxes 2 and 3.",
   ],
   pattern: "Trick Questions",
-  manip: 85,
   brief: "Real cookie consent forms mix opt-in and opt-out framing in the same list — so the same action (checking a box) means opposite things on different rows. Some protective options are buried unchecked. This level has clear labels, but the logic is deliberately inconsistent.",
   goalDetail: "Set your preferences so you get no marketing, your data sharing is limited, you're opted out of targeted ads, and your experience isn't personalized for tracking purposes. Read each label carefully — not all boxes start in the same state, and checking vs unchecking means different things on different rows.",
   dollars: {
@@ -51,10 +50,10 @@ const level4 = {
     link: "https://www.deceptive.design/hall-of-shame",
   },
   replay: [
-    { trap: true, note: "Boxes 1 and 4 are pre-checked opt-ins that benefit the company. Easy to spot — but you have to actually read them." },
-    { trap: true, note: "Box 4 (\"Personalize my experience\") sounds like a feature — it means allowing behavioral tracking." },
-    { trap: true, note: "Boxes 2 and 3 start UNCHECKED even though they protect you. The form buries its protective options by default." },
-    { trap: true, note: "The real trick: mixing opt-in and opt-out framing in the same form. \"Limit sharing\" (keep checked) vs \"Send me emails\" (uncheck) require opposite actions for opposite reasons." },
+    { trap: true, note: "Pre-checked boxes default to whichever options benefit the company, not the user." },
+    { trap: true, note: "A setting that sounds like a feature (\"Personalise my experience\") actually means enabling behavioural tracking." },
+    { trap: true, note: "Protective options start unchecked, burying them by default even though checking them helps the user." },
+    { trap: true, note: "Opt-in and opt-out logic are mixed within the same list, so identical checkbox actions mean opposite things on different rows." },
   ],
 
   render(el) {

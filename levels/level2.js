@@ -8,7 +8,6 @@ const level2 = {
     "The 'no' button is styled to feel bad to click. Click it anyway — it's always the right move.",
   ],
   pattern: "Confirmshaming",
-  manip: 67,
   brief: "Confirmshaming makes the 'no' option feel like a personal failing. Instead of 'No thanks', the button says something like 'No thanks, I hate saving money.' It's designed to make declining feel embarrassing — so you click yes instead.",
   goalDetail: "You'll be offered something in each round. Your goal is to decline every single offer. Click the 'no' button each time — but read it carefully first.",
   dollars: {
@@ -24,11 +23,12 @@ const level2 = {
     link: "https://www.deceptive.design/hall-of-shame",
   },
   replay: [
-    { trap: false, note: "The \"yes\" option is always friendly, positive, aspirational." },
-    { trap: true,  note: "The \"no\" option is written to make declining feel like a personal failure." },
-    { trap: false, note: "Notice: the \"no\" button is always visually smaller or less prominent." },
-    { trap: true,  note: "Each round escalates. The shame copy gets more emotionally pointed." },
+    { trap: false, note: "The \"yes\" option is always friendly, positive, and aspirational in tone." },
+    { trap: true,  note: "The \"no\" option is written so declining feels like confessing a character flaw, not making a choice." },
+    { trap: false, note: "The \"no\" button is consistently smaller or less visually prominent than the \"yes\" button." },
+    { trap: true,  note: "Each additional offer in the same session escalates the emotional pointedness of the shame copy." },
   ],
+
   render(el) {
     const rounds = [
       {

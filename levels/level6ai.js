@@ -8,7 +8,6 @@ const level6ai = {
     "Find the real coupon yourself under Promotions & Savings in the menu.",
   ],
   pattern: "AI Obstruction",
-  manip: 94,
   brief: "The AI claims to save you money. It references your actual booking details to sound credible. But every code it recommends secretly upgrades your booking first — then applies a discount to the inflated price. The final total is always higher than what you started with.",
   goalDetail: "You have 60 seconds. The AI sidebar will offer codes that sound personalized and helpful. Each one will cost you more than your current price. Ignore the AI, navigate the menus, and find the one real coupon yourself.",
   aiIntro: "The AI will reference your booking details to sound credible. Don't trust it — every code it recommends secretly inflates your bill before discounting. Find the real coupon yourself.",
@@ -26,11 +25,10 @@ const level6ai = {
     link: "https://www.deceptive.design/hall-of-shame",
   },
   replay: [
-    { trap: true,  note: "AI references your actual booking details — loyalty status, car type, days — to sound credible." },
-    { trap: true,  note: "It's not a fake discount. The discount exists, but so does the upgrade that comes with it. The end result is a bigger charge." },
-    { trap: true,  note: "The inflated price shows in the booking summary — but only after you click Apply." },
-    { trap: false, note: "Revert undoes the damage and restores the original price — but wastes precious seconds." },
-    { trap: false, note: "The real coupon is in the nested menu, same as Level 6." },
+    { trap: true,  note: "The assistant references your actual account or order details — status, history, specifics — to sound credible." },
+    { trap: true,  note: "The discount it recommends is real. The upgrade it quietly applies first is also real. The net result costs more." },
+    { trap: true,  note: "The inflated price only appears in the summary after the recommended action has already been applied." },
+    { trap: false, note: "Reverting the change restores the original price, but wastes time that may be scarce under a deadline." },
   ],
 
   render(el) {

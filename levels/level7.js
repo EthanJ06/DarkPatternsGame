@@ -226,7 +226,6 @@ const level7 = {
     "Add it to your cart, then open your cart from the top-right and remove anything that snuck in before placing your order.",
   ],
   pattern: "Fake Scarcity / Urgency",
-  manip: 82,
   brief: "Fake scarcity and urgency are designed to impair your decision-making with a false deadline to rush you into decisions. Countdown timers, 'Only 1 left!', and 'X people viewing' create a sense of panic that makes you act before you think. Almost none of it is real.",
   goalDetail: "You want to buy one specific item: the Adventure Backpack — 40L. Start from the home screen and search for it. Several other backpacks are mixed into the results as decoys. Add the right one to your cart and check out with only that item.",
   dollars: {
@@ -242,13 +241,13 @@ const level7 = {
     link: "https://www.deceptive.design/hall-of-shame",
   },
   replay: [
-    { trap: true,  note: "The timer runs out, then starts over. The deal never really ends; the countdown is just creating pressure." },
-    { trap: true,  note: "\"Only 1 left in stock!\" on the target item is a static number that never changes regardless of how many people add it to their cart." },
-    { trap: true,  note: "The viewer count (\"X people viewed today\") fluctuates randomly. No real data underlies it." },
-    { trap: true,  note: "\"Items reserved for X:XX\" implies your cart will be released to someone else. Nothing is actually being held." },
-    { trap: true,  note: "Multiple near-identical backpacks fill the results. Picking any except the exact target counts as a miss — read titles fully, not just the icon." },
-    { trap: true,  note: "A warranty item sneaks into your cart automatically once you add the backpack. You have to actively notice and remove it." },
-    { trap: false, note: "The winning move: ignore all timers and counters, read each title in full, and double-check your cart contents before placing the order." },
+    { trap: true,  note: "A \"Lightning Deal ends in...\" banner ticks down and then quietly resets — the urgency never resolves into anything real." },
+    { trap: true,  note: "\"Only 1 left in stock!\" is a static number that never changes regardless of cart activity." },
+    { trap: true,  note: "A viewer count (\"X people viewed today\") fluctuates randomly, with no real data underlying it." },
+    { trap: true,  note: "\"Items reserved for X:XX\" implies a cart will be released to someone else — nothing is actually being held." },
+    { trap: true,  note: "Multiple near-identical listings fill the results, making it easy to pick the wrong one while reading quickly." },
+    { trap: true,  note: "A warranty or add-on item sneaks into the cart automatically once the main item is added." },
+    { trap: false, note: "The winning move: ignore every timer and counter, read titles in full, and double-check the cart before paying." },
   ],
 
   render(el) {

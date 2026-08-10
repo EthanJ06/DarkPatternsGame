@@ -34,8 +34,7 @@ const level5ai = {
     "Just click 'No thanks' on every recommendation. All three are upsells you don't need.",
   ],
   pattern: "AI Hyper-Personalized Upsell",
-  manip: 96,
-  brief: "The same pattern, now with algorithmic authority. Instead of just sneaking items in, the AI \"predicts\" you'll want them, complete with a confidence percentage designed to make refusing feel irrational.",
+  brief: "The same trick as before, but now an AI backs it up. Instead of just sneaking items into your cart, it \"predicts\" you'll want them and shows a made-up confidence score, so saying no feels like arguing with facts instead of just declining an offer.",
   goalDetail: "Decline every AI-recommended upsell. The percentages and \"users like you\" framing are designed to make saying no feel like a mistake. They're not based on anything real.",
   aiIntro: "Each recommendation comes with a confidence score (94%, 87%...). These numbers are fabricated. They exist to make declining feel statistically unusual.",
   dollars: {
@@ -54,12 +53,12 @@ const level5ai = {
   aiWhy:
     "Upsells have always been part of shopping. The difference with AI is that they can feel personalized and unavoidable. A \"94% match\" score creates the impression that most people like you would choose this, so turning it down feels like the unusual choice.",
   replay: [
-    {trap: false, note: "\"NexusAI identified you as X\" — the profile is generated from minimal signals, but stated as established fact to make the recommendation feel inevitable.",},
-    {trap: true, note: "The confidence percentage (94%, 91%...) has no statistical basis. It exists to make declining feel irrational — like you're arguing with data.",},
-    {trap: true, note: "\"Offer expires in Xs\" — the countdown is fake urgency. The offer doesn't actually expire; it just auto-advances to pressure you into deciding before you've read carefully.",},
-    {trap: true, note: "\"Users like you bought this\" — social proof framing. Implies your peer group already said yes, making refusal feel like an outlier decision.",},
-    {trap: true, note: "\"Our model predicts you'll regret skipping this\" — predictive regret framing. AI-era manipulation: instead of shaming you now, it threatens your future self.",},
-    {trap: false, note: "The timer is there to make you feel like you have to decide. But if the offer advances automatically, waiting costs you nothing.",},
+    { trap: false, note: "\"NexusAI identified you as X\" states an inferred profile as established fact, generated from minimal signals." },
+    { trap: true,  note: "The confidence percentage (94%, 91%...) has no statistical basis. It exists to make declining feel irrational — like arguing with data." },
+    { trap: true,  note: "\"Offer expires in Xs\" is fake urgency — the offer doesn't actually expire, it just auto-advances to pressure a faster decision." },
+    { trap: true,  note: "\"Users like you bought this\" implies a peer group has already said yes, making refusal feel like an outlier decision." },
+    { trap: true,  note: "\"Our model predicts you'll regret skipping this\" threatens a future self rather than describing a present benefit." },
+    { trap: false, note: "The winning move: the timer expiring costs nothing. Every offer auto-advances whether or not you act — patience beats urgency." },
   ],
 
   render(el) {

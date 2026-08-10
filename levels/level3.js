@@ -40,7 +40,6 @@ const level3 = {
     "Any result with 'Sponsored' next to the URL is an ad. Select only the ones without it.",
   ],
   pattern: "Disguised Ads",
-  manip: 78,
   brief: "Disguised ads are paid results styled to look like organic search results. The 'Sponsored' label is deliberately small, low-contrast, and easy to skip over — especially when you're scanning quickly.",
   goalDetail: "Three rounds of search results. Each round, select all the real editorial results — not the sponsored ones — then hit Submit. Fail 2 rounds and the level ends.",
   dollars: {
@@ -56,10 +55,10 @@ const level3 = {
     link: "https://www.deceptive.design/hall-of-shame",
   },
   replay: [
-    { trap: true, note: "The \"Sponsored\" label uses the same low-contrast gray as the URL — easy to miss." },
-    { trap: false, note: "Organic results have no label, but the URL domain is the real tell." },
-    { trap: true, note: "Sponsored results often use titles indistinguishable from editorial content." },
-    { trap: false, note: "Real results tend to be from editorial domains (.com/blog, .org, .edu) not shopping domains." },
+    { trap: true,  note: "The \"Sponsored\" label uses the same low-contrast gray as the URL — easy to miss while scanning." },
+    { trap: false, note: "Organic results carry no label at all; the domain itself is usually the clearest tell." },
+    { trap: true,  note: "Sponsored results are often written in titles indistinguishable from genuine editorial content." },
+    { trap: false, note: "Real results tend to come from editorial or reference domains (.com/blog, .org, .edu) rather than direct-to-purchase shopping domains." },
   ],
 
   render(el) {

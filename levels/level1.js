@@ -8,7 +8,6 @@ const level1 = {
     "Click every button that mentions 'cancel' or 'no'. Ignore offers and surveys as best you can.",
   ],
   pattern: "Roach Motel",
-  manip: 92,
   brief: "The Roach Motel is named after the ad slogan: 'You can check in, but you can't check out.' Signing up is effortless — one or two clicks. Cancelling is a maze of detours, fake offers, and exhausting surveys. The goal is to wear you down until you give up.",
   goalDetail: "You have a NebulaPro subscription. You want to cancel it. Click 'Cancel subscription' and follow the steps all the way through.",
   dollars: {
@@ -21,16 +20,15 @@ const level1 = {
   rw: {
     company: "The New York Times",
     detail: "Sign-up takes a few clicks, but cancelling requires chatting with a \"Customer Care Advocate\" during limited hours or calling in — no online cancel button. A 2020 class-action suit and years of public complaints called it \"exceedingly difficult.\"",
-    caption: "Left: the one-click subscribe offer. Right: the cancellation page, which routes you to a phone call or a chat window instead of a cancel button.",
     link: "https://www.deceptive.design/brands/new-york-times",
   },
   replay: [
-    { trap: false, note: "Sign-up: 2 clicks. Intentionally frictionless to maximize conversions." },
-    { trap: true, note: "\"Pause instead?\" — a detour disguised as a helpful alternative. The goal is to break your momentum." },
-    { trap: true, note: "Mandatory survey: legally delays your cancellation and mines your reasons for retention scripts." },
-    { trap: true, note: "\"Special offer\" — triggered by your survey answer. A last-ditch retention loop." },
-    { trap: true, note: "6-question satisfaction survey, required. Exhaustion is the point." },
-    { trap: false, note: "\"Allow 5–7 business days\" — creates doubt. Will it actually cancel? Many people re-subscribe just in case." },
+    { trap: false, note: "Sign-up is reduced to one or two clicks — deliberately asymmetric with how cancellation is designed." },
+    { trap: true,  note: "A \"pause\" or \"downgrade\" option is surfaced as a friendly alternative before the actual cancel path is reachable, breaking your momentum." },
+    { trap: true,  note: "A mandatory feedback survey delays the cancellation and doubles as data collection for retention scripts." },
+    { trap: true,  note: "A discount or \"special offer\" only appears once you've committed to leaving — a last-ditch retention loop." },
+    { trap: true,  note: "Cancellation requires phone or live chat during limited hours instead of a same-page button, adding wait time as friction." },
+    { trap: false, note: "A vague confirmation (\"allow 5–7 business days\") creates doubt about whether it actually worked, prompting some people to re-subscribe just in case." },
   ],
 
   render(el) {
@@ -202,7 +200,7 @@ const level1 = {
           ${cardIcon('<path d="M12 2l2.4 6.6L21 10l-5.5 4.3L17 21l-5-3.5L7 21l1.5-6.7L3 10l6.6-1.4z"/>')}
           <div>
             <div class="sub-title">Special offer &mdash; just for you</div>
-            <div class="sub-sub">Available only if you cancel now</div>
+            <div class="sub-sub">Available only if you stay subscribed now</div>
           </div>
         </div>
         <div class="offer-card">

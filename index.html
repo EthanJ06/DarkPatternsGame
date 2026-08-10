@@ -40,22 +40,22 @@
   <div class="scr active" id="scr-intro" style="padding:clamp(32px, 6vw, 64px) clamp(24px, 6vw, 56px);align-items:center;text-align:center;gap:clamp(22px, 3.5vw, 32px);justify-content:center">
     <div style="font-size:13px;font-weight:500;letter-spacing:.1em;color:var(--text3);text-transform:uppercase">Educational game</div>
     <div style="font-size:clamp(34px, 6vw, 46px);font-weight:500;color:var(--text);line-height:1.2">You've Been<br>Opted In</div>
-    <div style="font-size:16px;color:var(--text2);max-width:640px;line-height:1.7">
-      <strong>Dark patterns</strong> are tricks built into websites and apps to make you do things you didn't intend —
+    <div style="font-size:16.5px;color:var(--text-soft);max-width:640px;line-height:1.7">
+      <strong style="color:var(--text)">Dark patterns</strong> are tricks built into websites and apps to make you do things you didn't intend —
       stay subscribed, share your data, buy add-ons, or click ads by mistake.
     </div>
     <div style="background:var(--bg3);border-radius:12px;padding:24px 28px;max-width:640px;text-align:left;border:1px solid var(--border);display:flex;flex-direction:column;gap:14px">
       <div style="font-size:14px;font-weight:500;color:var(--text)">How to play</div>
-      <div style="font-size:14px;color:var(--text2);line-height:1.6">
-        Each level gives you a <strong>clear goal</strong> — like "cancel your subscription" or "buy only what you want."
+      <div style="font-size:15px;color:var(--text-soft);line-height:1.6">
+        Each level gives you a <strong style="color:var(--text)">clear goal</strong> — like "cancel your subscription" or "buy only what you want."
         The UI will actively work against you. Your job is to succeed anyway.
       </div>
-      <div style="font-size:14px;color:var(--text2);line-height:1.6">
+      <div style="font-size:15px;color:var(--text-soft);line-height:1.6">
         After each level, a debrief explains exactly what the dark pattern was and shows real-world examples.
       </div>
     </div>
     <div style="display:flex;gap:16px;font-size:14px;color:var(--text3);flex-wrap:wrap;justify-content:center">
-      <span>13 levels</span><span>·</span><span>5 hearts</span><span>·</span><span>debrief after each</span>
+      <span>14 levels</span><span>·</span><span>5 hearts</span><span>·</span><span>debrief after each</span>
     </div>
     <div style="display:flex;gap:14px;flex-wrap:wrap;justify-content:center;align-items:center">
       <button class="gbtn gbtn-glossary" onclick="Glossary.show()">
@@ -65,7 +65,7 @@
       <button class="gbtn gbtn-green" onclick="G.start()">Start →</button>
     </div>
     <div style="display:flex;flex-direction:column;gap:10px;align-items:center">
-      <details style="font-size:13px;color:var(--fa-faint);cursor:pointer;text-align:center">
+      <details style="font-size:13px;color:var(--text2);cursor:pointer;text-align:center">
         <summary style="list-style:none;outline:none;cursor:pointer">Jump to level</summary>
         <div style="display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-top:8px" id="level-jump"></div>
       </details>
@@ -89,11 +89,6 @@
       <div class="brief-ai-note" id="brief-ai-note" style="display:none">
         <div class="brief-ai-label">AI-powered level</div>
         <div class="brief-ai-text" id="brief-ai-text"></div>
-      </div>
-      <div class="brief-example" id="brief-example" style="display:none">
-        <div class="brief-example-label">A real-world example</div>
-        <div class="brief-example-row" id="brief-example-row"></div>
-        <div class="brief-example-caption" id="brief-example-caption"></div>
       </div>
       <button class="gbtn gbtn-green" onclick="G.beginLevel()" id="brief-start-btn">Let's go →</button>
     </div>
@@ -139,11 +134,6 @@
       <div class="debrief-wrap">
         <div class="db-card">
           <div class="db-desc" id="db-desc"></div>
-          <div class="manip-row">
-            <div class="manip-lbl">Manipulativeness</div>
-            <div class="bar-t"><div class="bar-f" id="db-bar"></div></div>
-            <div style="font-size:12px;color:var(--fa-muted-alt);min-width:28px" id="db-score-lbl"></div>
-          </div>
           <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
             <div id="db-grade" class="grade-badge"></div>
             <div id="db-result"></div>

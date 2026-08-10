@@ -58,8 +58,7 @@ const level7ai = {
     "Browse the 'For You' tab and click 'Continue' at the bottom without adding more than one item.",
   ],
   pattern: 'AI Personalized Scarcity',
-  manip: 93,
-  brief: "The same fake-scarcity playbook, now aimed using your own purchase history. Instead of a generic 'Only 1 left!', NexusAI cites the specific thing you bought — your iPad, your PS5, your shoes — to make a manufactured stock shortage feel like it was tailored just for you.",
+  brief: "The same fake-scarcity trick, but personalized with your own purchase history. Instead of a generic 'Only 1 left!', NexusAI names something you actually bought — your iPad, your PS5, your shoes — to make a fake stock shortage feel like it was made just for you.",
   goalDetail: "NexusAI has pulled up your order history and built you a 'For You' tab of four personalized urgency offers from it. Each one names a real past purchase to justify a fake scarcity claim. Browse the page and continue without adding more than one — the countdown expiring costs you nothing.",
   aiIntro: "Each offer opens by citing something you actually bought — that's algorithmic authority borrowed from a real purchase, applied to a stock claim that has nothing to do with real inventory.",
   dollars: {
@@ -76,12 +75,11 @@ const level7ai = {
   },
   aiWhy: "Generic scarcity ('Only 1 left!') is easy to be skeptical of because it could apply to anyone. Personalized scarcity is harder to dismiss because it opens with something true — you really did buy that iPad — and borrows the credibility of that fact for a claim that isn't true at all: that this specific accessory is running out because of your specific purchase. The model doesn't know your sock drawer, your case situation, or your controller count. It knows one purchase and a timer.",
   replay: [
-    { trap: false, note: 'The order history shown is accurate — this is real data about you, not fabricated. That realism is what makes the offers that follow feel credible.' },
-    { trap: true,  note: 'Each offer opens by citing a real past purchase, then uses it to justify an unrelated stock or churn claim — the "For You" tab looks just like the rest of the store.' },
-    { trap: true,  note: 'Statistics like "68% of PS5 buyers add this within 30 days" may be real aggregate figures, but they say nothing about whether you personally need the item.' },
-    { trap: true,  note: 'Stock lines ("Only 2 left", "Low stock in your size") are exactly as fabricated as ordinary fake scarcity — personalizing the framing doesn\'t make the number real.' },
-    { trap: true,  note: 'The banner countdown ticks down and resets, exactly like the non-AI version — urgency with no real deadline behind it.' },
-    { trap: false, note: 'The tell: every reason is built backward from something you already own, not forward from something you asked about.' },
+    { trap: false, note: "The order history shown is real — that accuracy is what lends borrowed credibility to the claims that follow it." },
+    { trap: true,  note: "\"NexusAI flagged...\" attaches algorithmic authority to a real purchase, then uses it to justify an unrelated scarcity or churn claim." },
+    { trap: true,  note: "Aggregate statistics about \"buyers like you\" describe a population, not a fact about your specific situation." },
+    { trap: true,  note: "Stock lines (\"Only 2 left\", \"Low stock in your size\") are exactly as fabricated as ordinary fake scarcity — personalizing the framing doesn't make the number real." },
+    { trap: false, note: "The tell: every reason is built backward from something you already own, not forward from something you asked about." },
   ],
 
   render(el) {

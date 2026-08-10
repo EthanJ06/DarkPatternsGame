@@ -13,7 +13,6 @@ const level5 = {
     "Remove everything except 'Wireless headphones' before clicking Checkout.",
   ],
   pattern: "Sneak into Basket",
-  manip: 80,
   brief: "Sneak into Basket means extra items are pre-added to your cart — warranties, subscriptions, insurance — often below the fold or in pale text. They count on you not scrolling, not reading, or just clicking through.",
   goalDetail: "You want to buy wireless headphones. Check your cart carefully and remove everything that wasn't on your list before checking out. Watch out — items may reappear.",
   dollars: {
@@ -29,11 +28,11 @@ const level5 = {
     link: "https://www.deceptive.design/hall-of-shame",
   },
   replay: [
-    { trap: true, note: "Items are pre-added and labeled \"added for you,\" but this is a charge, not a service." },
-    { trap: true, note: "The \"free\" trial item costs nothing today, but auto-renews at $9.99/mo. The price is in fine print." },
-    { trap: true, note: "After you remove items and try to check out, new ones are sneaked in. The checkout loop creates exhaustion." },
-    { trap: false, note: "The only safe move: read every line before clicking Checkout, every time." },
-    { trap: true, note: "The countdown timer auto-placed your order when it hit zero — framed as \"Securing your cart\" but actually a forced checkout. Ticketmaster and airline booking sites use exactly this mechanic." },
+    { trap: true,  note: "Items are pre-added and labeled \"added for you\" — as if this is a service, not a charge." },
+    { trap: true,  note: "The \"free\" trial item costs nothing today, but auto-renews at a recurring price disclosed only in fine print." },
+    { trap: true,  note: "After items are removed and checkout is attempted, new ones are sneaked back in — creating an exhausting loop." },
+    { trap: false, note: "The only reliable defense is rereading every line in the cart immediately before paying, every time." },
+    { trap: true,  note: "A countdown timer auto-places the order when it hits zero, framed as \"securing\" the cart rather than a forced checkout." },
   ],
 
   render(el) {

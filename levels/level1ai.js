@@ -8,7 +8,6 @@ const level1ai = {
     "Keep repeating cancel-related words — the bot has a fixed number of deflections before it gives in.",
   ],
   pattern: "AI Roach Motel",
-  manip: 97,
   brief: "The classic Roach Motel, now run by a chatbot. Instead of screen after screen, you're stuck in a chat loop with an AI that deflects, misunderstands, and manufactures obstacles — running 24/7, never getting frustrated, optimized to exhaust you.",
   goalDetail: "You need to cancel your NebulaPro subscription via customer support chat. Type messages asking to cancel — the bot will try to stop you. Keep pushing. ⚠️ Be careful — if you send two messages in a row without mentioning cancellation, the bot will assume you've moved on and you'll lose a heart.",
   aiIntro: "This bot is designed to deflect. Every time you say 'cancel', it will find a reason to delay. Keep repeating your intent — you'll get through eventually.",
@@ -26,12 +25,12 @@ const level1ai = {
   },
   aiWhy: "AI makes the Roach Motel tireless. A human retention agent can only work a shift — an AI runs 24/7, never gets frustrated, and can be A/B tested to find the deflection script that works best on each personality type. At scale, a 1% improvement in deflection rate can mean millions in retained revenue.",
   replay: [
-    { trap: false, note: "Friendly greeting: builds rapport before you've stated your intent." },
-    { trap: true,  note: "Verification step: friction. Even if you're already logged in." },
-    { trap: true,  note: "\"You're just getting started!\" — manufactured emotional appeal using your account age." },
-    { trap: true,  note: "\"Transfer to retention team\" — a simulated handoff that just resets the script." },
-    { trap: true,  note: "\"Lost your session\" — fake technical failure resets your progress and makes you repeat yourself." },
-    { trap: true,  note: "\"Unpaid invoice\" — manufactured obstacle. Even if false, it creates doubt and delay." },
+    { trap: false, note: "A friendly greeting builds rapport with the bot before you have even stated your intent to cancel." },
+    { trap: true,  note: "Repeating your request in different words triggers a \"verification\" step, adding friction even to an already-logged-in account." },
+    { trap: true,  note: "The bot cites your account tenure or usage history to make a personalized-sounding emotional appeal against leaving." },
+    { trap: true,  note: "A \"transfer to retention team\" message resets the conversation rather than actually escalating it." },
+    { trap: true,  note: "A claimed \"lost session\" forces you to restate your request, exhausting patience rather than technical failure." },
+    { trap: true,  note: "A manufactured obstacle — an unpaid invoice, a pending review — is raised right as cancellation nears completion." },
   ],
 
   render(el) {

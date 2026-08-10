@@ -8,7 +8,6 @@ const level6 = {
     "Try Promotions & Savings → the correct submenu for your car type or membership status.",
   ],
   pattern: "Obstruction",
-  manip: 88,
   brief: "Obstruction buries your entitlements behind menus, fine print, and time pressure. Car rental companies offer dozens of codes — all mutually exclusive, most inapplicable — knowing the clock will run out before you find the right one.",
   goalDetail: "You have 60 seconds. Navigate the menus, find the one coupon that actually applies to your booking, and apply it. All coupons are mutually exclusive — only one is valid. Wrong ones cost a heart.",
   dollars: {
@@ -24,10 +23,10 @@ const level6 = {
     link: "https://www.deceptive.design/hall-of-shame",
   },
   replay: [
-    { trap: true,  note: "All coupons say \"cannot be combined with other offers\" — only one actually qualifies for your booking." },
-    { trap: true,  note: "The timer creates panic — most people apply the first code they find rather than reading the fine print." },
-    { trap: true,  note: "Dead ends (Add-ons, Help & FAQ, Special Offers) waste precious seconds." },
-    { trap: false, note: "The correct path is always under Promotions & Savings — matching your car type or membership status." },
+    { trap: true,  note: "Every option claims exclusivity from all the others, so only careful reading reveals which one actually applies." },
+    { trap: true,  note: "A visible countdown timer creates panic, pushing toward the first plausible option rather than verification." },
+    { trap: true,  note: "Dead-end menu paths waste precious time without ever leading anywhere relevant." },
+    { trap: false, note: "The correct path is never signposted directly — it has to be found using the same menu structure as every dead end." },
   ],
 
   render(el) {
