@@ -76,10 +76,10 @@ const level7ai = {
   aiWhy: "Generic scarcity ('Only 1 left!') is easy to be skeptical of because it could apply to anyone. Personalized scarcity is harder to dismiss because it opens with something true — you really did buy that iPad — and borrows the credibility of that fact for a claim that isn't true at all: that this specific accessory is running out because of your specific purchase. The model doesn't know your sock drawer, your case situation, or your controller count. It knows one purchase and a timer.",
   replay: [
     { trap: false, note: "The order history shown is real — that accuracy is what lends borrowed credibility to the claims that follow it." },
-    { trap: true,  note: "\"NexusAI flagged...\" attaches algorithmic authority to a real purchase, then uses it to justify an unrelated scarcity or churn claim." },
+    { trap: true,  note: "\"NexusAI flagged...\" attaches algorithmic authority to a real purchase, then uses it to justify an unrelated scarcity or claim." },
     { trap: true,  note: "Aggregate statistics about \"buyers like you\" describe a population, not a fact about your specific situation." },
-    { trap: true,  note: "Stock lines (\"Only 2 left\", \"Low stock in your size\") are exactly as fabricated as ordinary fake scarcity — personalizing the framing doesn't make the number real." },
-    { trap: false, note: "The tell: every reason is built backward from something you already own, not forward from something you asked about." },
+    { trap: true,  note: "Stock lines (\"Only 2 left\", \"Low stock in your size\") are fabricated as ordinary fake scarcity — personalizing doesn't make the number real." },
+    { trap: false, note: "It uses something you already own to make the offer seem relevant, instead of something you actually asked for." },
   ],
 
   render(el) {

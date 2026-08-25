@@ -26,7 +26,7 @@ const level6ai = {
   },
   replay: [
     { trap: true,  note: "The assistant references your actual account or order details — status, history, specifics — to sound credible." },
-    { trap: true,  note: "The discount it recommends is real. The upgrade it quietly applies first is also real. The net result costs more." },
+    { trap: true,  note: "The discount it shows you is real, but it also adds an upgrade first, so you end up paying more." },
     { trap: true,  note: "The inflated price only appears in the summary after the recommended action has already been applied." },
     { trap: false, note: "Reverting the change restores the original price, but wastes time that may be scarce under a deadline." },
   ],

@@ -45,9 +45,9 @@ const level4 = {
   },
   desc: "Double negatives, confusing phrasing, and a countdown timer combine to make you \"consent\" to things you never intended. The settings are designed to be misread under pressure.",
   rw: {
-    company: "GDPR cookie banners (widespread)",
-    detail: "A 2022 EU Commission report found 97% of popular websites used at least one dark pattern. The most common: \"Accept All\" in a large colored button, \"Manage Preferences\" leading to 400+ pre-ticked toggles.",
-    link: "https://www.deceptive.design/hall-of-shame",
+    company: "Ryanair",
+    detail: "Between 2010 and 2013, the airline's booking flow asked users to \"select a country of residence\" from a dropdown. Declining travel insurance meant scrolling to find a label — \"No travel insurance required\" — nonsensically placed between two unrelated countries, Latvia and Lithuania.",
+    link: "https://deceptive.design/types/trick-wording/",
   },
   replay: [
     { trap: true, note: "Pre-checked boxes default to whichever options benefit the company, not the user." },

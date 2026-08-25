@@ -266,31 +266,28 @@
       <div style="font-size:11px;color:#ddd">By continuing you agree to our updated Terms &amp; Privacy Policy</div>
     </div>
 
-    <!-- REAL WIN LAYER -->
-    <div id="win-real" style="display:none;flex-direction:column;align-items:center;gap:16px;text-align:center">
-      <div style="font-size:42px">🎉</div>
-      <div style="font-size:24px;font-weight:500;color:#acacac">You caught us.</div>
-      <div style="font-size:15px;color:var(--fa-text);max-width:480px;line-height:1.6">
-        That "Before you go" box was a dark pattern. Two pre-checked opt-ins (one with a double negative),
-        a fake countdown, a confirmshamed exit, and a "claim your badge" button that went nowhere.
-        <strong>You just played the game one more time without realising it.</strong>
-      </div>
-      <div style="font-size:14px;color:var(--fa-faint);max-width:460px;line-height:1.6">
-        Real companies deploy these on millions of people every day. Now you know what to look for —
-        coined by Harry Brignull in 2010, tracked at
-        <a href="https://www.deceptive.design" style="color:#185FA5">deceptive.design</a>.
-      </div>
-      <div style="width:100%;max-width:480px;background:var(--bg2);border-radius:12px;padding:16px;border:1px solid var(--border)">
-        <div style="font-size:14px;font-weight:500;color:var(--text);margin-bottom:12px">Achievements</div>
-        <div id="win-achievements"></div>
-      </div>
-      <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center">
-        <button class="btn btn-p" id="win-play-again">Play again</button>
-        <button class="btn" onclick="Glossary.show()">Pattern glossary</button>
-        <button class="btn" onclick="setScr('designer');initDesigner()">Try designer mode →</button>
-      </div>
-    </div>
+<!-- REAL WIN LAYER -->
+<div id="win-real" style="display:none;flex-direction:column;align-items:center;gap:16px;text-align:center">
+  <div style="font-size:42px">🎉</div>
+  <div style="font-size:24px;font-weight:500;color:var(--text)"> You caught us. </div>
+  <div style="font-size:16.5px;color:var(--text-soft);max-width:640px;line-height:1.7">
+    That "Before you go" box was a dark pattern. Two pre-checked opt-ins (one with a double negative), a fake countdown, a confirmshamed exit, and a "claim your badge" button that went nowhere.
+    <strong style="color:var(--text);font-weight:500">You just played the game one more time without realising it.</strong>
   </div>
+  <div style="font-size:14px;color:var(--text3);max-width:640px;line-height:1.7">
+    Real companies deploy these on millions of people every day. Now you know what to look for — coined by Harry Brignull in 2010, tracked at
+    <a href="https://www.deceptive.design" target="_blank" rel="noopener" style="color:var(--purple-light);text-decoration:none"> deceptive.design </a>
+  </div>
+  <div style="width:100%;max-width:480px;background:var(--bg2);border-radius:12px;padding:16px;border:1px solid var(--border)">
+    <div style="font-size:14px;font-weight:500;color:var(--text);margin-bottom:12px"> Achievements </div>
+    <div id="win-achievements"></div>
+  </div>
+  <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center">
+    <button class="gbtn gbtn-green" id="win-play-again">Play again</button>
+    <button class="gbtn gbtn-glossary" onclick="Glossary.show()"> Pattern glossary </button>
+    <button class="gbtn" onclick="setScr('designer');initDesigner()"> Try designer mode → </button>
+  </div>
+</div>
 
   <!-- GAME OVER -->
   <div class="gameover-overlay" id="scr-gameover" style="display:none">

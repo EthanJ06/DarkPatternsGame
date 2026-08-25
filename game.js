@@ -151,7 +151,7 @@ const GLOSSARY = [
   {
     name: "Roach Motel",
     ai: false,
-    desc: "Easy to get in, nearly impossible to get out. Sign-up is made to be seamless; cancellation however, is buried and gated behind surveys, and wrapped in fake offers.",
+    desc: "Easy to get in, impossible to get out. Sign-up is made to be seamless; cancellation however, is buried and gated behind surveys, and wrapped in fake offers.",
     coined: "Named by Harry Brignull, 2010. Based on the ad slogan \"You can check in, but you can't check out.\""
   },
   {
@@ -224,7 +224,7 @@ const GLOSSARY = [
     name: "AI Obstruction",
     ai: true,
     desc: "Unlike regular Obstruction, this is an AI assistant that sounds like it's finding you real savings, but every code it recommends secretly upgrades your order first, so the \"discount\" still leaves you paying more than you started with.",
-    coined: "An AI-amplified version of Obstruction. The discount is real; so is the inflated price it's quietly applied to."
+    coined: "An AI-amplified version of Obstruction. The discount is real; as well as the inflated price it's applied to."
   },
   {
     name: "AI Personalized Scarcity",
@@ -252,6 +252,13 @@ function findPatternPair(name) {
     if (pair[0] === name || pair[1] === name) return pair;
   }
   return [name, null];
+}
+
+// Looks up a single glossary entry by its exact pattern name (as used in
+// each level's `pattern` field). Returns null if no match is found, so
+// callers can fall back gracefully instead of throwing.
+function findGlossaryEntry(name) {
+  return GLOSSARY.find(g => g.name === name) || null;
 }
 
 function showGlossary() {
@@ -426,7 +433,7 @@ const PATTERN_INFO_CONTENT = {
     ],
   },
   "AI Obstruction": {
-    why: "Following the same profit-driven model as regular Obstruction, but with AI running the conversation. These booking and support assistants are increasingly trained to maximize revenue per interaction rather than to minimize the customer's cost. Framing an upsell as a personalized saving, and then applying a genuine discount to a quietly inflated price, is technically honest at each individual step, while being financially harmful overall. At scale, even a small average increase per transaction adds up considerably.",
+    why: "Following the same profit-driven model as regular Obstruction, but with AI running the conversation. These booking and support assistants are increasingly trained to maximize revenue per interaction rather than to minimize the customer's cost. Framing an upsell as a personalized saving, and then applying a genuine discount to an inflated price, is technically honest at each individual step, while being financially harmful overall. At scale, even a small average increase per transaction adds up considerably.",
     flags: [
       "An assistant cites specific account or order details to sound credible before making its recommendation.",
       "The \"discount\" it offers is real, but only after it has upgraded or altered your order first.",
@@ -438,7 +445,7 @@ const PATTERN_INFO_CONTENT = {
   "Fake Scarcity / Urgency": {
     why: "Urgency short-circuits the deliberate, comparison-shopping part of a purchase decision. A countdown or \"3 left\" counter exploits loss aversion, which is typically a much stronger motivator than an actual discount. Since none of the underlying inventory or viewer data needs to be real, manufacturing it costs the company nothing, and the resulting conversion lift is well documented, which is why some version of this pattern ends up appearing on nearly every major e-commerce site.",
     flags: [
-      "A countdown timer expires and then quietly resets, rather than leading to any real consequence.",
+      "A countdown timer expires and then resets, without any real consequence.",
       "A stock count (\"Only 1 left!\") never changes no matter how many times the item is added to or removed from a cart.",
       "\"X people are viewing this\" or \"bought this recently\" figures fluctuate with no obvious real data behind them.",
       "Near-identical listings compete for attention, making it easy to select the wrong one under time pressure.",
@@ -1158,7 +1165,12 @@ function showDebrief(won) {
   nm.textContent = lv.pattern;
   nm.className   = 'db-name' + (isAI ? ' db-ai' : '');
 
-  document.getElementById('db-desc').textContent = lv.desc;
+  // Pull the description from the glossary so debrief copy always matches
+  // the glossary entry for this pattern — single source of truth. Falls
+  // back to the level's own `desc` field if the pattern name doesn't match
+  // anything in GLOSSARY (e.g. a typo), so a mismatch fails soft, not silent.
+  const glossaryEntry = findGlossaryEntry(lv.pattern);
+  document.getElementById('db-desc').textContent = glossaryEntry ? glossaryEntry.desc : lv.desc;
 
   const grade      = levelGrades[levelIdx] || '—';
   const gradeEl    = document.getElementById('db-grade');

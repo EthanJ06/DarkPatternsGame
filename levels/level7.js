@@ -241,9 +241,9 @@ const level7 = {
     link: "https://www.deceptive.design/hall-of-shame",
   },
   replay: [
-    { trap: true,  note: "A \"Lightning Deal ends in...\" banner ticks down and then quietly resets — the urgency never resolves into anything real." },
+    { trap: true, note: "A \"Lightning Deal ends in...\" timer counts down, then resets and starts over — the deal never actually ends." },    
     { trap: true,  note: "\"Only 1 left in stock!\" is a static number that never changes regardless of cart activity." },
-    { trap: true,  note: "A viewer count (\"X people viewed today\") fluctuates randomly, with no real data underlying it." },
+    { trap: true,  note: "A viewer count (\"X people viewed today\") fluctuates randomly, with no real data behind it." },
     { trap: true,  note: "\"Items reserved for X:XX\" implies a cart will be released to someone else — nothing is actually being held." },
     { trap: true,  note: "Multiple near-identical listings fill the results, making it easy to pick the wrong one while reading quickly." },
     { trap: true,  note: "A warranty or add-on item sneaks into the cart automatically once the main item is added." },
