@@ -329,8 +329,15 @@ clip-path: path('M7.5 13C7.5 13 1 8.5 1 4.5A3.2 3.2 0 0 1 7.5 3A3.2 3.2 0 0 1 14
 
 /* ── GAME OVER POPUP ── */
 .gameover-overlay {
-  position: fixed; inset: 0; background: rgba(0,0,0,.7);
-  z-index: 100; display: flex; align-items: center; justify-content: center; padding: 20px;
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  width: 100vw; height: 100vh;
+  background: rgba(0,0,0,.7);
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
 }
 .gameover-panel {
   background: var(--bg2); border-radius: 16px; border: 1px solid var(--border);

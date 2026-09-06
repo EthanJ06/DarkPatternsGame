@@ -64,7 +64,6 @@ const level3 = {
   render(el) {
     let round = 0;
     let roundFails = 0;
-    const MAX_FAILS = 2;
 
     const showRound = () => {
       const results = ROUNDS[round];
@@ -77,7 +76,7 @@ const level3 = {
           <span style="font-size:12px;color:#888;">Round ${round + 1} of ${ROUNDS.length}</span>
           <div style="display:flex;gap:5px;align-items:center;">
             ${ROUNDS.map((_, i) => `<div style="width:20px;height:4px;border-radius:2px;background:${i <= round ? '#4285f4' : '#ddd'};"></div>`).join('')}
-            <span id="l3-mistakes" style="font-size:12px;color:${roundFails === MAX_FAILS - 1 ? '#d93025' : '#888'};margin-left:8px;">${MAX_FAILS - roundFails} mistake${MAX_FAILS - roundFails === 1 ? '' : 's'} left</span>
+            <span id="l3-mistakes" style="font-size:12px;color:#888;margin-left:8px;">${roundFails > 0 ? `${roundFails} mistake${roundFails === 1 ? "" : "s"} this round` : ""}</span>
           </div>
         </div>
         <div style="display:flex;align-items:center;gap:10px;border:1px solid #dfe1e5;border-radius:24px;padding:8px 14px;margin-bottom:12px;box-shadow:0 1px 3px rgba(0,0,0,0.08);">
@@ -140,25 +139,15 @@ const level3 = {
           roundFails++;
           const mistakesEl = document.getElementById("l3-mistakes");
           if (mistakesEl) {
-            const remaining = MAX_FAILS - roundFails;
-            mistakesEl.textContent = `${remaining} mistake${remaining === 1 ? '' : 's'} left`;
-            mistakesEl.style.color = remaining <= 1 ? "#d93025" : "#888";
+            mistakesEl.textContent = `${roundFails} mistake${roundFails === 1 ? "" : "s"} this round`;
+            mistakesEl.style.color = "#d93025";
           }
 
-          if (roundFails >= MAX_FAILS) {
-            fail("You fell for too many disguised ads — the algorithm got you!");
-            setTimeout(() => {
-              succeed();
-              setLevelGrade(levelIdx, "F");
-            }, 1900);
-          } else {
-            const remaining = MAX_FAILS - roundFails;
-            const msg = [...selected].some(i => results[i].ad)
-              ? "You included a sponsored result."
-              : "You missed a real result.";
-            fail(`${msg} ${remaining} mistake${remaining === 1 ? '' : 's'} left.`);
-            setTimeout(showRound, 1800);
-          }
+          const msg = [...selected].some(i => results[i].ad)
+            ? "You included a sponsored result."
+            : "You missed a real result.";
+          fail(`${msg} Try again.`);
+          setTimeout(showRound, 1800);
         }
       };
     };

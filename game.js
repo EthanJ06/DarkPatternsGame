@@ -781,7 +781,7 @@ function setScr(name) {
   });
   //Close game over screen whenever user navigates to another screen
   const go = document.getElementById('scr-gameover');
-  if (go) go.style.display = 'none';
+  if (go && hearts > 0) go.style.display = 'none';
 }
 
 // ── Brief ──────────────────────────────────────────────────────────────────
@@ -878,7 +878,11 @@ function showHint() {
   const d = document.createElement('div');
   d.id = 'hint-bubble';
   d.className = 'hint-bubble';
-  d.innerHTML = `💡 <strong>Hint ${level + 1} of ${lv.hints.length}:</strong> ${hint}`;
+  d.innerHTML = `
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px">
+      <span>💡 <strong>Hint ${level + 1} of ${lv.hints.length}:</strong> ${hint}</span>
+      <button onclick="document.getElementById('hint-bubble')?.remove()" style="background:none;border:none;cursor:pointer;font-size:14px;color:inherit;padding:0;flex-shrink:0;line-height:1">✕</button>
+    </div>`;
   hintState.text = d.innerHTML;
   placeOverlay(d, 'bottom');
 
@@ -890,6 +894,7 @@ function showHint() {
 
 // ── Succeed ────────────────────────────────────────────────────────────────
 function succeed() {
+  document.getElementById('hint-bubble')?.remove();
   streak++;
   const pts   = lostHeart ? 80 : 100;
   const bonus = streak >= 3 ? 20 : 0;
@@ -916,13 +921,27 @@ function succeed() {
 
 // ── Fail ───────────────────────────────────────────────────────────────────
 function fail(msg) {
+  document.getElementById('hint-bubble')?.remove();
   const wasNew = !lostHeart;
-  if (!lostHeart) { hearts = Math.max(0, hearts - 1); lostHeart = true; }
+  if (!lostHeart) {
+    hearts = Math.max(0, hearts - 1);
+    lostHeart = true;
+
+    if (hearts === 0) {
+      _ui.renderHearts(true);
+      setTimeout(() => showGameOver(), 1200);
+      return;
+    }
+  }
   streak = 0;
 
-  if (hearts === 0) {
-    _ui.renderHearts(true);
-    setTimeout(() => showGameOver(), 1200);
+  // If this isn't the first fail this level, just show damage message
+  if (!wasNew) {
+    const d = document.createElement('div');
+    d.className   = 'damage-msg';
+    d.textContent = msg || 'Caught!';
+    placeOverlay(d, 'top');
+    setTimeout(() => d.remove(), 1900);
     return;
   }
 
@@ -1023,7 +1042,9 @@ function jumpTo(idx) {
 // ── Game Over ──────────────────────────────────────────────────────────────
 function showGameOver() {
   const overlay = document.getElementById('scr-gameover');
-  if (overlay) overlay.style.display = 'flex';
+  if (!overlay) return;
+  overlay.style.display = 'flex';
+  overlay.style.zIndex  = '200';
   const el = document.getElementById('go-breakdown');
   if (!el) return;
   el.innerHTML = LEVELS.map((lv, i) => {
@@ -1083,11 +1104,15 @@ const G = {
   beginLevel: () => showLevel(),
   setScr,
   tryAgain() {
+    const go = document.getElementById('scr-gameover');
+    if (go) go.style.display = 'none';
     hearts = 5; score = 0; streak = 0; levelIdx = 0;
     lostHeart = false; levelGrades = []; achUnlocked = new Set();
     showBrief();
   },
   continueAfterFail() {
+    const go = document.getElementById('scr-gameover');
+    if (go) go.style.display = 'none';
     hearts    = 3;
     lostHeart = false;
     showBrief();

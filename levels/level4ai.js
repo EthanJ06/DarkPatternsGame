@@ -122,17 +122,19 @@ const level4ai = {
       document.getElementById("l4a-save").onclick = () => {
         const boxes = v.options.map((_, i) => document.getElementById(`ac${i}`));
         const ok = boxes.every(Boolean) &&
-          boxes.every((cb, i) => (v.correctIndices.includes(i) ? cb.checked : !cb.checked));2
+          boxes.every((cb, i) => (v.correctIndices.includes(i) ? cb.checked : !cb.checked));
 
-        if (ok) wins++;
-        else fail("That wasn't the real opt-out — lost a heart.");
-
-        round++;
-        if (round >= VARIANTS.length) {
-          if (ok) setTimeout(finish, 1200);
-          else setTimeout(finish, 1900);
+        if (ok) {
+          wins++;
+          round++;
+          if (round >= VARIANTS.length) {
+            setTimeout(finish, 1200);
+          } else {
+            setTimeout(show, 600);
+          }
         } else {
-          setTimeout(show, ok ? 600 : 1900);
+          fail("That wasn't the real opt-out — lost a heart.");
+          setTimeout(show, 1900);
         }
       };
     };

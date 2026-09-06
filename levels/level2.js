@@ -57,8 +57,6 @@ const level2 = {
       },
     ];
     let r = 0;
-    let fails = 0;
-    const MAX_FAILS = 2;
 
     const fakePage = `
       <div style="flex:1;overflow:hidden;position:relative;border-radius:inherit">
@@ -120,15 +118,6 @@ const level2 = {
 
       document.getElementById("l2-yes").onclick = () => {
         fail("You opted in! Lost a heart.");
-        fails++;
-        if (fails >= MAX_FAILS) {
-          setTimeout(() => {
-            succeed();
-            setLevelGrade(levelIdx, "F");
-          }, 1900);
-          return;
-        }
-        r = Math.min(r + 1, rounds.length - 1);
         setTimeout(update, 1600);
       };
       

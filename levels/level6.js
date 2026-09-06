@@ -187,10 +187,14 @@ const level6 = {
             </div>
           </div>
         </div>
-        <button class="btn btn-p" id="l6-continue" style="font-size:15px;padding:13px">Continue →</button>
+        <div style="display:flex;gap:10px">
+          <button class="btn" id="l6-restart" style="font-size:15px;padding:13px">Try again</button>
+          <button class="btn btn-p" id="l6-continue" style="font-size:15px;padding:13px">Continue →</button>
+        </div>
       </div>
     `);
     document.getElementById("l6-continue").onclick = () => G.next();
+    document.getElementById("l6-restart").onclick = () => G.showLevel();
   }, 1800);
 };
 
