@@ -22,7 +22,6 @@ const level5 = {
     period: "one-time",
     note: "$21.98 extra at checkout — plus $119.88/year when the \"free\" NebulaPro trial auto-renews",
   },
-  desc: "Extra items are pre-added and styled to blend in — below the fold, in pale text, or described as \"included\". They count on you not scrolling, not reading, or just clicking through.",
   rw: {
     company: "Sports Direct",
     detail: "Pre-added a £1 \"free\" mug and then travel insurance to customer carts. The UK Advertising Standards Authority ruled this illegal. Ryanair did the same with travel insurance for years before regulators intervened.",

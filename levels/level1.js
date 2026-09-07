@@ -16,7 +16,6 @@ const level1 = {
     period: "month",
     note: "A recurring charge for a service you actively tried to cancel.",
   },
-  desc: "Easy to get in, impossible to get out. Cancellation is buried under detours, fake offers, and mandatory surveys — each one hoping you give up.",
   rw: {
     company: "The New York Times",
     detail: "Sign-up takes a few clicks, but cancelling requires chatting with a \"Customer Care Advocate\" during limited hours or calling in — no online cancel button. A 2020 class-action suit and years of public complaints called it \"exceedingly difficult.\"",

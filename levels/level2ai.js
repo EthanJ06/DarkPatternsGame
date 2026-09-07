@@ -71,12 +71,6 @@ const level2ai = {
     period: null,
     note: "No direct cost — but profiling enriches your behavioral dossier, sold to data brokers and advertisers.",
   },
-  desc: "Pseudo-AI 'analyzes your behavior' and generates shame copy that feels disturbingly personal — targeting your apparent psychology, not just generic guilt.",
-  rw: {
-    company: "Behavioral ad platforms",
-    detail: "Real platforms like Optimizely and Dynamic Yield segment users by psychological profile and test which emotional appeals drive the highest conversion. AI personalizes shame at scale.",
-    link: "https://www.deceptive.design/hall-of-shame",
-  },
   aiWhy: "Generic confirmshaming has a ceiling — \"I hate saving money\" works on some people and feels absurd to others. AI removes that ceiling by personalizing the shame to each user's inferred profile. Someone flagged as \"price-sensitive\" gets financial shame; someone flagged as \"health-focused\" gets health shame. The insult is customized.",
   replay: [
     { trap: false, note: "A profile banner appears immediately — algorithmic confidence stated before any choice is presented." },

@@ -48,7 +48,6 @@ const level3 = {
     period: null,
     note: "No direct cost — but you may overpay for products only discoverable via ads, with no price competition.",
   },
-  desc: "Paid results styled to be indistinguishable from organic ones. The ad label is tiny, low-contrast, and easy to miss — especially when you're in a hurry.",
   rw: {
     company: "Google & Bing",
     detail: "\"Sponsored\" labels have shrunk over the years while ads have grown visually identical to organic results. The EU's Digital Services Act now requires clearer labeling, effective 2024.",

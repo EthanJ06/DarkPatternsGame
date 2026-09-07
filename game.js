@@ -234,9 +234,7 @@ const GLOSSARY = [
   },
 ];
 
-// Every base pattern paired with its AI-amplified counterpart, where one
-// exists. A `null` second element means no AI-amplified level exists yet —
-// the info page then renders a single section instead of a pair.
+// Every base pattern paired with its AI-amplified counterpart, where one exists. A `null` second element means no AI-amplified level exists yet
 const PATTERN_PAIRS = [
   ['Roach Motel', 'AI Roach Motel'],
   ['Confirmshaming', 'AI Confirmshaming'],
@@ -254,9 +252,7 @@ function findPatternPair(name) {
   return [name, null];
 }
 
-// Looks up a single glossary entry by its exact pattern name (as used in
-// each level's `pattern` field). Returns null if no match is found, so
-// callers can fall back gracefully instead of throwing.
+// Looks up a single glossary entry by its exact pattern name (as used in each level's `pattern` field). Returns null if no match is found
 function findGlossaryEntry(name) {
   return GLOSSARY.find(g => g.name === name) || null;
 }
@@ -289,11 +285,6 @@ function closeGlossaryOnBackdrop(e) {
 }
 
 // ── Pattern info page ───────────────────────────────────────────────────
-// Opened from any glossary entry. Shows the base pattern and, where one
-// exists, its AI-amplified counterpart side by side in the same page.
-
-// General, pattern-level content — not tied to the fictional NebulaPro
-// level. This is about the pattern as it exists in the wild.
 const PATTERN_INFO_CONTENT = {
   "Roach Motel": {
     why: "Subscription businesses run on recurring revenue, so every cancellation means a loss in customer lifetime value, where retention gets treated as a core metric. Adobe, for instance, receives roughly 97% of its revenue from subscriptions, and is one of the reasons why regulators believe similar companies have a strong incentive to bury the cancellation button. Even a small amount of added friction is enough to convert some fraction of would-be leavers into users who simply give up.",
@@ -623,10 +614,10 @@ const COPY_OPTS = [
 ];
 
 const VERDICTS = [
-  { min: 0,   max: 20,  text: 'Your form is clean — honest design.',                                              reg: 'No regulatory concerns.',                                                                                               color: '#3B6D11' },
-  { min: 21,  max: 50,  text: 'Mildly manipulative — a few nudges that could go either way.',                     reg: 'Borderline — some patterns may attract scrutiny under GDPR and FTC guidelines.',                                       color: '#854F0B' },
-  { min: 51,  max: 100, text: 'Significantly manipulative — multiple dark patterns working together.',             reg: 'High risk: likely violates GDPR Art. 7 (freely given consent) and FTC deceptive practices rules.',                     color: '#A32D2D' },
-  { min: 101, max: 999, text: 'Highly predatory — this is textbook dark pattern design.',                          reg: 'This would attract FTC enforcement action and EU DSA fines of up to 6% of global revenue.',                           color: '#791F1F' },
+  { min: 0,   max: 20,  text: 'Your form is clean — honest design.',                                       reg: 'No regulatory concerns.',                                                                           color: '#3B6D11' },
+  { min: 21,  max: 50,  text: 'Mildly manipulative — a few nudges that could go either way.',              reg: 'Borderline — some patterns may attract scrutiny under GDPR and FTC guidelines.',                    color: '#854F0B' },
+  { min: 51,  max: 100, text: 'Significantly manipulative — multiple dark patterns working together.',     reg: 'High risk: likely violates GDPR Art. 7 (freely given consent) and FTC deceptive practices rules.',  color: '#A32D2D' },
+  { min: 101, max: 999, text: 'Highly predatory — this is textbook dark pattern design.',                  reg: 'This would attract FTC enforcement action and EU DSA fines of up to 6% of global revenue.',         color: '#791F1F' },
 ];
 
 function totalPts() {
@@ -726,7 +717,6 @@ window.initDesigner = initDesigner;
 
 // ======== game.js ========
 // js/game.js — Core game state and engine (no UI imports — avoids circular deps)
-
 
 // ── State ──────────────────────────────────────────────────────────────────
 let hearts      = 5;
@@ -1124,7 +1114,6 @@ const G = {
 // js/ui.js — HUD, dots, debrief, win screen, confetti
 // Registers itself with game.js via registerUI() to avoid circular imports.
 
-
 // ── HUD ────────────────────────────────────────────────────────────────────
 function renderHearts(animate = false) {
   const el = document.getElementById('h-hearts');
@@ -1190,10 +1179,7 @@ function showDebrief(won) {
   nm.textContent = lv.pattern;
   nm.className   = 'db-name' + (isAI ? ' db-ai' : '');
 
-  // Pull the description from the glossary so debrief copy always matches
-  // the glossary entry for this pattern — single source of truth. Falls
-  // back to the level's own `desc` field if the pattern name doesn't match
-  // anything in GLOSSARY (e.g. a typo), so a mismatch fails soft, not silent.
+  // Pull the description from the glossary so debrief copy always matches the glossary entry for this pattern 
   const glossaryEntry = findGlossaryEntry(lv.pattern);
   document.getElementById('db-desc').textContent = glossaryEntry ? glossaryEntry.desc : lv.desc;
 
@@ -1219,7 +1205,7 @@ function showDebrief(won) {
   document.getElementById('db-next').textContent =
     levelIdx < LEVELS.length - 1 ? 'Next level →' : 'See results →';
 
-  // Dollar cost — folded into the score card
+  // Dollar cost
   const dc = document.getElementById('db-cost');
   if (lv.dollars) {
     dc.style.display = 'flex';
@@ -1239,26 +1225,31 @@ function showDebrief(won) {
   }
 
   // Real-world card
-  const rwEl    = document.getElementById('db-rw');
-  const rwFiles = getExampleImages(lv);
+  const rwEl = document.getElementById('db-rw');
+  if (!lv.rw) 
+    {rwEl.style.display = 'none';} 
+  else {
+    rwEl.style.display = '';
+    const rwFiles = getExampleImages(lv);
 
-  rwEl.innerHTML = `
-    <div class="brief-example-label">A real-world example</div>
-    <div class="brief-example-row" id="db-rw-imgs" style="display:none">
-      ${rwFiles.map((f, i) => `<img class="brief-example-img" id="db-rw-img-${i}" alt="${lv.rw.company} — ${lv.pattern}">`).join('')}
-    </div>
-    <div class="brief-example-caption"><strong>${lv.rw.company}</strong> — ${lv.rw.detail}</div>`;
+    rwEl.innerHTML = `
+      <div class="brief-example-label">A real-world example</div>
+      <div class="brief-example-row" id="db-rw-imgs" style="display:none">
+        ${rwFiles.map((f, i) => `<img class="brief-example-img" id="db-rw-img-${i}" alt="${lv.rw.company} — ${lv.pattern}">`).join('')}
+      </div>
+      <div class="brief-example-caption"><strong>${lv.rw.company}</strong> — ${lv.rw.detail}</div>`;
 
-  const rwImgsWrap = document.getElementById('db-rw-imgs');
-  let rwFailed = 0;
-  rwFiles.forEach((f, i) => {
-    const img = document.getElementById(`db-rw-img-${i}`);
-    img.onload  = () => { rwImgsWrap.style.display = 'flex'; };
-    img.onerror = () => { rwFailed++; if (rwFailed === rwFiles.length) rwImgsWrap.style.display = 'none'; };
-    img.src = `assets/examples/${f}`;
-  });
+    const rwImgsWrap = document.getElementById('db-rw-imgs');
+    let rwFailed = 0;
+    rwFiles.forEach((f, i) => {
+      const img = document.getElementById(`db-rw-img-${i}`);
+      img.onload  = () => { rwImgsWrap.style.display = 'flex'; };
+      img.onerror = () => { rwFailed++; if (rwFailed === rwFiles.length) rwImgsWrap.style.display = 'none'; };
+      img.src = `assets/examples/${f}`;
+    });
+  }
 
-  // AI card (hyper only)
+  // AI card Hidden
   const aic = document.getElementById('db-ai-card');
   if (isAI && lv.aiWhy) {
     aic.style.display = 'flex';

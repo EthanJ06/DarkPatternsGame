@@ -43,7 +43,6 @@ const level4 = {
     period: null,
     note: "No direct cost — but your personal data is sold to ~200 third-party brokers at an average value of $240/year per profile.",
   },
-  desc: "Double negatives, confusing phrasing, and a countdown timer combine to make you \"consent\" to things you never intended. The settings are designed to be misread under pressure.",
   rw: {
     company: "Ryanair",
     detail: "Between 2010 and 2013, the airline's booking flow asked users to \"select a country of residence\" from a dropdown. Declining travel insurance meant scrolling to find a label — \"No travel insurance required\" — nonsensically placed between two unrelated countries, Latvia and Lithuania.",

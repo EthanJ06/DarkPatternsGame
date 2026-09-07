@@ -16,7 +16,6 @@ const level6 = {
     period: "fixed",
     note: "The discount you were entitled to — forfeited because the clock ran out.",
   },
-  desc: "Eight mutually exclusive coupons, one timer, one correct answer. The fine print tells you which one applies — if you can find it in time.",
   rw: {
     company: "Enterprise / Hertz / Avis",
     detail: "Major rental companies routinely advertise discount codes with conflicting conditions and short redemption windows, knowing most customers will either pick the wrong one or give up entirely.",

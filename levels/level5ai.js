@@ -43,13 +43,6 @@ const level5ai = {
     period: "month",
     note: "$491.64/year in subscriptions you didn't need, sold to you by an algorithm",
   },
-  desc: "Pseudo-AI 'predicts' what you need, with a confidence percentage, making declining feel irrational. The profile is fake; the confidence figure is meaningless.",
-  rw: {
-    company: "Amazon, streaming platforms",
-    detail:
-      "\" \"Customers who bought X also bought Y\" is pretty harmless. This goes a step further. Instead of a general recommendation, it tells you an algorithm picked these items just for you, making it feel like there's a good reason not to remove them.",
-    link: "https://www.deceptive.design/hall-of-shame",
-  },
   aiWhy:
     "Upsells have always been part of shopping. The difference with AI is that they can feel personalized and unavoidable. A \"94% match\" score creates the impression that most people like you would choose this, so turning it down feels like the unusual choice.",
   replay: [
