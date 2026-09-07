@@ -711,9 +711,31 @@ function initDesigner() {
   update();
 }
 
+function finishDesigner() {
+  const pts = totalPts();
+  const v = VERDICTS.find(v => pts >= v.min && pts <= v.max) ?? VERDICTS[VERDICTS.length - 1];
+
+  const verdictEl = document.getElementById('df-verdict');
+  if (verdictEl) {
+    verdictEl.textContent = `Manipulativeness score: ${pts}. ${v.text}`;
+  }
+  const overlay = document.getElementById('designer-finish');
+  if (overlay) overlay.style.display = 'flex';
+}
+
+function closeDesignerFinishOnBackdrop(e) {
+  const overlay = document.getElementById('designer-finish');
+  if (!overlay) return;
+  if (!e.target.closest('.gameover-panel')) {
+    overlay.style.display = 'none';
+  }
+}
+
 // Expose to HTML onclick attributes
 window.dpick       = dpick;
 window.initDesigner = initDesigner;
+window.finishDesigner = finishDesigner;
+window.closeDesignerFinishOnBackdrop = closeDesignerFinishOnBackdrop;
 
 // ======== game.js ========
 // js/game.js — Core game state and engine (no UI imports — avoids circular deps)
