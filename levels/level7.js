@@ -207,8 +207,6 @@ function badgesForKey(key, prevBadgeTxt) {
   const p = PRODUCTS[key];
   if (!p || !p.orig) return [];
   const h = hashStr(key);
-  // Not every discounted item gets a promo badge — a real results page
-  // mixes plain listings in with tagged ones, so this covers roughly 40%.
   if (h % 5 >= 2) return [];
   let idx = h % GENERIC_BADGE_POOL.length;
   if (GENERIC_BADGE_POOL[idx][1] === prevBadgeTxt) idx = (idx + 1) % GENERIC_BADGE_POOL.length;
@@ -234,7 +232,6 @@ const level7 = {
     period: "one-time",
     note: "The final bill: $47.97 in extras you were nudged into buying, plus a warranty you didn't ask for.",
   },
-  desc: "Countdown timers, fake stock warnings, and social proof pressure combine to make you act before you think. Studies show urgency increases conversion by up to 332% — almost none of the scarcity is real.",
   rw: {
     company: "Booking.com",
     detail: "Fined by the UK CMA in 2019 for fake \"Only 1 room left!\" and \"8 people looking at this\" messages. Internal data showed the stock counts were fabricated. The practice remains widespread.",

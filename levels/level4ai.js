@@ -52,12 +52,6 @@ const level4ai = {
     period: null,
     note: "Your data profile — now enriched with consent — is worth an estimated $240–480/year to the data brokerage ecosystem.",
   },
-  desc: "The interface reshuffles every time you try to opt out — A/B testing in real time to find the phrasing (and layout position) most likely to confuse you. It calls this 'personalization'.",
-  rw: {
-    company: "Consent Management Platforms (CMPs)",
-    detail: "Platforms like OneTrust and Quantcast have been documented running multi-variant consent UI tests — different button colors, label phrasing, and layout — optimized for maximum \"accept\" rates. The Norwegian Consumer Council's 2022 report \"Dark Patterns and the Right to Privacy\" documented this directly.",
-    link: "https://www.deceptive.design/hall-of-shame",
-  },
   aiWhy: "A/B testing consent UI has existed for years. AI accelerates the iteration cycle from weeks to hours, auto-generating new variants and retiring underperformers. Every time you \"save\" incorrect preferences, the system learns which phrasing — and which position — caught you, and serves it more often.",
   replay: [
     { trap: true,  note: "The wording changes between versions, but the choices are basically the same. This can make it harder to understand what you're agreeing to." },

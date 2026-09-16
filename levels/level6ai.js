@@ -19,12 +19,6 @@ const level6ai = {
     period: "fixed",
     note: "The AI's codes would have increased your bill by $20–60 while appearing to save you money.",
   },
-  desc: "An AI sidebar that sounds credible, references your booking, and recommends codes that secretly upgrade your rental before discounting — leaving you paying more than you started with.",
-  rw: {
-    company: "Various travel booking platforms",
-    detail: "AI booking assistants on major travel platforms have been shown to recommend higher-margin options under the guise of personalized savings, particularly on car rental and hotel booking flows.",
-    link: "https://www.deceptive.design/hall-of-shame",
-  },
   replay: [
     { trap: true,  note: "AI references your actual booking details — loyalty status, car type, days — to sound credible." },
     { trap: true,  note: "It's not a fake discount. The discount exists, but so does the upgrade that comes with it. The end result is a bigger charge." },

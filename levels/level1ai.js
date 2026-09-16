@@ -17,12 +17,6 @@ const level1ai = {
     period: "month",
     note: "$119.88/year — identical trap, AI-enforced",
   },
-  desc: "The chatbot variant: an AI support agent that deflects, forgets context, manufactures obstacles, and re-engages with fake concern — designed to exhaust you into giving up.",
-  rw: {
-    company: "Major US telecoms",
-    detail: "AI chat deflection is now standard practice. Internal studies show customers abandon cancellation after 4+ deflections. The bot is working exactly as designed.",
-    link: "https://www.deceptive.design/hall-of-shame",
-  },
   aiWhy: "AI makes the Roach Motel tireless. A human retention agent can only work a shift — an AI runs 24/7, never gets frustrated, and can be A/B tested to find the deflection script that works best on each personality type. At scale, a 1% improvement in deflection rate can mean millions in retained revenue.",
   replay: [
     { trap: false, note: "A friendly greeting builds rapport with the bot before you have even stated your intent to cancel." },

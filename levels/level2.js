@@ -16,7 +16,6 @@ const level2 = {
     period: null,
     note: "No direct cost — but your inbox and attention are the product. Your data is sold to list brokers.",
   },
-  desc: "Framing the 'no' as a self-inflicted insult. You're not declining an offer — you're confessing a character flaw. Studies show this increases opt-in rates by up to 15%.",
   rw: {
     company: "MyMedic",
     detail: "Used popup confirmshaming with options like \"No, I'd rather bleed to death\" to sell first-aid products. Widely cited as one of the most egregious examples.",

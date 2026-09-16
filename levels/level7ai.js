@@ -58,7 +58,7 @@ const level7ai = {
     "Browse the 'For You' tab and click 'Continue' at the bottom without adding more than one item.",
   ],
   pattern: 'AI Personalized Scarcity',
-  brief: "The same fake-scarcity trick, but personalized with your own purchase history. Instead of a generic 'Only 1 left!', NexusAI names something you actually bought — your iPad, your PS5, your shoes — to make a fake stock shortage feel like it was made just for you.",
+  brief: "The same fake scarcity trick, but personalized with your own purchase history. Instead of a generic 'Only 1 left!', NexusAI names something you bought like your iPad, PS5, or shoes. This makes a fake stock shortage feel like it was made just for you.",
   goalDetail: "NexusAI has pulled up your order history and built you a 'For You' tab of four personalized urgency offers from it. Each one names a real past purchase to justify a fake scarcity claim. Browse the page and continue without adding more than one — the countdown expiring costs you nothing.",
   aiIntro: "Each offer opens by citing something you actually bought — that's algorithmic authority borrowed from a real purchase, applied to a stock claim that has nothing to do with real inventory.",
   dollars: {
@@ -66,12 +66,6 @@ const level7ai = {
     amount: 248.96,
     period: 'one-time',
     note: '$248.96 in accessories you were algorithmically nudged toward buying because you already owned the related item — not because you asked for them',
-  },
-  desc: "Fake scarcity, personalized: NexusAI mines your real order history for plausible-sounding justifications, then attaches a manufactured stock countdown to each one. The purchases are real. The urgency is not.",
-  rw: {
-    company: 'Personalization platforms (Dynamic Yield, Amazon Personalize, and similar)',
-    detail: "Retailers increasingly pair real purchase-history data with generated urgency messaging — 'customers who bought X usually buy Y within 30 days' framing is common in post-purchase email and on-site recommendation engines. The underlying behavioral statistic is often real; the individual stock claim attached to it typically is not.",
-    link: 'https://www.deceptive.design/hall-of-shame',
   },
   aiWhy: "Generic scarcity ('Only 1 left!') is easy to be skeptical of because it could apply to anyone. Personalized scarcity is harder to dismiss because it opens with something true — you really did buy that iPad — and borrows the credibility of that fact for a claim that isn't true at all: that this specific accessory is running out because of your specific purchase. The model doesn't know your sock drawer, your case situation, or your controller count. It knows one purchase and a timer.",
   replay: [
