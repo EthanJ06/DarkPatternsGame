@@ -144,7 +144,7 @@ const level4 = {
       const skipBtn = document.getElementById("l4-skip");
       if (skipBtn) {
         skipBtn.onclick = () => {
-          fail("Moved on — lost a heart.");
+          fail("Moving on without fixing it leaves the confusing settings in place, which is what the form is counting on.");
           setTimeout(() => succeed(), 1900);
         };
       }

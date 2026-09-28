@@ -188,11 +188,9 @@ const level6 = {
         </div>
         <div style="display:flex;gap:10px">
           <button class="btn" id="l6-restart" style="font-size:15px;padding:13px">Try again</button>
-          <button class="btn btn-p" id="l6-continue" style="font-size:15px;padding:13px">Continue →</button>
         </div>
       </div>
     `);
-    document.getElementById("l6-continue").onclick = () => G.next();
     document.getElementById("l6-restart").onclick = () => G.showLevel();
   }, 1800);
 };
@@ -229,7 +227,7 @@ const level6 = {
   } else {
     if (!penalized) {
       penalized = true;
-      G.fail(`${c.code} doesn't apply to your booking — lost a heart. Check the fine print.`);
+      G.fail(`${c.code} doesn't apply to your booking. Every option is written to sound plausible until you check the conditions.`);
     }
     const msgEl = document.getElementById("l6-apply-msg");
     if (msgEl) msgEl.innerHTML = `<span style="color:#A32D2D;font-size:14px">${c.code} doesn't apply. Read the conditions carefully.</span>`;

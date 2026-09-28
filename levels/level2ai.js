@@ -147,7 +147,7 @@ const level2ai = {
       no.onclick = null;
 
       document.getElementById("l2ai-yes").onclick = () => {
-        fail("The AI got you — lost a heart.");
+        fail("The personalized shame copy did its job. That's why the AI profiled you before showing an offer.");
         setTimeout(update, 1600);
       };
 

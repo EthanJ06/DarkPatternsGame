@@ -122,20 +122,24 @@ const level3 = {
             showRound();
           }
         } else {
-          // highlight mistakes
-          results.forEach((r, i) => {
-            const item = document.getElementById("r" + i);
-            if (!item) return;
-            if (selected.has(i) && r.ad) {
-              item.style.borderColor = "#d93025";
-              item.style.background = "#fff0f0";
-            } else if (!selected.has(i) && !r.ad) {
-              item.style.borderColor = "#f29900";
-              item.style.background = "#fffbe6";
-            }
-          });
-
           roundFails++;
+          const showHighlight = roundFails >= 2;
+
+          if (showHighlight) {
+            // highlight mistakes — only shown from the second failed attempt on
+            results.forEach((r, i) => {
+              const item = document.getElementById("r" + i);
+              if (!item) return;
+              if (selected.has(i) && r.ad) {
+                item.style.borderColor = "#d93025";
+                item.style.background = "#fff0f0";
+              } else if (!selected.has(i) && !r.ad) {
+                item.style.borderColor = "#f29900";
+                item.style.background = "#fffbe6";
+              }
+            });
+          }
+
           const mistakesEl = document.getElementById("l3-mistakes");
           if (mistakesEl) {
             mistakesEl.textContent = `${roundFails} mistake${roundFails === 1 ? "" : "s"} this round`;
@@ -145,7 +149,7 @@ const level3 = {
           const msg = [...selected].some(i => results[i].ad)
             ? "You included a sponsored result."
             : "You missed a real result.";
-          fail(`${msg} Try again.`);
+          fail(showHighlight ? `${msg} Look at the highlighted results.` : `${msg} Try again.`);
           setTimeout(showRound, 1800);
         }
       };

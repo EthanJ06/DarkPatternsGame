@@ -62,12 +62,26 @@ const level4ai = {
   ],
 
   render(el) {
+    const MAX_ATTEMPTS = 2;
     let round = 0;
     let wins = 0;
+    let attempts = 0; // resets each round
 
     const finish = () => {
       if (wins < 2) setLevelGrade(levelIdx, "F");
       succeed();
+    };
+
+    const revealed = () => attempts >= MAX_ATTEMPTS;
+
+    const correctAnswerText = (v) => {
+      const check   = v.correctIndices.map(i => `"${v.options[i].label}"`).join(" and ");
+      const uncheck = v.options
+        .map((o, i) => i)
+        .filter(i => !v.correctIndices.includes(i))
+        .map(i => `"${v.options[i].label}"`)
+        .join(" and ");
+      return `Check ${check} — those are the real opt-outs. Leave ${uncheck} unchecked, no matter how safe they sound.`;
     };
 
     const show = () => {
@@ -75,6 +89,24 @@ const level4ai = {
       el.innerHTML = aiBanner ? aiBanner.outerHTML : "";
 
       const v = VARIANTS[round];
+
+      const topNote = revealed()
+        ? `<div class="inline-note" style="background:#FAEEDA;color:#633806;margin-top:10px">
+             The wording is designed to confuse — that's the whole trick.<br>
+             <strong>Answer:</strong> ${correctAnswerText(v)}
+           </div>`
+        : attempts === 1
+          ? "<div class=\"ftiny\" style=\"color:#854F0B;margin-top:8px\">One more wrong attempt and the answer will be revealed.</div>"
+          : "";
+
+      const footer = revealed()
+        ? `<div class="btn-row" style="margin-top:14px">
+             <button class="btn btn-p" id="l4a-save">Save</button>
+           </div>
+           <div class="ftiny" style="color:#aaa;margin-top:4px">You've seen the point — the wording is the whole trick.</div>`
+        : `<div class="btn-row" style="margin-top:14px">
+             <button class="btn btn-p" id="l4a-save">Save</button>
+           </div>`;
 
       el.insertAdjacentHTML("beforeend", `
         <div style="overflow-y:auto;min-height:0">
@@ -95,8 +127,9 @@ const level4ai = {
             </div>
           </div>
           <div class="inline-note" style="background:#EEEDFE;color:#26215C">
-            NexusAI has re-optimized this form (variant ${round + 1}). <em>Two options genuinely protect your privacy — find both. One shot per round.</em>
+            NexusAI has re-optimized this form (variant ${round + 1}). <em>Two options genuinely protect your privacy — find both.</em>
           </div>
+          ${topNote}
           <div style="margin-top:6px">
             ${v.options.map((o, i) => `
               <div class="priv-row">
@@ -107,10 +140,7 @@ const level4ai = {
                 </label>
               </div>`).join('')}
           </div>
-          <div class="btn-row" style="margin-top:14px">
-            <button class="btn btn-p" id="l4a-save">Save</button>
-          </div>
-
+          ${footer}
         </div>`);
 
       document.getElementById("l4a-save").onclick = () => {
@@ -121,16 +151,32 @@ const level4ai = {
         if (ok) {
           wins++;
           round++;
+          attempts = 0;
           if (round >= VARIANTS.length) {
             setTimeout(finish, 1200);
           } else {
             setTimeout(show, 600);
           }
         } else {
-          fail("That wasn't the real opt-out — lost a heart.");
+          attempts++;
+          fail("Not the real opt-out. The reshuffled wording is built to make similar-sounding options hard to tell apart.");
           setTimeout(show, 1900);
         }
       };
+
+      const skipBtn = document.getElementById("l4a-skip");
+      if (skipBtn) {
+        skipBtn.onclick = () => {
+          round++;
+          attempts = 0;
+          fail("Not the real opt-out. The reshuffled wording is built to make similar-sounding options hard to tell apart.");
+          if (round >= VARIANTS.length) {
+            setTimeout(finish, 1900);
+          } else {
+            setTimeout(show, 1900);
+          }
+        };
+      }
     };
 
     show();

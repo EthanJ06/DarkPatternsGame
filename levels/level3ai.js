@@ -88,7 +88,6 @@ const level3ai = {
   render(el) {
     let round = 0;
     let roundFails = 0;
-    const MAX_FAILS = 2;
 
     const productHtml = (p, reviews) => {
       const avg = (reviews.reduce((a, r) => a + r.stars, 0) / reviews.length).toFixed(1);
@@ -132,7 +131,7 @@ el.insertAdjacentHTML('beforeend', `
     <span style="font-size:12px;color:#888;">Round ${round + 1} of ${ROUNDS.length}</span>
     <div style="display:flex;gap:5px;align-items:center;">
       ${ROUNDS.map((_, i) => `<div style="width:20px;height:4px;border-radius:2px;background:${i <= round ? '#534AB7' : '#ddd'};"></div>`).join('')}
-      <span id="l3ai-mistakes" style="font-size:12px;color:${roundFails === MAX_FAILS - 1 ? "#d93025" : "#888"};margin-left:8px;">${MAX_FAILS - roundFails} mistake${MAX_FAILS - roundFails === 1 ? "" : "s"} left</span>
+      <span id="l3ai-mistakes" style="font-size:12px;color:#888;margin-left:8px;">${roundFails > 0 ? `${roundFails} mistake${roundFails === 1 ? "" : "s"} this round` : ""}</span>
     </div>
   </div>
   <div style="flex:1;min-height:0;overflow-y:auto;display:flex;flex-direction:column;gap:0">
@@ -179,41 +178,34 @@ el.insertAdjacentHTML('beforeend', `
             showRound();
           }
         } else {
-          reviews.forEach((r, i) => {
-            const item = document.getElementById("rev" + i);
-            if (!item) return;
-            if (selected.has(i) && !r.ai) {
-              item.style.borderColor = "#d93025";
-              item.style.background = "#fff0f0";
-            } else if (!selected.has(i) && r.ai) {
-              item.style.borderColor = "#f29900";
-              item.style.background = "#fffbe6";
-            }
-          });
-
           roundFails++;
+          const showHighlight = roundFails >= 2;
+
+          if (showHighlight) {
+            reviews.forEach((r, i) => {
+              const item = document.getElementById("rev" + i);
+              if (!item) return;
+              if (selected.has(i) && !r.ai) {
+                item.style.borderColor = "#d93025";
+                item.style.background = "#fff0f0";
+              } else if (!selected.has(i) && r.ai) {
+                item.style.borderColor = "#f29900";
+                item.style.background = "#fffbe6";
+              }
+            });
+          }
 
           const mistakesEl = document.getElementById("l3ai-mistakes");
           if (mistakesEl) {
-            const remaining = MAX_FAILS - roundFails;
-            mistakesEl.textContent = `${remaining} mistake${remaining === 1 ? '' : 's'} left`;
-            mistakesEl.style.color = remaining <= 1 ? "#d93025" : "#888";
+            mistakesEl.textContent = `${roundFails} mistake${roundFails === 1 ? "" : "s"} this round`;
+            mistakesEl.style.color = "#d93025";
           }
 
-          if (roundFails >= MAX_FAILS) {
-            fail("You flagged too many real reviews as fake — the level ends here.");
-            setTimeout(() => {
-              succeed();
-              setLevelGrade(levelIdx, "F");
-            }, 1900);
-          } else {
-            const remaining = MAX_FAILS - roundFails;
-            const msg = [...selected].some(i => !reviews[i].ai)
-              ? "You flagged a real review as AI."
-              : "You missed an AI-generated review.";
-            fail(`${msg} ${remaining} mistake${remaining === 1 ? '' : 's'} left.`);
-            setTimeout(showRound, 1800);
-          }
+          const msg = [...selected].some(i => !reviews[i].ai)
+            ? "You flagged a real review as AI."
+            : "You missed an AI-generated review.";
+          fail(showHighlight ? `${msg} Look at the highlighted reviews.` : `${msg} Try again.`);
+          setTimeout(showRound, 1800);
         }
       };
     };

@@ -100,17 +100,18 @@
     <div class="hud">
       <div style="display:flex;align-items:center;gap:9px;flex-wrap:wrap">
         <span class="hud-lvl" id="h-lvl">Level 1 of 10</span>
-        <span style="font-size:13px;color:var(--fa-muted);font-style:italic" id="h-goal"></span>
+        <button class="gbtn gbtn-info" id="h-info-btn" style="font-size:13px;padding:5px 12px;font-weight:600;letter-spacing:.3px" onclick="G.toggleInfo()">ⓘ Info</button>
       </div>
       <div style="display:flex;align-items:center;gap:8px">
         <span class="streak-pill" id="h-streak" style="display:none"></span>
-        <div class="hearts" id="h-hearts"></div>
         <div class="score-pill">Score: <span id="h-score">0</span></div>
         <button class="gbtn gbtn-ghost" id="h-hint-btn" style="display:none" onclick="G.showHint()">💡 Hint</button>
-        <div class="cost-pill" id="h-cost" style="display:none">$0 extracted</div>
       </div>
     </div>
-    <div class="xp-track"><div class="xp-fill" id="xp-fill" style="width:0%"></div></div>
+    <div id="h-info-bar" style="display:none;background:var(--bg2);border-bottom:1px solid var(--border);padding:8px 16px;font-size:13px;color:var(--text2);gap:16px;flex-wrap:wrap;align-items:center">
+      <span id="h-goal"></span>
+      <span id="h-pattern" style="opacity:.7"></span>
+    </div>
     <div class="fake-app" id="lc"></div>
     <div class="dots" id="dots-l"></div>
   </div>
@@ -291,22 +292,6 @@
 </div>
 
 </div>
-
-  <!-- GAME OVER -->
-  <div class="gameover-overlay" id="scr-gameover" style="display:none">
-    <div class="gameover-panel">
-      <div style="font-size:36px">💔</div>
-      <div style="font-size:26px;font-weight:500;color:var(--text)">Game Over</div>
-      <div style="font-size:15px;color:var(--text2);line-height:1.6">The dark patterns got you. Here's how each level went:</div>
-      <div id="go-breakdown" style="width:100%;background:var(--bg3);border-radius:10px;padding:16px;border:1px solid var(--border);display:flex;flex-direction:column;gap:10px;text-align:left"></div>
-      <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center">
-        <button class="gbtn gbtn-green" onclick="G.tryAgain()">Try Again</button>
-        <button class="gbtn gbtn-dark"  onclick="G.continueAfterFail()">Continue anyway →</button>
-      </div>
-      <div style="font-size:13px;color:var(--text3)">Continuing resets your hearts but keeps your progress.</div>
-    </div>
-  </div>
-
   <!-- DESIGNER FINISH OVERLAY -->
   <div class="gameover-overlay" id="designer-finish" style="display:none" onclick="closeDesignerFinishOnBackdrop(event)">
     <div class="gameover-panel">

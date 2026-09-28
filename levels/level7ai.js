@@ -8,7 +8,8 @@ const STYLES = `
   .l7ai-nav{background:#232f3e;padding:13px 18px;display:flex;align-items:center;gap:14px;flex-shrink:0}
   .l7ai-logo{color:#fff;font-size:21px;font-weight:700;letter-spacing:-.5px;white-space:nowrap;flex-shrink:0}
   .l7ai-logo span{color:#9b93f0}
-  .l7ai-cartbtn{position:relative;background:#37475a;border:none;height:44px;padding:0 16px;border-radius:9px;display:flex;align-items:center;gap:8px;color:#fff;font-size:16px;font-family:inherit;flex-shrink:0;white-space:nowrap;margin-left:auto}
+  .l7ai-cartbtn{position:relative;background:#37475a;border:none;height:44px;padding:0 16px;border-radius:9px;display:flex;align-items:center;gap:8px;color:#fff;font-size:16px;font-family:inherit;flex-shrink:0;white-space:nowrap;margin-left:auto;cursor:pointer !important}
+  .l7ai-cartbtn:hover{background:#485769}
   .l7ai-cartbadge{position:absolute;top:-8px;right:-8px;background:#9b93f0;color:#111;font-size:12px;font-weight:700;border-radius:50%;min-width:21px;height:21px;display:flex;align-items:center;justify-content:center;padding:0 3px;box-shadow:0 0 0 2px #232f3e}
   .l7ai-subnav{background:#37475a;padding:8px 18px;display:flex;gap:20px;overflow-x:auto;flex-shrink:0}
   .l7ai-snitem{color:#fff;font-size:15px;white-space:nowrap;opacity:.7;padding-bottom:6px}
@@ -129,8 +130,7 @@ const level7ai = {
       },
     ];
 
-    const MAX_FAILS = 2;
-    let fails = 0;
+    let cartItems = [];
     let cartCount = 0;
     let dealSecsLeft = 133;
     let dealInterval = null;
@@ -220,7 +220,7 @@ const level7ai = {
         <div class="l7ai-wrap" style="flex:1;min-height:0;border-radius:inherit;overflow:hidden">
           <div class="l7ai-nav">
             <div class="l7ai-logo">Quick<span>Cart</span></div>
-            <button class="l7ai-cartbtn">🛒 Cart<span class="l7ai-cartbadge" id="l7ai-cartbadge" style="display:none">0</span></button>
+            <button class="l7ai-cartbtn" style="cursor:pointer">🛒 Cart<span class="l7ai-cartbadge" id="l7ai-cartbadge" style="display:none">0</span></button>
           </div>
           <div class="l7ai-subnav">
             <span class="l7ai-snitem">Home</span>
@@ -242,33 +242,92 @@ const level7ai = {
       document.querySelectorAll('.l7ai-atc').forEach(btn => {
         btn.onclick = () => {
           const key = btn.dataset.key;
+          const offer = OFFERS.find(o => o.key === key);
+          if (!offer || cartItems.find(i => i.key === key)) return;
+          cartItems.push(offer);
           btn.textContent = '✓ Added';
           btn.classList.add('added');
           btn.disabled = true;
           cartCount++;
           const badge = document.getElementById('l7ai-cartbadge');
           if (badge) { badge.style.display = 'flex'; badge.textContent = cartCount; }
-
-          fails++;
-          if (fails >= MAX_FAILS) {
-            clearDealTimer();
-            fail('Two personalized offers got you — the model knows your history.');
-            document.querySelectorAll('.l7ai-atc').forEach(b => b.disabled = true);
-            setTimeout(finish, 1900);
-          } else {
-            fail('Added it — lost a heart. Your order history just got more to work with.');
-          }
+          fail('A personalized offer got through — the model uses your history to make each pitch harder to resist.');
         };
       });
 
+      document.querySelector('.l7ai-cartbtn').onclick = showCart;
       document.getElementById('l7ai-continue-shopping').onclick = finish;
 
       startDealTimer();
     };
 
+    const updateCartBadge = () => {
+      const badge = document.getElementById('l7ai-cartbadge');
+      if (badge) {
+        badge.textContent = cartItems.length;
+        badge.style.display = cartItems.length > 0 ? 'flex' : 'none';
+      }
+    };
+
+    const showCart = () => {
+      clearDealTimer();
+      const total = cartItems.reduce((a, i) => a + i.price, 0);
+      el.innerHTML = '';
+      el.insertAdjacentHTML('beforeend', `
+        <div style="padding:18px;display:flex;flex-direction:column;gap:14px;background:#fff;min-height:300px">
+          <button class="btn" id="l7ai-back" style="align-self:flex-start">← Back</button>
+          <div style="font-size:18px;font-weight:600;color:#111;border-bottom:1px solid #e8e8e4;padding-bottom:12px">Your Cart (${cartItems.length} item${cartItems.length !== 1 ? 's' : ''})</div>
+          <div id="l7ai-cart-items">
+            ${cartItems.length === 0
+              ? '<div style="text-align:center;color:#aaa;padding:28px">Your cart is empty.</div>'
+              : cartItems.map(item => `
+                <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:0.5px solid #e8e8e4;gap:10px">
+                  <span style="flex:1;color:#111;font-size:14px">${item.name}</span>
+                  <span style="font-weight:600;font-size:14px;flex-shrink:0">$${item.price.toFixed(2)}</span>
+                  <button class="l7ai-cremove" data-key="${item.key}" style="background:none;border:none;color:#0C447C;font-size:13px;cursor:pointer;padding:4px 7px">Remove</button>
+                </div>`).join('')}
+          </div>
+          ${cartItems.length > 0 ? `
+            <div style="display:flex;justify-content:space-between;font-size:16px;font-weight:600;padding-top:12px;border-top:1px solid #ccc">
+              <span>Total</span><span>$${total.toFixed(2)}</span>
+            </div>
+            <button class="btn btn-ai" id="l7ai-place" style="padding:14px;font-size:16px;font-weight:500;border-radius:9px">Place order →</button>` : ''}
+        </div>`);
+
+      document.getElementById('l7ai-back').onclick = () => {
+        showStore();
+        // Restore added state for items already in cart
+        cartItems.forEach(item => {
+          const btn = document.querySelector(`.l7ai-atc[data-key="${item.key}"]`);
+          if (btn) { btn.textContent = '✓ Added'; btn.classList.add('added'); btn.disabled = true; }
+        });
+        updateCartBadge();
+      };
+      document.querySelectorAll('.l7ai-cremove').forEach(b => {
+        b.onclick = () => {
+          const key = b.dataset.key;
+          cartItems = cartItems.filter(i => i.key !== key);
+          updateCartBadge();
+          showCart();
+        };
+      });
+      const placeBtn = document.getElementById('l7ai-place');
+      if (placeBtn) placeBtn.onclick = () => {
+        if (cartItems.length > 0) {
+          fail('You added personalized offers to your order — the AI upsell worked.');
+          cartItems = [];
+          updateCartBadge();
+        }
+        finish();
+      };
+    };
+
     const finish = () => {
       clearDealTimer();
-      if (fails > 0) setLevelGrade(levelIdx, fails >= MAX_FAILS ? 'F' : 'B');
+      if (cartItems.length > 0) {
+        fail('You still have personalized offers in your cart — remove them before continuing.');
+        return;
+      }
       succeed();
     };
 

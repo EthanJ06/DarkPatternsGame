@@ -116,16 +116,16 @@ function bgStop() {
 // js/achievements.js — Achievement definitions and unlock logic
 
 const ACHIEVEMENTS = [
-  { id: 'first_blood',   icon: '🩸', name: 'First Blood',    desc: 'Lost your first heart.' },
-  { id: 'untouchable',   icon: '🛡️', name: 'Untouchable',    desc: 'Completed the game without losing a single heart.' },
+  { id: 'perfect',       icon: '⭐', name: 'Perfect Run',    desc: 'Got 100% on every level in a single run.' },
+  { id: 'first_try',     icon: '🎯', name: 'First Try',      desc: 'Completed any level on the first attempt.' },
   { id: 'speed_reader',  icon: '⚡', name: 'Speed Reader',   desc: 'Cleared Level 4 with more than 15 seconds remaining.' },
   { id: 'bot_whisperer', icon: '🤖', name: 'Bot Whisperer',  desc: 'Cleared Level 1 AI in the minimum number of messages.' },
   { id: 'sharp_eye',     icon: '👁️', name: 'Sharp Eye',      desc: 'Spotted the AI-generated review on the first try.' },
-  { id: 'streak_3',      icon: '🔥', name: 'On Fire',        desc: 'Cleared 3 levels in a row with no damage.' },
-  { id: 'all_s',         icon: '⭐', name: 'Perfect Run',    desc: 'S-ranked every level in a single run.' },
+  { id: 'streak_3',      icon: '🔥', name: 'On Fire',        desc: 'Cleared 3 levels in a row on the first attempt.' },
   { id: 'hard_clear',    icon: '💀', name: 'They Know',      desc: 'Completed the game in hard mode.' },
   { id: 'caught_fakeout',icon: '🎭', name: 'Fool Me Once',   desc: 'Spotted the dark pattern on the win screen.' },
   { id: 'no_hints',      icon: '🧠', name: 'No Hints',       desc: 'Completed the game without ever using a hint.' },
+  { id: 'resilient',     icon: '💪', name: 'Resilient',      desc: 'Completed every level despite getting it wrong at least once.' },
 ];
 
 /** Render achievement list into a container element */
@@ -741,35 +741,32 @@ window.closeDesignerFinishOnBackdrop = closeDesignerFinishOnBackdrop;
 // js/game.js — Core game state and engine (no UI imports — avoids circular deps)
 
 // ── State ──────────────────────────────────────────────────────────────────
-let hearts      = 5;
-let score       = 0;
-let streak      = 0;
-let levelIdx    = 0;
-let hardMode    = false;
-let hasWon      = false;
-let xp          = 0;
-let manipCost   = 0;
-let levelGrades = [];
-let achUnlocked = new Set();
-let hintState   = {};
-let lostHeart   = false;
-let hoverTimers = {};
+let score         = 0;
+let streak        = 0;
+let levelIdx      = 0;
+let hardMode      = false;
+let hasWon        = false;
+let xp            = 0;
+let manipCost     = 0;
+let levelScores   = [];   // per-level percentage scores (0-100)
+let achUnlocked   = new Set();
+let hintState     = {};
+let levelAttempts = 0;    // how many times the player has failed this level
+let hoverTimers   = {};
 
 // Setters used by level files and ui.js
-function setHearts(v)        { hearts        = v; }
-function setScore(v)         { score         = v; }
-function setStreak(v)        { streak        = v; }
-function setLevelIdx(v)      { levelIdx      = v; }
-function setLostHeart(v)     { lostHeart     = v; }
-function setManipCost(v)     { manipCost     = v; }
-function setLevelGrade(i, g) { levelGrades[i] = g; }
-function addAch(id)          { achUnlocked.add(id); }
-function setHintState(obj)   { Object.assign(hintState, obj); }
-function resetHintState()    { hintState = {}; }
+function setScore(v)          { score         = v; }
+function setStreak(v)         { streak        = v; }
+function setLevelIdx(v)       { levelIdx      = v; }
+function setManipCost(v)      { manipCost     = v; }
+function setLevelScore(i, v)  { levelScores[i] = v; }
+function addAch(id)           { achUnlocked.add(id); }
+function setHintState(obj)    { Object.assign(hintState, obj); }
+function resetHintState()     { hintState = {}; }
+function getLevelAttempts()   { return levelAttempts; }
 
 // ── UI callbacks (set by ui.js to avoid circular imports) ─────────────────
 let _ui = {
-  renderHearts:  () => {},
   renderScore:   () => {},
   renderStreak:  () => {},
   renderDots:    () => {},
@@ -791,9 +788,6 @@ function setScr(name) {
     const el = document.getElementById('scr-' + s);
     if (el) el.classList.toggle('active', s === name);
   });
-  //Close game over screen whenever user navigates to another screen
-  const go = document.getElementById('scr-gameover');
-  if (go && hearts > 0) go.style.display = 'none';
 }
 
 // ── Brief ──────────────────────────────────────────────────────────────────
@@ -839,22 +833,26 @@ function getExampleImages(lv) {
 // ── Level ──────────────────────────────────────────────────────────────────
 function showLevel() {
   setScr('level');
-  lostHeart   = false;
-  hoverTimers = {};
+  levelAttempts = 0;
+  hoverTimers   = {};
   resetHintState();
 
   const hintBtn = document.getElementById('h-hint-btn');
   if (hintBtn) {
     hintBtn.disabled      = false;
     hintBtn.textContent   = '💡 Hint';
-    hintBtn.style.display = 'none';
+    hintBtn.style.display = '';
   }
 
   const lv = LEVELS[levelIdx];
   document.getElementById('h-lvl').innerHTML =
     `Level ${levelIdx + 1} of ${LEVELS.length}` +
     (hardMode ? ' <span class="hard-badge">HARD</span>' : '');
-  document.getElementById('h-goal').textContent = 'Goal: ' + lv.goal;
+  document.getElementById('h-goal').textContent    = 'Goal: ' + lv.goal;
+  const patEl = document.getElementById('h-pattern');
+  if (patEl) patEl.textContent = 'Pattern: ' + lv.pattern;
+  const infoBar = document.getElementById('h-info-bar');
+  if (infoBar) infoBar.style.display = 'none'; // collapsed by default
 
   const lc = document.getElementById('lc');
   lc.removeAttribute('style');
@@ -868,7 +866,6 @@ function showLevel() {
 
   lv.render(lc);
 
-  _ui.renderHearts();
   _ui.renderScore();
   _ui.renderStreak();
   _ui.renderDots('dots-l');
@@ -908,25 +905,21 @@ function showHint() {
 function succeed() {
   document.getElementById('hint-bubble')?.remove();
   streak++;
-  const pts   = lostHeart ? 80 : 100;
-  const bonus = streak >= 3 ? 20 : 0;
-  score += pts + bonus;
-  _ui.popScore(pts + bonus);
 
-  let grade;
-  if (!lostHeart && streak >= 3) grade = 'S';
-  else if (!lostHeart)           grade = 'A';
-  else if (hearts >= 3)          grade = 'B';
-  else if (hearts >= 1)          grade = 'C';
-  else                           grade = 'F';
-  levelGrades[levelIdx] = grade;
+  // Score based on attempt count: 100% first try, 60% second, 25% third+
+  const pct = levelAttempts === 0 ? 100 : levelAttempts === 1 ? 60 : levelAttempts === 2 ? 25 : 0;
+  const bonus = (levelAttempts === 0 && streak >= 3) ? 20 : 0;
+  const pts = Math.round(pct + bonus);
+  score += pts;
+  levelScores[levelIdx] = pct;
+  _ui.popScore(pts);
 
-  levelClear(grade);
+  levelClear(pct);
 
   const lc = document.getElementById('lc');
   if (lc) { lc.classList.add('flash-green'); setTimeout(() => lc.classList.remove('flash-green'), 500); }
 
-  if (!lostHeart) _ui.spawnConfetti();
+  if (levelAttempts === 0) _ui.spawnConfetti();
   checkAchievements();
   _ui.showDebrief(true);
 }
@@ -934,39 +927,12 @@ function succeed() {
 // ── Fail ───────────────────────────────────────────────────────────────────
 function fail(msg) {
   document.getElementById('hint-bubble')?.remove();
-  const wasNew = !lostHeart;
-  if (!lostHeart) {
-    hearts = Math.max(0, hearts - 1);
-    lostHeart = true;
-
-    if (hearts === 0) {
-      _ui.renderHearts(true);
-      setTimeout(() => showGameOver(), 1200);
-      return;
-    }
-  }
+  levelAttempts++;
   streak = 0;
-
-  // If this isn't the first fail this level, just show damage message
-  if (!wasNew) {
-    const d = document.createElement('div');
-    d.className   = 'damage-msg';
-    d.textContent = msg || 'Caught!';
-    placeOverlay(d, 'top');
-    setTimeout(() => d.remove(), 1900);
-    return;
-  }
 
   const hintBtn = document.getElementById('h-hint-btn');
   if (hintBtn) hintBtn.style.display = '';
 
-  if (wasNew && LEVELS[levelIdx]?.dollars?.amount > 0) {
-    const lv  = LEVELS[levelIdx];
-    const hit = lv.dollars.period === 'month' ? lv.dollars.amount * 12 : lv.dollars.amount;
-    manipCost += hit;
-  }
-
-  _ui.renderHearts(wasNew);
   _ui.renderScore();
   _ui.renderStreak();
   caught();
@@ -979,9 +945,9 @@ function fail(msg) {
 
   const d = document.createElement('div');
   d.className   = 'damage-msg';
-  d.textContent = msg || 'Caught! You lost a heart.';
+  d.textContent = (msg || 'Not quite!');
   placeOverlay(d, 'top');
-  setTimeout(() => d.remove(), 1900);
+  setTimeout(() => d.remove(), 3800);
 
   if (hintState.text && !document.getElementById('hint-bubble')) {
     const h = document.createElement('div');
@@ -1046,54 +1012,38 @@ function next() {
 }
 
 function jumpTo(idx) {
-  hearts = 5; score = 0; streak = 0; levelIdx = idx;
-  hoverTimers = {};
+  score         = 0;
+  streak        = 0;
+  levelIdx      = idx;
+  levelAttempts = 0;
+  levelScores   = [];
+  hoverTimers   = {};
   showBrief();
 }
 
 // ── Game Over ──────────────────────────────────────────────────────────────
-function showGameOver() {
-  const overlay = document.getElementById('scr-gameover');
-  if (!overlay) return;
-  overlay.style.display = 'flex';
-  overlay.style.zIndex  = '200';
-  const el = document.getElementById('go-breakdown');
-  if (!el) return;
-  el.innerHTML = LEVELS.map((lv, i) => {
-    const grade = levelGrades[i];
-    const done  = i < levelIdx;
-    const isCur = i === levelIdx;
-    const color = (!done && !isCur) ? 'var(--text3)' : (grade === 'S' || grade === 'A') ? 'var(--green)' : 'var(--red)';
-    return `
-      <div style="display:flex;justify-content:space-between;align-items:center;font-size:12px;padding:4px 0;border-bottom:1px solid var(--border)">
-        <span style="color:var(--text2)">${lv.title} — ${lv.pattern}</span>
-        <span style="color:${color};font-weight:500">${isCur ? '✗ failed here' : done ? (grade || '—') : 'not reached'}</span>
-      </div>`;
-  }).join('');
-}
 
 // ── Achievements ───────────────────────────────────────────────────────────
 function checkAchievements() {
-  if (lostHeart && !achUnlocked.has('first_blood'))   achUnlocked.add('first_blood');
-  if (hearts === 5 && levelIdx === LEVELS.length - 1) achUnlocked.add('untouchable');
-  if (streak >= 3)                                     achUnlocked.add('streak_3');
-  if (hardMode && levelIdx === LEVELS.length - 1)     achUnlocked.add('hard_clear');
-  if (levelGrades.length === LEVELS.length && levelGrades.every(g => g === 'S')) achUnlocked.add('all_s');
-  if (levelIdx === LEVELS.length - 1 && !hintState.used) achUnlocked.add('no_hints');
+  if (levelAttempts === 0)                                                          achUnlocked.add('first_try');
+  if (streak >= 3)                                                                  achUnlocked.add('streak_3');
+  if (hardMode && levelIdx === LEVELS.length - 1)                                  achUnlocked.add('hard_clear');
+  if (levelScores.length === LEVELS.length && levelScores.every(s => s === 100))   achUnlocked.add('perfect');
+  if (levelIdx === LEVELS.length - 1 && !hintState.used)                           achUnlocked.add('no_hints');
+  if (levelIdx === LEVELS.length - 1 && levelScores.every(s => s !== undefined) && levelScores.some(s => s < 100)) achUnlocked.add('resilient');
 }
 
 // ── Start / Restart ────────────────────────────────────────────────────────
 function start(hard = false) {
-  hardMode    = !!hard;
-  hearts      = 5;
-  score       = 0;
-  streak      = 0;
-  levelIdx    = 0;
-  hoverTimers = {};
-  xp          = 0;
-  manipCost   = 0;
-  levelGrades = [];
-  achUnlocked = new Set();
+  hardMode      = !!hard;
+  score         = 0;
+  streak        = 0;
+  levelIdx      = 0;
+  hoverTimers   = {};
+  xp            = 0;
+  manipCost     = 0;
+  levelScores   = [];
+  achUnlocked   = new Set();
   showBrief();
 }
 
@@ -1113,21 +1063,13 @@ const G = {
   succeed,
   fail,
   showHint,
+  showLevel,
+  getLevelAttempts,
   beginLevel: () => showLevel(),
   setScr,
-  tryAgain() {
-    const go = document.getElementById('scr-gameover');
-    if (go) go.style.display = 'none';
-    hearts = 5; score = 0; streak = 0; levelIdx = 0;
-    lostHeart = false; levelGrades = []; achUnlocked = new Set();
-    showBrief();
-  },
-  continueAfterFail() {
-    const go = document.getElementById('scr-gameover');
-    if (go) go.style.display = 'none';
-    hearts    = 3;
-    lostHeart = false;
-    showBrief();
+  toggleInfo() {
+    const bar = document.getElementById('h-info-bar');
+    if (bar) bar.style.display = bar.style.display === 'none' ? 'flex' : 'none';
   },
 };
 
@@ -1137,18 +1079,6 @@ const G = {
 // Registers itself with game.js via registerUI() to avoid circular imports.
 
 // ── HUD ────────────────────────────────────────────────────────────────────
-function renderHearts(animate = false) {
-  const el = document.getElementById('h-hearts');
-  if (!el) return;
-  el.innerHTML = Array.from({ length: 5 }, (_, i) =>
-    `<div class="heart${i >= hearts ? ' lost' : ''}" id="heart-${i}"></div>`
-  ).join('');
-  if (animate && hearts >= 0) {
-    const h = document.getElementById(`heart-${hearts}`);
-    if (h) h.style.animation = 'heartbreak 0.5s ease forwards';
-  }
-}
-
 function renderScore() {
   document.getElementById('h-score').textContent = score;
   const maxXP = 1260;
@@ -1205,21 +1135,28 @@ function showDebrief(won) {
   const glossaryEntry = findGlossaryEntry(lv.pattern);
   document.getElementById('db-desc').textContent = glossaryEntry ? glossaryEntry.desc : lv.desc;
 
-  const grade      = levelGrades[levelIdx] || '—';
-  const gradeEl    = document.getElementById('db-grade');
-  const gradeColors = { S: '#1a1a1a', A: '#27500A', B: '#854F0B', C: '#7A3300', F: '#A32D2D' };
-  const gradeBg     = { S: '#f5f5f2', A: '#EAF3DE', B: '#FAEEDA', C: '#FDE8D8', F: '#FCEBEB' };
+  const pct     = levelScores[levelIdx] ?? 0;
+  const gradeEl = document.getElementById('db-grade');
+  const pctColor = pct === 100 ? '#27500A' : pct >= 60 ? '#854F0B' : '#A32D2D';
+  const pctBg    = pct === 100 ? '#EAF3DE' : pct >= 60 ? '#FAEEDA' : '#FCEBEB';
   if (gradeEl) {
-    gradeEl.textContent      = grade;
-    gradeEl.style.background = gradeBg[grade]    || '#f5f5f2';
-    gradeEl.style.color      = gradeColors[grade] || '#111';
+    gradeEl.textContent      = pct + '%';
+    gradeEl.style.background = pctBg;
+    gradeEl.style.color      = pctColor;
   }
 
   const dr = document.getElementById('db-result');
-  if (won && !lostHeart) {
-    dr.innerHTML = `<div class="db-result good">Clean dodge — +100 pts${streak >= 3 ? ' + streak bonus!' : ''}</div>`;
-  } else if (won) {
-    dr.innerHTML = `<div class="db-result ok">Cleared with damage — +80 pts</div>`;
+  if (won) {
+    const attempts = levelAttempts;
+    if (attempts === 0) {
+      dr.innerHTML = `<div class="db-result good">First try — 100%${streak >= 3 ? ' + streak bonus!' : ''}</div>`;
+    } else if (attempts === 1) {
+      dr.innerHTML = `<div class="db-result ok">Got it on the second try — 60%</div>`;
+    } else if (attempts === 2) {
+      dr.innerHTML = `<div class="db-result ok">Completed after 3 attempts — 25%</div>`;
+    } else {
+      dr.innerHTML = `<div class="db-result ok">Completed after ${attempts + 1} attempts — 0%</div>`;
+    }
   } else {
     dr.innerHTML = '';
   }
@@ -1298,31 +1235,43 @@ function showWin() {
   document.getElementById('win-fakeout').style.display = 'flex';
   document.getElementById('win-real').style.display    = 'none';
 
+  const avgScore = levelScores.length
+    ? Math.round(levelScores.reduce((a, b) => a + b, 0) / levelScores.length)
+    : 0;
+
   let title, sub;
-  if (hearts === 5 && score >= 900) {
+  if (avgScore === 100) {
     title = 'Perfect run.';
-    sub   = 'You dodged every pattern without taking damage. You are genuinely hard to manipulate.';
-  } else if (hearts >= 3) {
+    sub   = 'First try on every level. You are genuinely hard to manipulate.';
+  } else if (avgScore >= 75) {
     title = 'Sharp-eyed.';
-    sub   = 'You caught most of the tricks. A few got through — see the receipt below.';
-  } else if (hearts >= 1) {
+    sub   = 'You caught most of the tricks. A few got through — see your scorecard below.';
+  } else if (avgScore >= 50) {
     title = 'Roughed up but out.';
-    sub   = 'The dark patterns took a toll. Review the receipt — you may be more susceptible than you think.';
+    sub   = 'The dark patterns took a toll. Review the scorecard — you may be more susceptible than you think.';
   } else {
-    title = 'Fully opted in.';
-    sub   = 'You lost all your hearts. The good news: now you know exactly how it happened.';
+    title = 'The patterns got you.';
+    sub   = 'Now you know exactly how it happened. Use the scorecard below to review what tripped you up.';
   }
 
   document.getElementById('win-title').textContent = title;
   document.getElementById('win-sub').textContent   = sub;
 
-  const maxScore = LEVELS.length * 100 + 60;
+  const scorecard = LEVELS.map((lv, i) => {
+    const pct = levelScores[i] ?? 0;
+    const color = pct === 100 ? '#27500A' : pct >= 60 ? '#854F0B' : '#A32D2D';
+    const bg    = pct === 100 ? '#EAF3DE' : pct >= 60 ? '#FAEEDA' : '#FCEBEB';
+    const label = pct === 100 ? '✓ First try' : pct === 60 ? 'Second try' : pct === 25 ? 'Third try+' : '—';
+    return `
+      <div class="receipt-row" style="align-items:center">
+        <span style="color:var(--text2);font-size:13px">${lv.title} — ${lv.pattern}</span>
+        <span style="background:${bg};color:${color};padding:3px 10px;border-radius:20px;font-size:13px;font-weight:600;white-space:nowrap">${pct}% <span style="font-weight:400;font-size:11px">${label}</span></span>
+      </div>`;
+  }).join('');
+
   document.getElementById('win-receipt').innerHTML = `
-    <div class="receipt-row"><span>Final score</span><span>${score} / ${maxScore}</span></div>
-    <div class="receipt-row"><span>Hearts remaining</span><span>${hearts} / 5</span></div>
-    <div class="receipt-row"><span>Levels cleared</span><span>${LEVELS.length} / ${LEVELS.length}</span></div>
-    <div class="receipt-row"><span>Best streak</span><span>${streak} clean</span></div>
-    <div class="receipt-total"><span>Resistance rating</span><span>${rating()}</span></div>`;
+    ${scorecard}
+    <div class="receipt-total"><span>Overall score</span><span>${avgScore}%</span></div>`;
 
   let countdown = 30;
   const foTimer = setInterval(() => {
@@ -1370,10 +1319,13 @@ function revealRealWin() {
 }
 
 function rating() {
-  if (score >= 900 && hearts === 5) return 'Untouchable';
-  if (score >= 750)                  return 'Sharp-eyed';
-  if (score >= 500)                  return 'Aware';
-  if (score >= 300)                  return 'Vulnerable';
+  const avg = levelScores.length
+    ? Math.round(levelScores.reduce((a, b) => a + b, 0) / levelScores.length)
+    : 0;
+  if (avg === 100) return 'Untouchable';
+  if (avg >= 75)   return 'Sharp-eyed';
+  if (avg >= 50)   return 'Aware';
+  if (avg >= 25)   return 'Vulnerable';
   return 'Opted in';
 }
 
@@ -1417,7 +1369,7 @@ function spawnConfetti() {
 }
 
 // ── Register with game.js (breaks the circular dependency) ─────────────────
-registerUI({ renderHearts, renderScore, renderStreak, renderDots, popScore, spawnConfetti, showDebrief, showWin });
+registerUI({ renderScore, renderStreak, renderDots, popScore, spawnConfetti, showDebrief, showWin });
 
 // ======== levels ========
 import level1    from './levels/level1.js';
@@ -1448,7 +1400,7 @@ window.addAch          = addAch;
 window.tick            = tick;
 window.almostGotYou   = almostGotYou;
 window.trackHover     = trackHover;
-window.setLevelGrade  = setLevelGrade;
+window.setLevelScore  = setLevelScore;
 Object.defineProperty(window, 'levelIdx', { get: () => levelIdx });
 window.Glossary = {
   show: showGlossary,

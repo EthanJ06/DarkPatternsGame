@@ -154,7 +154,7 @@ const level1 = {
         </div>
         <div class="btn-row">
           <button class="btn" id="l1-cancel">Cancel subscription</button>
-          <button class="btn btn-p" onclick="G.fail('You kept the plan — lost a heart.')">Keep plan</button>
+          <button class="btn btn-p" onclick="G.fail('That keep-plan button is placed to interrupt you before you even reach the real cancel flow.');if(G.getLevelAttempts()>=2){const b=document.getElementById('l1-cancel');if(b)b.style.cssText+='outline:3px solid #27500A;background:#EAF3DE;color:#27500A'}">Keep plan</button>
         </div>`,
 
       () => card.innerHTML = `
@@ -173,7 +173,7 @@ const level1 = {
         </div>
         <div class="btn-row">
           <button class="btn" id="l1-no">No, cancel</button>
-          <button class="btn btn-p" onclick="G.fail('You paused instead of cancelling — your subscription continues. Lost a heart.')">Pause for free</button>
+          <button class="btn btn-p" onclick="G.fail('Pausing is not cancelling — the charges keep going while it looks like you handled it.');if(G.getLevelAttempts()>=2){const b=document.getElementById('l1-no');if(b)b.style.cssText+='outline:3px solid #27500A;background:#EAF3DE;color:#27500A'}">Pause for free</button>
         </div>`,
 
       () => card.innerHTML = `
@@ -211,7 +211,7 @@ const level1 = {
         </div>
         <div class="btn-row">
           <button class="btn" id="l1-offer">No thanks, cancel</button>
-          <button class="btn btn-p" onclick="G.fail('You accepted the offer — subscription continues at $4.99/mo. Lost a heart.')">Accept offer</button>
+          <button class="btn btn-p" onclick="G.fail('Taking the discount keeps you subscribed — that is exactly what a retention offer is built to do.');if(G.getLevelAttempts()>=2){const b=document.getElementById('l1-offer');if(b)b.style.cssText+='outline:3px solid #27500A;background:#EAF3DE;color:#27500A'}">Accept offer</button>
         </div>`,
 
       () => card.innerHTML = `

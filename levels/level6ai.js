@@ -207,12 +207,12 @@ const level6ai = {
               <span style="color:#534AB7;font-weight:500;flex-shrink:0">3.</span>
               Apply <strong>${validCouponObj.code}</strong>
             </div>
-          </div>
+          <div style="display:flex;gap:10px">
+          <button class="btn" id="l6ai-restart" style="font-size:15px;padding:13px">Try again</button>
         </div>
-        <button class="btn btn-p" id="l6ai-continue" style="font-size:15px;padding:13px">Continue →</button>
       </div>
     `);
-    document.getElementById("l6ai-continue").onclick = () => G.next();
+    document.getElementById("l6ai-restart").onclick = () => G.showLevel();
   }, 1800);
 };
 
@@ -307,7 +307,7 @@ const level6ai = {
 
         if (!penalized) {
           penalized = true;
-          G.fail(`${offer.code} inflated your bill by $${final - subtotal}. Lost a heart.`);
+          G.fail(`${offer.code} raised your total by $${final - subtotal} before the discount was even applied. The "savings" were calculated on an inflated price.`);
         }
 
         const revertBtn = document.createElement("button");
@@ -403,7 +403,7 @@ const level6ai = {
           if (isValid) {
             applyRealCode(c);
           } else {
-            if (!penalized) { penalized = true; G.fail(`${c.code} doesn't apply to your booking — lost a heart.`); }
+            if (!penalized) { penalized = true; G.fail(`${c.code} doesn't apply to your booking. Every option is written to sound plausible until you check the conditions.`); }
             const msgEl = document.getElementById("l6ai-apply-msg");
             if (msgEl) msgEl.innerHTML = `<span style="color:#A32D2D;font-size:11px">${c.code} doesn't apply. Check the conditions.</span>`;
           }

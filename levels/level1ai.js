@@ -135,7 +135,7 @@ const level1ai = {
             penalized = true;
             setTimeout(() => {
               addChat(false, "It looks like your cancellation request may have been resolved. Is there anything else I can help you with?");
-              G.fail("You went off-topic twice — the bot assumed you moved on. Lost a heart. Stay focused on cancelling.");
+              G.fail("The bot reads silence on cancellation as you dropping the request — staying on-message is the only way through");
               // Show hint
               const lc = document.getElementById("lc");
               if (lc) {

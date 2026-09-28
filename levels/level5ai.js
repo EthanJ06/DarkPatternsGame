@@ -200,7 +200,7 @@ const level5ai = {
           }, 1900);
           return;
         }
-        fail("AI upsell worked — lost a heart. Resist the next one!");
+        fail("Two personalized upsells got through. Repeated, tailored exposure is exactly what the targeting is optimized for.");
         // Disable buttons to prevent double-clicks during the brief pause
         document.getElementById("l5ai-add").disabled  = true;
         document.getElementById("l5ai-skip").disabled = true;

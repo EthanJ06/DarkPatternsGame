@@ -116,7 +116,7 @@ const level2 = {
       document.getElementById("l2-round").textContent   = `Round ${r + 1} of ${rounds.length}`;
 
       document.getElementById("l2-yes").onclick = () => {
-        fail("You opted in! Lost a heart.");
+        fail("Clicking yes is exactly what the shame-worded decline button was designed to push you toward.");
         setTimeout(update, 1600);
       };
       
