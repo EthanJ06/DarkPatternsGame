@@ -205,7 +205,7 @@ el.insertAdjacentHTML('beforeend', `
             ? "You flagged a real review as AI."
             : "You missed an AI-generated review.";
           fail(showHighlight ? `${msg} Look at the highlighted reviews.` : `${msg} Try again.`);
-          setTimeout(showRound, 1800);
+          setTimeout(showRound, 3500);
         }
       };
     };

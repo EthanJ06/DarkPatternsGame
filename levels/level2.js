@@ -116,7 +116,10 @@ const level2 = {
       document.getElementById("l2-round").textContent   = `Round ${r + 1} of ${rounds.length}`;
 
       document.getElementById("l2-yes").onclick = () => {
-        fail("Clicking yes is exactly what the shame-worded decline button was designed to push you toward.");
+        const msg = rounds[r].no.toLowerCase().includes("hate") || rounds[r].no.toLowerCase().includes("dark") || rounds[r].no.toLowerCase().includes("wellbeing") || rounds[r].no.toLowerCase().includes("overpaying")
+          ? "You opted in — that's what the shame-worded 'no' button was designed to make you do."
+          : "You opted in — the offer was framed to make saying no feel wrong.";
+        fail(msg);
         setTimeout(update, 1600);
       };
       

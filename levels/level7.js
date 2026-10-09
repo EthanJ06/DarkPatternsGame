@@ -707,7 +707,7 @@ const level7 = {
       const onlyBackpack = cart.length === 1 && hasBackpack;
 
       if (!hasBackpack) {
-        G.fail("Your cart doesn't have the backpack in it!");
+        G.fail("Your cart doesn't have the Adventure Backpack — 40L in it. Search for \"backpack\" and scroll to the bottom of the results to find it.");
         setTimeout(renderCart, 1700);
         return;
       }

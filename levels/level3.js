@@ -150,7 +150,7 @@ const level3 = {
             ? "You included a sponsored result."
             : "You missed a real result.";
           fail(showHighlight ? `${msg} Look at the highlighted results.` : `${msg} Try again.`);
-          setTimeout(showRound, 1800);
+          setTimeout(showRound, showHighlight ? 3500 : 1800);
         }
       };
     };
