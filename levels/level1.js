@@ -22,12 +22,12 @@ const level1 = {
     link: "https://www.deceptive.design/brands/new-york-times",
   },
   replay: [
-    { trap: false, note: "Sign-up is reduced to one or two clicks — deliberately asymmetric with how cancellation is designed." },
-    { trap: true,  note: "A \"pause\" or \"downgrade\" option is surfaced as a friendly alternative before the actual cancel path is reachable, breaking your momentum." },
+    { trap: false, note: "Sign up is made easy -- just one or two clicks. Cancelling, on the other hand, is not." },
+    { trap: true,  note: "A \"pause\" or \"downgrade\" option is offered as an alternative, so that you lose the momentum to actually cancel." },
     { trap: true,  note: "A mandatory feedback survey delays the cancellation and doubles as data collection for retention scripts." },
-    { trap: true,  note: "A discount or \"special offer\" only appears once you've committed to leaving — a last-ditch retention loop." },
-    { trap: true,  note: "Cancellation requires phone or live chat during limited hours instead of a same-page button, adding wait time as friction." },
-    { trap: false, note: "A vague confirmation (\"allow 5–7 business days\") creates doubt about whether it actually worked, prompting some people to re-subscribe just in case." },
+    { trap: true,  note: "A discount or \"special offer\" only appears once you've committed to leaving — a last-ditch retention effort." },
+    { trap: true,  note: " Cancellation requires phone or live chat during limited hours instead of a same-page button, adding wait time to delay or dissuade cancellation." },
+    { trap: false, note: "A vague confirmation (\"allow 5-7 business days\") may let another billing cycle slip through. It also creates uncertainty as to whether the cancellation went through, and some people neglect to follow up." },
   ],
 
   render(el) {
@@ -224,14 +224,33 @@ const level1 = {
           </div>
         </div>
         <div class="reason-card" style="padding:10px 12px">
-          ${['How satisfied were you?', 'How easy was it to use?', 'Likelihood to return?', 'Would you recommend us?', 'Did you use mobile?', 'How did you find us?']
+          ${['How satisfied were you?', 'How easy was it to use?', 'Likelihood to return?', 'Would you recommend us?']
           .map((q, i) => `
-              <div style="padding:10px 0;${i < 5 ? 'border-bottom:1px solid #f0f0ee' : ''}">
+              <div style="padding:10px 0;border-bottom:1px solid #f0f0ee">
                 <div class="fs" style="color:#333">${i + 1}. ${q}</div>
                 <div class="star-row" style="display:flex;gap:6px;margin-top:6px">
                   ${"12345".split("").map((_, si) => `<span class="star" data-i="${si}" style="font-size:18px;cursor:pointer">★</span>`).join("")}
                 </div>
               </div>`).join('')}
+          <div style="padding:10px 0;border-bottom:1px solid #f0f0ee">
+            <div class="fs" style="color:#333">5. Did you use mobile?</div>
+            <div style="display:flex;gap:8px;margin-top:8px">
+              <button class="yn-btn" id="yn-yes" data-val="yes" style="padding:7px 20px;border-radius:7px;border:1.5px solid #ddd;background:#fff;font-size:13px;cursor:pointer;transition:background .12s,border-color .12s">Yes</button>
+              <button class="yn-btn" id="yn-no"  data-val="no"  style="padding:7px 20px;border-radius:7px;border:1.5px solid #ddd;background:#fff;font-size:13px;cursor:pointer;transition:background .12s,border-color .12s">No</button>
+            </div>
+          </div>
+          <div style="padding:10px 0">
+            <div class="fs" style="color:#333">6. How did you find us?</div>
+            <select id="found-us" style="margin-top:8px;width:100%;padding:8px 10px;border-radius:7px;border:1.5px solid #ddd;background:#fff;font-size:13px;color:#333;appearance:auto">
+              <option value="">— Select an option —</option>
+              <option>Social media</option>
+              <option>Friend or colleague referral</option>
+              <option>Online ad</option>
+              <option>App store</option>
+              <option>Blog or review site</option>
+              <option>Other</option>
+            </select>
+          </div>
         </div>
         <div class="btn-row">
           <button class="btn" id="l1-done">Submit & cancel</button>
@@ -275,7 +294,10 @@ const level1 = {
         const allRated = Array.from(document.querySelectorAll(".star-row")).every(row =>
           row.querySelector(".star.selected")
         );
-        if (!allRated) {
+        const mobileAnswered = document.querySelector(".yn-btn.selected");
+        const foundUs = document.getElementById("found-us");
+        const foundUsAnswered = foundUs && foundUs.value !== "";
+        if (!allRated || !mobileAnswered || !foundUsAnswered) {
           almostGotYou(el, "You must answer all questions before submitting.");
           return;
         }
@@ -288,6 +310,21 @@ const level1 = {
           row.querySelectorAll(".star").forEach((s, i) => {
             s.classList.toggle("selected", i <= parseInt(star.dataset.i));
           });
+        };
+      });
+
+      document.querySelectorAll(".yn-btn").forEach(btn => {
+        btn.onclick = () => {
+          document.querySelectorAll(".yn-btn").forEach(b => {
+            b.classList.remove("selected");
+            b.style.background = "#fff";
+            b.style.borderColor = "#ddd";
+            b.style.color = "#333";
+          });
+          btn.classList.add("selected");
+          btn.style.background = "#111";
+          btn.style.borderColor = "#111";
+          btn.style.color = "#fff";
         };
       });
     };

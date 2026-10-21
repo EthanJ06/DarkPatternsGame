@@ -19,12 +19,12 @@ const level1ai = {
   },
   aiWhy: "AI makes the Roach Motel tireless. A human retention agent can only work a shift — an AI runs 24/7, never gets frustrated, and can be A/B tested to find the deflection script that works best on each personality type. At scale, a 1% improvement in deflection rate can mean millions in retained revenue.",
   replay: [
-    { trap: false, note: "A friendly greeting builds rapport with the bot before you have even stated your intent to cancel." },
-    { trap: true,  note: "Repeating your request in different words triggers a \"verification\" step, adding friction even to an already-logged-in account." },
-    { trap: true,  note: "The bot cites your account tenure or usage history to make a personalized-sounding emotional appeal against leaving." },
-    { trap: true,  note: "A \"transfer to retention team\" message resets the conversation rather than actually escalating it." },
-    { trap: true,  note: "A claimed \"lost session\" forces you to restate your request, exhausting patience rather than technical failure." },
-    { trap: true,  note: "A manufactured obstacle — an unpaid invoice, a pending review — is raised right as cancellation nears completion." },
+    { trap: false, note: "A greeting builds rapport with the bot." },
+    { trap: true,  note: "Extra \"verification\" steps, such as re-entering a password or confirming your identity, before letting you cancel, even if you’re already logged in, adds difficulty that makes giving up more likely." },
+    { trap: true,  note: "The bot cites your account tenure or usage history to make a personalized emotional appeal against leaving." },
+    { trap: true,  note: "A \"transfer to retention team\" message resets the conversation rather than escalating it." },
+    { trap: true,  note: "A claimed \"lost session\" forces you to restate your request, exhausting patience." },
+    { trap: true,  note: "A manufactured obstacle, such as an unpaid invoice or a pending review, is raised right as cancellation nears completion for further delay or dissuade cancellation." },
   ],
 
   render(el) {
@@ -109,6 +109,7 @@ const level1ai = {
         // Too short — bot doesn't understand
         if (normalized.split(" ").length < 3) {
           addChat(false, confused[ci++ % confused.length]);
+          addChat(false, "💡 Tip: Try typing a full sentence — short messages confuse me.");
           lastMessage = normalized;
           return;
         }
@@ -135,7 +136,7 @@ const level1ai = {
             penalized = true;
             setTimeout(() => {
               addChat(false, "It looks like your cancellation request may have been resolved. Is there anything else I can help you with?");
-              G.fail("The bot reads silence on cancellation as you dropping the request — staying on-message is the only way through");
+              G.fail("You went off-topic twice — the bot assumed you moved on. Lost a heart. Stay focused on cancelling.");
               // Show hint
               const lc = document.getElementById("lc");
               if (lc) {

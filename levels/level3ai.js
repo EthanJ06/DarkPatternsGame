@@ -79,15 +79,14 @@ const level3ai = {
   },
   aiWhy: "Old fake reviews were obvious: five stars, no detail, broken English. AI-generated reviews mimic the statistical distribution of real reviews — including 3-star \"balanced\" ones that feel authentic. They reference plausible use cases, mention realistic friction, and use names from the target demographic. The only real tell is a certain over-smoothness in the prose.",
   replay: [
-    { trap: false, note: "Real reviews include specific, idiosyncratic detail — individual preferences, unusual use cases, actual friction encountered." },
-    { trap: true,  note: "AI reviews open with demographic framing: \"As a busy parent,\" \"As a fitness enthusiast\" — a targeting label, not a person speaking naturally." },
+    { trap: false, note: "Real reviews include specific details, including individual preferences, unusual use cases and drawbacks encountered with the products." },
+    { trap: true,  note: "AI reviews often open with demographic framing: \"As a busy parent,\" \"As a fitness enthusiast,\" but don't reflect a person speaking naturally." },
     { trap: true,  note: "Generic superlatives (\"life-changing\", \"worth every penny\", \"game changer\") with no specific feature mentioned are a strong AI signal." },
-    { trap: false, note: "The real tell is an over-smoothness in the prose — no hesitation or specificity, praise that could apply to any product in the category." },
+    { trap: false, note: "AI reviews often employ an over-smoothness in the prose, with no hesitation or specificity -- praise that could apply to any product in the category." },
   ],
 
   render(el) {
     let round = 0;
-    let roundFails = 0;
 
     const productHtml = (p, reviews) => {
       const avg = (reviews.reduce((a, r) => a + r.stars, 0) / reviews.length).toFixed(1);
@@ -131,7 +130,7 @@ el.insertAdjacentHTML('beforeend', `
     <span style="font-size:12px;color:#888;">Round ${round + 1} of ${ROUNDS.length}</span>
     <div style="display:flex;gap:5px;align-items:center;">
       ${ROUNDS.map((_, i) => `<div style="width:20px;height:4px;border-radius:2px;background:${i <= round ? '#534AB7' : '#ddd'};"></div>`).join('')}
-      <span id="l3ai-mistakes" style="font-size:12px;color:#888;margin-left:8px;">${roundFails > 0 ? `${roundFails} mistake${roundFails === 1 ? "" : "s"} this round` : ""}</span>
+      <span style="font-size:12px;color:#888;margin-left:8px;">Round ${round + 1} of ${ROUNDS.length}</span>
     </div>
   </div>
   <div style="flex:1;min-height:0;overflow-y:auto;display:flex;flex-direction:column;gap:0">
@@ -178,34 +177,23 @@ el.insertAdjacentHTML('beforeend', `
             showRound();
           }
         } else {
-          roundFails++;
-          const showHighlight = roundFails >= 2;
-
-          if (showHighlight) {
-            reviews.forEach((r, i) => {
-              const item = document.getElementById("rev" + i);
-              if (!item) return;
-              if (selected.has(i) && !r.ai) {
-                item.style.borderColor = "#d93025";
-                item.style.background = "#fff0f0";
-              } else if (!selected.has(i) && r.ai) {
-                item.style.borderColor = "#f29900";
-                item.style.background = "#fffbe6";
-              }
-            });
-          }
-
-          const mistakesEl = document.getElementById("l3ai-mistakes");
-          if (mistakesEl) {
-            mistakesEl.textContent = `${roundFails} mistake${roundFails === 1 ? "" : "s"} this round`;
-            mistakesEl.style.color = "#d93025";
-          }
+          reviews.forEach((r, i) => {
+            const item = document.getElementById("rev" + i);
+            if (!item) return;
+            if (selected.has(i) && !r.ai) {
+              item.style.borderColor = "#d93025";
+              item.style.background = "#fff0f0";
+            } else if (!selected.has(i) && r.ai) {
+              item.style.borderColor = "#f29900";
+              item.style.background = "#fffbe6";
+            }
+          });
 
           const msg = [...selected].some(i => !reviews[i].ai)
             ? "You flagged a real review as AI."
             : "You missed an AI-generated review.";
-          fail(showHighlight ? `${msg} Look at the highlighted reviews.` : `${msg} Try again.`);
-          setTimeout(showRound, 3500);
+          fail(msg + " Try again.");
+          setTimeout(showRound, 1800);
         }
       };
     };
