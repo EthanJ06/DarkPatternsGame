@@ -151,13 +151,13 @@ const GLOSSARY = [
   {
     name: "Roach Motel",
     ai: false,
-    desc: "Easy to get in, impossible to get out. Sign-up is made to be seamless; cancellation however, is buried and gated behind surveys, and wrapped in fake offers.",
+    desc: "Easy to get in, impossible to get out. Sign-up is one or two clicks; cancellation is buried behind surveys, detours, and fake retention offers.",
     coined: "Named by Harry Brignull, 2010. Based on the ad slogan \"You can check in, but you can't check out.\""
   },
   {
     name: "Confirmshaming",
     ai: false,
-    desc: "The decline option is worded or phrased as a self-inflicted insult. You are not declining an offer, rather you are confessing to having a character flaw.",
+    desc: "The decline option is worded as a self-inflicted insult. You're not declining an offer. You're confessing to a character flaw.",
     coined: "Coined by Nathaniel Read, 2014."
   },
   {
@@ -169,7 +169,7 @@ const GLOSSARY = [
   {
     name: "Trick Questions",
     ai: false,
-    desc: "Double negatives, confusing phrasing, and time pressure all work together to make users \"consent\" to things they never actually intended. The wording is designed to be misread.",
+    desc: "Double negatives, confusing phrasing, and time pressure push users into consenting to things they never intended. The wording is built to be misread.",
     coined: "Part of Harry Brignull's original 2010 taxonomy."
   },
   {
@@ -187,49 +187,49 @@ const GLOSSARY = [
   {
     name: "Fake Scarcity / Urgency",
     ai: false,
-    desc: "Countdown timers, fake stock warnings, and fabricated social proof (like \"847 people viewing\") are all designed to trigger loss aversion and panic-buying. Almost none of the scarcity is actually real: the timer resets, the stock number never changes, and the viewer count is just randomly generated.",
+    desc: "Countdown timers, fake stock warnings, and fabricated social proof (\"847 people viewing\") trigger loss aversion and panic-buying. Almost none of it is real: the timer resets, the stock number never changes, and the viewer count is randomly generated.",
     coined: "Part of Harry Brignull's original 2010 taxonomy. Booking.com was fined by the UK CMA in 2019 for fabricated scarcity messaging."
   },
   {
     name: "AI Roach Motel",
     ai: true,
-    desc: "A chatbot that endlessly deflects questions, forgets context, misunderstands requests, and manufactures obstacles. Tactics intentionally implemented into the AI designed to exhaust you into staying subscribed.",
-    coined: "An AI-amplified version of Roach Motel. AI makes deflection scalable and tireless."
+    desc: "A chatbot that deflects, forgets context, misunderstands requests, and manufactures obstacles, by design. The goal is to exhaust you into staying subscribed.",
+    coined: "An AI-amplified version of Roach Motel. A human retention agent works a shift; an AI runs all day."
   },
   {
     name: "AI Confirmshaming",
     ai: true,
-    desc: "Behavioral analysis generates copy tailored to shame you according to your psychology profile, unlike regular confirmshaming it is not generic guilt, but something that feels disturbingly personal and eerily specific to you.",
+    desc: "Behavioral analysis generates shame copy matched to your inferred psychology. Unlike generic confirmshaming, it doesn't say \"I hate saving money.\" It says whatever your profile suggests will land hardest.",
     coined: "An AI-amplified version of Confirmshaming. Personalization makes shame more effective."
   },
   {
     name: "AI Synthetic Social Proof",
     ai: true,
-    desc: "AI-generated reviews, ratings, and testimonials that sound statistically plausible, but are entirely fabricated. Unlike older fake reviews, these are tuned specifically to sound credible, making them a lot harder to spot.",
+    desc: "AI-generated reviews that are statistically plausible but entirely fabricated. Unlike older fake reviews, they include hedged praise, balanced star ratings, and realistic names, the same distribution a real review set would have.",
     coined: "An AI-era evolution. The FTC began pursuing enforcement in 2023–2024."
   },
   {
     name: "AI A/B Gaslighting",
     ai: true,
-    desc: "Unlike regular Trick Questions, this version of the consent interface actually \"A/B tests\" itself in real time. Every time you get close to opting out, it reshuffles the wording and calls it \"personalization.\" It is not.",
+    desc: "The consent interface A/B tests itself in real time. Every time you get close to opting out, the wording reshuffles. Real consent management platforms do this and call it \"personalization.\"",
     coined: "An AI-amplified version of Trick Questions. Real consent management platforms have begun using variant testing on consent UI."
   },
   {
     name: "AI Hyper-Personalized Upsell",
     ai: true,
-    desc: "Unlike regular Sneak into Basket, a pseudo-AI \"predicts\" exactly what you're likely to buy based on your \"profile.\" In reality it's just basic heuristics dressed up in algorithmic confidence, designed to make declining feel irrational.",
+    desc: "A pseudo-AI \"predicts\" what you'll want and attaches a confidence score to each recommendation. The score is fabricated. It exists to make declining feel like arguing with data rather than just saying no.",
     coined: "An AI-amplified version of Sneak into Basket. Dynamic personalization increases conversion rates by 20–30% according to industry research."
   },
   {
     name: "AI Obstruction",
     ai: true,
-    desc: "Unlike regular Obstruction, this is an AI assistant that sounds like it's finding you real savings, but every code it recommends secretly upgrades your order first, so the \"discount\" still leaves you paying more than you started with.",
-    coined: "An AI-amplified version of Obstruction. The discount is real; as well as the inflated price it's applied to."
+    desc: "An AI assistant that sounds like it's finding you savings, but every code it recommends secretly upgrades your order first. The discount is real. So is the inflated price it's applied to.",
+    coined: "An AI-amplified version of Obstruction. The final total is always higher than what you started with."
   },
   {
     name: "AI Personalized Scarcity",
     ai: true,
-    desc: "Unlike regular Fake Scarcity, this pulls real items from your order history and attaches a manufactured stock countdown to each one — \"NexusAI flagged your iPad purchase\" borrows the credibility of something true to sell a shortage that isn't.",
+    desc: "Real items from your order history get a manufactured stock countdown attached. \"NexusAI flagged your iPad purchase\" borrows the credibility of something true to sell a shortage that isn't.",
     coined: "An AI-amplified version of Fake Scarcity / Urgency. The purchase history is real; the urgency attached to it is not."
   },
 ];
@@ -289,24 +289,24 @@ const PATTERN_INFO_CONTENT = {
   "Roach Motel": {
     why: "Subscription businesses run on recurring revenue, so every cancellation means a loss in customer lifetime value, where retention gets treated as a core metric. Adobe, for instance, receives roughly 97% of its revenue from subscriptions, and is one of the reasons why regulators believe similar companies have a strong incentive to bury the cancellation button. Even a small amount of added friction is enough to convert some fraction of would-be leavers into users who simply give up.",
     flags: [
-      "The cancel button is hard to find — buried in settings, behind a support ticket, or reachable only by phone.",
+      "The cancel button is hard to find, buried in settings, behind a support ticket, or reachable only by phone.",
       "Cancelling takes noticeably more steps than signing up did.",
       "You're shown a retention offer or a \"pause instead\" alternative before you're allowed to actually cancel.",
       "A survey or feedback form is required before the cancellation will go through.",
-      "There's no online cancel option — you're told to call in, then put on hold or transferred.",
+      "There's no online cancel option. You're told to call in, then put on hold or transferred.",
       "You receive a vague \"processing\" message with no immediate confirmation, leaving you unsure whether it actually worked.",
     ],
     moreExamples: [
-      { company: "The New York Times", detail: "Sign-up takes a few clicks, but cancelling requires chatting with a \"Customer Care Advocate\" during limited hours or calling in — no online cancel button. A 2020 class-action suit and years of public complaints called it \"exceedingly difficult.\"", images: ["l1-a.png", "l1-b.png"], caption: "Left: the one-click subscribe offer. Right: the cancellation page, which routes you to a phone call or a chat window instead of a cancel button.", link: "https://www.deceptive.design/brands/new-york-times" },
-      { company: "Zoom", detail: "Uses obstruction and misdirection in its subscription cancellation journey — burying the cancel path behind extra steps and steering attention toward staying subscribed rather than a clear exit.", images: ["l1-c.png", "l1-d.png"], caption: "Left: the cancel confirmation, with \"Accept\" (switch to a pricier plan) styled as the prominent choice over \"Cancel Subscription.\" Right: a follow-up discount offer shown before cancellation completes." },
+      { company: "The New York Times", detail: "Sign-up takes a few clicks, but cancelling requires chatting with a \"Customer Care Advocate\" during limited hours or calling in. No online cancel button. A 2020 class-action suit and years of public complaints called it \"exceedingly difficult.\"", images: ["l1-a.png", "l1-b.png"], caption: "Left: the one-click subscribe offer. Right: the cancellation page, which routes you to a phone call or a chat window instead of a cancel button.", link: "https://www.deceptive.design/brands/new-york-times" },
+      { company: "Zoom", detail: "Uses obstruction and misdirection in its subscription cancellation journey, burying the cancel path behind extra steps and steering attention toward staying subscribed rather than a clear exit.", images: ["l1-c.png", "l1-d.png"], caption: "Left: the cancel confirmation, with \"Accept\" (switch to a pricier plan) styled as the prominent choice over \"Cancel Subscription.\" Right: a follow-up discount offer shown before cancellation completes." },
     ],
   },
   "AI Roach Motel": {
-    why: "Following the same business model of retention, but with the implementation of AI to remove human limits. A support representative can only work a shift; a chatbot runs continuously and never gets tired of repeating the same deflection lines. Customer support platforms are now selling \"deflection rate\" and \"save rate\" as genuine product metrics: how many cancellation requests never reach a human, and how many of those people get talked out of leaving.",
+    why: "Same business model as Roach Motel, but AI removes the human limits on it. A support representative works a shift; a chatbot runs continuously without flagging or repeating itself. Customer support platforms now sell \"deflection rate\" and \"save rate\" as product metrics: how many cancellation requests never reach a human, and how many of those people are talked out of leaving.",
     flags: [
       "The bot keeps redirecting you toward \"helping\" with something else instead of processing the cancellation.",
       "It claims to have \"lost your session\" or asks you to repeat information you already gave it.",
-      "It raises a manufactured obstacle — an \"unpaid balance\" or \"pending review\" — that conveniently blocks cancellation.",
+      "It raises a manufactured obstacle, an \"unpaid balance\" or \"pending review,\" that conveniently blocks cancellation.",
       "It offers a discount or pause option that references your account history to sound personalized.",
       "After enough back-and-forth, it declares your request \"resolved\" without ever confirming that's the outcome you wanted.",
       "There's no visible way to reach a human once the bot starts deflecting.",
@@ -318,16 +318,16 @@ const PATTERN_INFO_CONTENT = {
       "The decline button is worded as a self-directed insult rather than a neutral \"No thanks.\"",
       "The accept option uses warm, affirming language while the decline option relies on guilt or mockery.",
       "The decline text names a consequence you never said you wanted (\"I enjoy overpaying\", \"I'd rather stay in the dark\").",
-      "The two buttons carry noticeably different visual weight — one large and colorful, the other small, grey, or a plain text link.",
+      "The two buttons carry noticeably different visual weight: one large and colorful, the other small, grey, or a plain text link.",
       "The shame becomes more pointed the longer a multi-step flow continues.",
     ],
     moreExamples: [
       { company: "MyMedic", detail: "Used popup confirmshaming with options like \"No, I'd rather bleed to death\" to sell first-aid products. Widely cited as one of the most egregious examples.", images: ["l2-a.png", "l2-b.png"], link: "https://deceptive.design/types/confirmshaming/" },
-      { company: "American Airlines & IndiGo", detail: "Both airlines have been separately flagged for confirmshaming users into travel insurance during checkout — framing the decline option so skipping the add-on reads as a careless decision rather than a neutral one.", images: [{ file: "l2-c.png", fit: "contain" }], link: "https://deceptive.design/articles/indigo-manipulating-emotions-of-users-when-booking-flights-to-opt-for-travel-insurance/?q=confirmshaminhttps://deceptive.design/articles/american-airlines-confirmshaming-users-into-buying-flight-insurance?q=confirmshamin" },
+      { company: "American Airlines & IndiGo", detail: "Both airlines have been separately flagged for confirmshaming users into travel insurance during checkout, framing the decline option so skipping the add-on reads as a careless decision rather than a neutral one.", images: [{ file: "l2-c.png", fit: "contain" }], link: "https://deceptive.design/articles/indigo-manipulating-emotions-of-users-when-booking-flights-to-opt-for-travel-insurance/?q=confirmshaminhttps://deceptive.design/articles/american-airlines-confirmshaming-users-into-buying-flight-insurance?q=confirmshamin" },
     ],
   },
   "AI Confirmshaming": {
-    why: "There are limits to generic confirmshaming, as a statement that impacts one customer can be read and glossed over by another. AI raises that ceiling by allowing companies to take advantage of your psychological profile to shame the user at a personal level, using financial shame if you're flagged \"price-sensitive,\" health shame if you're flagged \"health-focused.\" This applies the same concept that is done in Ad platforms already as they segment users for targeted ads.",
+    why: "Generic confirmshaming has a ceiling. \"I hate saving money\" lands on some people and reads as absurd to others. AI removes it by matching the shame to each user's inferred profile: financial shame for someone flagged as \"price-sensitive,\" health shame for someone flagged as \"health-focused.\" The same segmentation ad platforms have used for years, now applied to the decline button.",
     flags: [
       "A \"behavioral profile\" or confidence percentage appears before you've even seen the offer.",
       "The accept button appears first, with no visible way to decline for several seconds.",
@@ -353,29 +353,29 @@ const PATTERN_INFO_CONTENT = {
   "AI Synthetic Social Proof": {
     why: "Older fake reviews were easy to spot, with five stars, no real detail, and broken English. AI-generated reviews instead mimic the actual distribution of real ones, hedged three-star reviews included, since that kind of variation is what makes a set of reviews feel authentic. They reference plausible use cases, realistic complaints, and names drawn from the target demographic, which is why they end up being considerably harder to catch than earlier generations of fake reviews.",
     flags: [
-      "A review opens with demographic framing — \"As a busy parent of three,\" \"As a fitness enthusiast\" — a targeting label rather than a person speaking.",
+      "A review opens with demographic framing: \"As a busy parent of three,\" \"As a fitness enthusiast.\" That's a targeting label, not a person speaking.",
       "Generic superlatives (\"life-changing,\" \"game changer,\" \"worth every penny\") appear with no specific feature ever named.",
       "The prose is unusually smooth, with no hesitation, typos, or idiosyncratic detail.",
       "The praise is generic enough that it could be copy-pasted onto almost any product in the category.",
-      "Star ratings look suspiciously well distributed — a few mildly critical three-star reviews mixed among the five-star ones, mimicking authenticity.",
+      "Star ratings look suspiciously well distributed: a few mildly critical three-star reviews mixed among the five-star ones, mimicking authenticity.",
     ],
   },
   "Trick Questions": {
     why: "Consent forms are often legally required, so companies can't skip them outright, but nothing requires the wording to actually be clear. Mixing opt-in and opt-out logic within the same list, under time pressure, reliably produces enough consent \"mistakes\" in the company's favor that the confusion starts to look less like an accident and more like a deliberate design choice.",
     flags: [
-      "Checkboxes in the same form require opposite actions — checking vs. unchecking — to reach the same protective outcome.",
+      "Checkboxes in the same form require opposite actions, checking vs. unchecking, to reach the same protective outcome.",
       "A protective option starts unchecked while a data-sharing option starts pre-checked.",
       "Double negatives (\"Do not disable...\", \"uncheck to opt out\") replace a plain, direct statement.",
       "A countdown or expiring session pressures you to submit before rereading every line.",
       "The label describing a setting doesn't match what checking the box actually does.",
     ],
     moreExamples: [
-      { company: "Ryanair", detail: "Between 2010 and 2013, the airline's booking flow asked users to \"select a country of residence\" from a dropdown. Declining travel insurance meant scrolling to find a label — \"No travel insurance required\" — nonsensically placed between two unrelated countries, Latvia and Lithuania.", images: ["l4-a.png", "l4-b.png"], link: "https://deceptive.design/types/trick-wording/" },
-      { company: "Yahoo", detail: "A subscription-management screen used a button labeled \"No, cancel\" that actually meant \"cancel the cancellation\" — clicking it kept users subscribed to the exact mailing list they were trying to leave.", images: ["l4-c.png"], link: "https://deceptive.design/articles/yahoo-uses-confusing-design-to-users-into-staying-subscribed-to-their-mailing-lists/" },
+      { company: "Ryanair", detail: "Between 2010 and 2013, the airline's booking flow asked users to \"select a country of residence\" from a dropdown. Declining travel insurance meant scrolling to find a label, \"No travel insurance required,\" nonsensically placed between two unrelated countries, Latvia and Lithuania.", images: ["l4-a.png", "l4-b.png"], link: "https://deceptive.design/types/trick-wording/" },
+      { company: "Yahoo", detail: "A subscription-management screen used a button labeled \"No, cancel\" that actually meant \"cancel the cancellation.\" Clicking it kept users subscribed to the exact mailing list they were trying to leave.", images: ["l4-c.png"], link: "https://deceptive.design/articles/yahoo-uses-confusing-design-to-users-into-staying-subscribed-to-their-mailing-lists/" },
     ],
   },
   "AI A/B Gaslighting": {
-    why: "Following the same business model as regular consent forms, but with AI running the process. A/B testing consent screens isn't new — platforms including OneTrust and Quantcast have been documented running multi-variant tests on button color, wording, and layout, all optimizing for the highest \"accept\" rate. AI just accelerates the cycle from weeks to hours: it generates new phrasing, retires whatever fails to confuse enough people, and learns which version worked on you.",
+    why: "A/B testing consent screens isn't new. Platforms including OneTrust and Quantcast have been documented running multi-variant tests on button color, wording, and layout, optimizing for the highest \"accept\" rate. AI accelerates the cycle from weeks to hours: it generates new phrasing, retires whatever fails to confuse enough people, and learns which version worked on you specifically.",
     flags: [
       "The form's wording changes every time you attempt to opt out, rather than staying stable.",
       "Different variants use different sentence structures to describe what is functionally the same choice.",
@@ -395,11 +395,11 @@ const PATTERN_INFO_CONTENT = {
     ],
     moreExamples: [
       { company: "Sports Direct", detail: "Pre-added a £1 \"free\" mug and then travel insurance to customer carts. The UK Advertising Standards Authority ruled this illegal. Ryanair did the same with travel insurance for years before regulators intervened.", images: ["l5-a.png", "l5-b.png"], link: "https://www.deceptive.design/hall-of-shame" },
-      { company: "Notion", detail: "A user reported their plan was silently set to annual billing instead of monthly after they used promotional credits — without their consent — leading to an unexpected invoice for roughly $2,150 once the credits ran out.", images: [{ file: "l5-c.png", fit: "contain" }, "l5-d.png", { file: "l5-e.png", fit: "contain" }, { file: "l5-f.png", fit: "contain" }], link: "https://deceptive.design/articles/notions-subscription-plan-set-to-yearly-instead-of-monthly-without-consent-of-users/" },
+      { company: "Notion", detail: "A user reported their plan was silently set to annual billing instead of monthly after they used promotional credits, without their consent, leading to an unexpected invoice for roughly $2,150 once the credits ran out.", images: [{ file: "l5-c.png", fit: "contain" }, "l5-d.png", { file: "l5-e.png", fit: "contain" }, { file: "l5-f.png", fit: "contain" }], link: "https://deceptive.design/articles/notions-subscription-plan-set-to-yearly-instead-of-monthly-without-consent-of-users/" },
     ],
   },
   "AI Hyper-Personalized Upsell": {
-    why: "Upsells have always existed, but AI simply makes them feel inevitable. A stated \"94% match\" implies that declining is statistically unusual, which is really just a form of algorithmic social pressure. That score is often little more than a basic demographic guess dressed up in machine-learning language, so refusing ends up feeling like arguing with data rather than just making a straightforward choice.",
+    why: "Upsells have always existed. AI makes them feel inevitable. A \"94% match\" score implies declining is statistically unusual, algorithmic social pressure dressed up in machine-learning language. The score is often a basic demographic guess, but refusing still feels like arguing with data rather than just saying no.",
     flags: [
       "A stated \"match\" or confidence percentage accompanies the pitch with no visible methodology.",
       "\"Users like you\" or \"people in your profile\" implies your peer group has already agreed.",
@@ -415,16 +415,16 @@ const PATTERN_INFO_CONTENT = {
       "Mutually exclusive conditions (\"cannot be combined with,\" \"not valid for members\") are scattered across separate pages instead of shown together.",
       "A visible countdown pressures a decision before you've confirmed an option actually applies to you.",
       "Several menu paths are dead ends that exist mainly to consume time and attention.",
-      "The correct path exists, but nothing signposts it directly — it's found the same way you'd find any dead end.",
+      "The correct path exists, but nothing signposts it directly. It's found the same way you'd find any dead end.",
     ],
     moreExamples: [
       { company: "Enterprise / Hertz / Avis", detail: "Major rental companies routinely advertise discount codes with conflicting conditions and short redemption windows, knowing most customers will either pick the wrong one or give up entirely.", images: ["l6.png"], link: "https://www.deceptive.design/hall-of-shame" },
       { company: "CourseHero", detail: "The study-document platform gated access behind a \"pay or contribute\" wall, requiring either payment or ten of the user's own uploaded documents before unlocking content.", images: ["l6-b.png"],link: "https://darkpatterns.uxp2.com/pattern/coursehero-pay-or-contribute/" },
-      { company: "Moonpig", detail: "An email newsletter reportedly hid its unsubscribe link by setting the link text to black on a black background — technically present, functionally invisible without selecting the text.", images: ["l6-c.png", "l6-d.png"], link: "https://deceptive.design/articles/moonpig-email-hides-the-unsubscribe-link-using-black-text-on-a-black-background/" },
+      { company: "Moonpig", detail: "An email newsletter reportedly hid its unsubscribe link by setting the link text to black on a black background, technically present but functionally invisible without selecting the text.", images: ["l6-c.png", "l6-d.png"], link: "https://deceptive.design/articles/moonpig-email-hides-the-unsubscribe-link-using-black-text-on-a-black-background/" },
     ],
   },
   "AI Obstruction": {
-    why: "Following the same profit-driven model as regular Obstruction, but with AI running the conversation. These booking and support assistants are increasingly trained to maximize revenue per interaction rather than to minimize the customer's cost. Framing an upsell as a personalized saving, and then applying a genuine discount to an inflated price, is technically honest at each individual step, while being financially harmful overall. At scale, even a small average increase per transaction adds up considerably.",
+    why: "Booking and support assistants are increasingly trained to maximize revenue per interaction, not to minimize the customer's cost. Framing an upsell as a personalized saving, then applying a genuine discount to an inflated price, is technically honest at each step while being financially harmful overall. At scale, even a $10 average increase per booking adds up to hundreds of millions annually.",
     flags: [
       "An assistant cites specific account or order details to sound credible before making its recommendation.",
       "The \"discount\" it offers is real, but only after it has upgraded or altered your order first.",
@@ -447,11 +447,11 @@ const PATTERN_INFO_CONTENT = {
     ],
   },
   "AI Personalized Scarcity": {
-    why: "Generic scarcity works on strangers to your data; personalized scarcity works better because it opens with something true. Citing a purchase you actually made borrows the credibility of that fact for a stock or churn claim that has nothing to do with real inventory — the model doesn't know your case situation or your sock drawer, it just knows one purchase and a timer.",
+    why: "Generic scarcity works on strangers to your data; personalized scarcity works better because it opens with something true. Citing a purchase you actually made borrows the credibility of that fact for a stock or churn claim that has nothing to do with real inventory. The model doesn't know your case situation or your sock drawer, it just knows one purchase and a timer.",
     flags: [
       "An offer opens by citing a specific past purchase, then uses that purchase to justify an unrelated stock or urgency claim.",
       "A stated statistic (\"68% of buyers add this within 30 days\") describes aggregate behavior, not anything specific to you.",
-      "The stock count or countdown attached to the offer behaves exactly like ordinary fake scarcity once you look closely — it just has your order history laid over the top of it.",
+      "The stock count or countdown attached to the offer behaves exactly like ordinary fake scarcity once you look closely. It just has your order history laid over the top of it.",
       "The reasoning is built backward from something you already own rather than forward from anything you've actually asked for.",
       "The countdown auto-advances to the next offer whether or not you respond.",
     ],
@@ -614,10 +614,10 @@ const COPY_OPTS = [
 ];
 
 const VERDICTS = [
-  { min: 0,   max: 20,  text: 'Your form is clean — honest design.',                                       reg: 'No regulatory concerns.',                                                                           color: '#3B6D11' },
-  { min: 21,  max: 50,  text: 'Mildly manipulative — a few nudges that could go either way.',              reg: 'Borderline — some patterns may attract scrutiny under GDPR and FTC guidelines.',                    color: '#854F0B' },
-  { min: 51,  max: 100, text: 'Significantly manipulative — multiple dark patterns working together.',     reg: 'High risk: likely violates GDPR Art. 7 (freely given consent) and FTC deceptive practices rules.',  color: '#A32D2D' },
-  { min: 101, max: 999, text: 'Highly predatory — this is textbook dark pattern design.',                  reg: 'This would attract FTC enforcement action and EU DSA fines of up to 6% of global revenue.',         color: '#791F1F' },
+  { min: 0,   max: 20,  text: 'Your form is clean. Honest design.',                                        reg: 'No regulatory concerns.',                                                                           color: '#3B6D11' },
+  { min: 21,  max: 50,  text: 'Mildly manipulative: a few nudges that could go either way.',               reg: 'Borderline. Some patterns may attract scrutiny under GDPR and FTC guidelines.',                    color: '#854F0B' },
+  { min: 51,  max: 100, text: 'Significantly manipulative: multiple dark patterns working together.',      reg: 'High risk: likely violates GDPR Art. 7 (freely given consent) and FTC deceptive practices rules.',  color: '#A32D2D' },
+  { min: 101, max: 999, text: 'Highly predatory. This is textbook dark pattern design.',                   reg: 'This would attract FTC enforcement action and EU DSA fines of up to 6% of global revenue.',         color: '#791F1F' },
 ];
 
 function totalPts() {

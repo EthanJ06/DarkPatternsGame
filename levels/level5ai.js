@@ -26,11 +26,11 @@ const UPSELLS = [
 
 const level5ai = {
   id: "l5ai",
-  title: "Level 5 — Hyper",
+  title: "Level 5 - Hyper",
   isAI: true,
   goal: "Resist the personalized upsell",
   hints: [
-    "The confidence percentage is made up — it has no statistical basis.",
+    "The confidence percentage is made up. It has no statistical basis.",
     "Just click 'No thanks' on every recommendation. All three are upsells you don't need.",
   ],
   pattern: "AI Hyper-Personalized Upsell",
@@ -46,12 +46,12 @@ const level5ai = {
   aiWhy:
     "Upsells have always been part of shopping. The difference with AI is that they can feel personalized and unavoidable. A \"94% match\" score creates the impression that most people like you would choose this, so turning it down feels like the unusual choice.",
   replay: [
-    { trap: false, note: "\"NexusAI identified you as X\" states an inferred profile as established fact, generated from minimal signals." },
-    { trap: true,  note: "The confidence percentage (94%, 91%...) has no statistical basis. It exists to make declining feel irrational — like arguing with data." },
-    { trap: true,  note: "\"Offer expires in Xs\" is fake urgency — the offer doesn't actually expire, it just auto-advances to pressure a faster decision." },
+    { trap: true, note: "\"NexusAI identified you as X\" states an inferred profile as established fact, generated from minimal signals." },
+    { trap: true,  note: "The confidence percentage (94%, 91%...) has no statistical basis. It exists to make declining feel irrational, like arguing with data." },
+    { trap: true,  note: "\"Offer expires in Xs\" is fake urgency. The offer doesn't actually expire, it just auto-advances to pressure a faster decision." },
     { trap: true,  note: "\"Users like you bought this\" implies a peer group has already said yes, making refusal feel like an outlier decision." },
     { trap: true,  note: "\"Our model predicts you'll regret skipping this\" threatens a future self rather than describing a present benefit." },
-    { trap: false, note: "The winning move: the timer expiring costs nothing. Every offer auto-advances whether or not you act — patience beats urgency." },
+    { trap: true, note: "The winning move: the timer expiring costs nothing. Every offer auto-advances whether or not you act. Patience beats urgency." },
   ],
 
   render(el) {

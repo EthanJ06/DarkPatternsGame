@@ -4,11 +4,11 @@ const level1 = {
   isAI: false,
   goal: "Cancel your subscription",
   hints: [
-    "There's a button to cancel — but it's not the primary action on each screen.",
+    "There's a button to cancel, but it's not the primary action on each screen.",
     "Click every button that mentions 'cancel' or 'no'. Ignore offers and surveys as best you can.",
   ],
   pattern: "Roach Motel",
-  brief: "The Roach Motel is named after the ad slogan: 'You can check in, but you can't check out.' Signing up is effortless — one or two clicks. Cancelling is a maze of detours, fake offers, and exhausting surveys. The goal is to wear you down until you give up.",
+  brief: "Named after the ad slogan: 'You can check in, but you can't check out.' Signing up is one or two clicks. Cancelling is a maze of detours, fake offers, and mandatory surveys designed to exhaust you until you give up.",
   goalDetail: "You have a NebulaPro subscription. You want to cancel it. Click 'Cancel subscription' and follow the steps all the way through.",
   dollars: {
     label: "If you gave up and kept the plan",
@@ -18,16 +18,16 @@ const level1 = {
   },
   rw: {
     company: "The New York Times",
-    detail: "Sign-up takes a few clicks, but cancelling requires chatting with a \"Customer Care Advocate\" during limited hours or calling in — no online cancel button. A 2020 class-action suit and years of public complaints called it \"exceedingly difficult.\"",
+    detail: "Sign-up takes a few clicks, but cancelling requires chatting with a \"Customer Care Advocate\" during limited hours or calling in. No online cancel button. A 2020 class-action suit and years of public complaints called it \"exceedingly difficult.\"",
     link: "https://www.deceptive.design/brands/new-york-times",
   },
   replay: [
-    { trap: false, note: "Sign up is made easy -- just one or two clicks. Cancelling, on the other hand, is not." },
-    { trap: true,  note: "A \"pause\" or \"downgrade\" option is offered as an alternative, so that you lose the momentum to actually cancel." },
-    { trap: true,  note: "A mandatory feedback survey delays the cancellation and doubles as data collection for retention scripts." },
-    { trap: true,  note: "A discount or \"special offer\" only appears once you've committed to leaving — a last-ditch retention effort." },
-    { trap: true,  note: " Cancellation requires phone or live chat during limited hours instead of a same-page button, adding wait time to delay or dissuade cancellation." },
-    { trap: false, note: "A vague confirmation (\"allow 5-7 business days\") may let another billing cycle slip through. It also creates uncertainty as to whether the cancellation went through, and some people neglect to follow up." },
+    { trap: true, note: "Sign-up takes one or two clicks. Cancelling does not." },
+    { trap: true,  note: "A \"pause\" or \"downgrade\" option interrupts the cancellation flow, killing your momentum before you reach the actual exit." },
+    { trap: true,  note: "A mandatory feedback survey delays the cancellation and collects data for retention scripts at the same time." },
+    { trap: true,  note: "The discount only appears once you've committed to leaving, a retention offer triggered by intent to cancel." },
+    { trap: true,  note: "Cancellation requires phone or live chat during limited hours instead of a button on the same page, adding wait time to delay or deter." },
+    { trap: true, note: "A vague confirmation (\"allow 5-7 business days\") may let another billing cycle through. It also leaves you unsure whether the cancellation actually worked." },
   ],
 
   render(el) {

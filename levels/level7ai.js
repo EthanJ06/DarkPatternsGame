@@ -51,30 +51,30 @@ function fmt(s) {
 
 const level7ai = {
   id: 'l7ai',
-  title: 'Level 7 — Hyper',
+  title: 'Level 7 - Hyper',
   isAI: true,
   goal: 'Resist the AI-personalized scarcity offers',
   hints: [
-    "Every offer is framed around something from your order history — that's the personalization, not evidence you actually need it.",
+    "Every offer is framed around something from your order history. That's the personalization, not evidence you actually need it.",
     "Browse the 'For You' tab and click 'Continue' at the bottom without adding more than one item.",
   ],
   pattern: 'AI Personalized Scarcity',
   brief: "The same fake scarcity trick, but personalized with your own purchase history. Instead of a generic 'Only 1 left!', NexusAI names something you bought like your iPad, PS5, or shoes. This makes a fake stock shortage feel like it was made just for you.",
-  goalDetail: "NexusAI has pulled up your order history and built you a 'For You' tab of four personalized urgency offers from it. Each one names a real past purchase to justify a fake scarcity claim. Browse the page and continue without adding more than one — the countdown expiring costs you nothing.",
-  aiIntro: "Each offer opens by citing something you actually bought — that's algorithmic authority borrowed from a real purchase, applied to a stock claim that has nothing to do with real inventory.",
+  goalDetail: "NexusAI has pulled up your order history and built you a 'For You' tab of four personalized urgency offers from it. Each one names a real past purchase to justify a fake scarcity claim. Browse the page and continue without adding more than one. The countdown expiring costs you nothing.",
+  aiIntro: "Each offer opens by citing something you actually bought. That's algorithmic authority borrowed from a real purchase, applied to a stock claim that has nothing to do with real inventory.",
   dollars: {
     label: 'If you accepted all four personalized offers',
     amount: 248.96,
     period: 'one-time',
-    note: '$248.96 in accessories you were algorithmically nudged toward buying because you already owned the related item — not because you asked for them',
+    note: '$248.96 in accessories you were algorithmically nudged toward buying because you already owned the related item, not because you asked for them',
   },
-  aiWhy: "Generic scarcity ('Only 1 left!') is easy to be skeptical of because it could apply to anyone. Personalized scarcity is harder to dismiss because it opens with something true — you really did buy that iPad — and borrows the credibility of that fact for a claim that isn't true at all: that this specific accessory is running out because of your specific purchase. The model doesn't know your sock drawer, your case situation, or your controller count. It knows one purchase and a timer.",
+  aiWhy: "Generic scarcity ('Only 1 left!') is easy to be skeptical of because it could apply to anyone. Personalized scarcity is harder to dismiss because it opens with something true. You really did buy that iPad. It borrows the credibility of that fact for a claim that isn't true at all: that this specific accessory is running out because of your specific purchase. The model doesn't know your sock drawer, your case situation, or your controller count. It knows one purchase and a timer.",
   replay: [
-    { trap: false, note: "The order history shown is real — that accuracy is what lends borrowed credibility to the claims that follow it." },
+    { trap: true, note: "The order history shown is real. That accuracy is what lends borrowed credibility to the claims that follow it." },
     { trap: true,  note: "\"NexusAI flagged...\" attaches algorithmic authority to a real purchase, then uses it to justify an unrelated scarcity or claim." },
     { trap: true,  note: "Aggregate statistics about \"buyers like you\" describe a population, not a fact about your specific situation." },
-    { trap: true,  note: "Stock lines (\"Only 2 left\", \"Low stock in your size\") are fabricated as ordinary fake scarcity — personalizing doesn't make the number real." },
-    { trap: false, note: "It uses something you already own to make the offer seem relevant, instead of something you actually asked for." },
+    { trap: true,  note: "Stock lines (\"Only 2 left\", \"Low stock in your size\") are fabricated as ordinary fake scarcity. Personalizing doesn't make the number real." },
+    { trap: true, note: "It uses something you already own to make the offer seem relevant, instead of something you actually asked for." },
   ],
 
   render(el) {

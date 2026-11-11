@@ -4,17 +4,17 @@ const level6 = {
   isAI: false,
   goal: "Apply the one valid coupon before time runs out",
   hints: [
-    "Only one coupon actually applies — check the fine print carefully against your booking.",
+    "Only one coupon actually applies. Check the fine print carefully against your booking.",
     "Try Promotions & Savings → the correct submenu for your car type or membership status.",
   ],
   pattern: "Obstruction",
-  brief: "Obstruction buries your entitlements behind menus, fine print, and time pressure. Car rental companies offer dozens of codes — all mutually exclusive, most inapplicable — knowing the clock will run out before you find the right one.",
-  goalDetail: "You have 60 seconds. Navigate the menus, find the one coupon that actually applies to your booking, and apply it. All coupons are mutually exclusive — only one is valid. Wrong ones cost a heart.",
+  brief: "Obstruction buries your entitlements behind menus, fine print, and time pressure. Car rental companies offer dozens of codes, all mutually exclusive and most inapplicable, knowing the clock will run out before you find the right one.",
+  goalDetail: "You have 60 seconds. Navigate the menus, find the one coupon that actually applies to your booking, and apply it. All coupons are mutually exclusive, so only one is valid. Wrong ones cost a heart.",
   dollars: {
     label: "If you gave up and paid full price",
     amount: 0,
     period: "fixed",
-    note: "The discount you were entitled to — forfeited because the clock ran out.",
+    note: "The discount you were entitled to, forfeited because the clock ran out.",
   },
   rw: {
     company: "Enterprise / Hertz / Avis",
@@ -25,7 +25,7 @@ const level6 = {
     { trap: true,  note: "Every option claims exclusivity from all the others, so only careful reading reveals which one actually applies." },
     { trap: true,  note: "A visible countdown timer creates panic, pushing toward the first plausible option rather than verification." },
     { trap: true,  note: "Dead-end menu paths waste precious time without ever leading anywhere relevant." },
-    { trap: false, note: "The correct path is never signposted directly — it has to be found using the same menu structure as every dead end." },
+    { trap: true, note: "The correct path is never signposted directly. It has to be found using the same menu structure as every dead end." },
   ],
 
   render(el) {

@@ -31,21 +31,21 @@ const level4 = {
   isAI: false,
   goal: "Save your real privacy preferences",
   hints: [
-    "Not all boxes start in the same state — some protective options begin unchecked.",
+    "Not all boxes start in the same state. Some protective options begin unchecked.",
     "Uncheck boxes 1 and 4, check boxes 2 and 3.",
   ],
   pattern: "Trick Questions",
-  brief: "Real cookie consent forms mix opt-in and opt-out framing in the same list — so the same action (checking a box) means opposite things on different rows. Some protective options are buried unchecked. This level has clear labels, but the logic is deliberately inconsistent.",
-  goalDetail: "Set your preferences so you get no marketing, your data sharing is limited, you're opted out of targeted ads, and your experience isn't personalized for tracking purposes. Read each label carefully — not all boxes start in the same state, and checking vs unchecking means different things on different rows.",
+  brief: "Real cookie consent forms mix opt-in and opt-out framing in the same list, so the same action (checking a box) means opposite things on different rows. Some protective options are buried unchecked. This level has clear labels, but the logic is deliberately inconsistent.",
+  goalDetail: "Set your preferences so you get no marketing, your data sharing is limited, you're opted out of targeted ads, and your experience isn't personalized for tracking purposes. Read each label carefully. Not all boxes start in the same state, and checking vs unchecking means different things on different rows.",
   dollars: {
     label: "If you accidentally consented to data sharing",
     amount: 0,
     period: null,
-    note: "No direct cost — but your personal data is sold to ~200 third-party brokers at an average value of $240/year per profile.",
+    note: "No direct cost, but your personal data is sold to ~200 third-party brokers at an average value of $240/year per profile.",
   },
   rw: {
     company: "Ryanair",
-    detail: "Between 2010 and 2013, the airline's booking flow asked users to \"select a country of residence\" from a dropdown. Declining travel insurance meant scrolling to find a label — \"No travel insurance required\" — nonsensically placed between two unrelated countries, Latvia and Lithuania.",
+    detail: "Between 2010 and 2013, the airline's booking flow asked users to \"select a country of residence\" from a dropdown. Declining travel insurance meant scrolling to find a label, \"No travel insurance required,\" nonsensically placed between two unrelated countries, Latvia and Lithuania.",
     link: "https://deceptive.design/types/trick-wording/",
   },
   replay: [

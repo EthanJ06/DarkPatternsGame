@@ -217,15 +217,15 @@ const level7 = {
   id: "l7",
   title: "Level 7",
   isAI: false,
-  goal: "Buy only the Adventure Backpack — 40L",
+  goal: "Buy only the Adventure Backpack - 40L",
   hints: [
     "Search for 'backpack' using the search bar at the top to find what you need.",
-    "Several backpacks are in the results — only one is the exact target: 'Adventure Backpack — 40L'. Read titles carefully.",
+    "Several backpacks are in the results. Only one is the exact target: 'Adventure Backpack - 40L'. Read titles carefully.",
     "Add it to your cart, then open your cart from the top-right and remove anything that snuck in before placing your order.",
   ],
   pattern: "Fake Scarcity / Urgency",
-  brief: "Fake scarcity and urgency are designed to impair your decision-making with a false deadline to rush you into decisions. Countdown timers, 'Only 1 left!', and 'X people viewing' create a sense of panic that makes you act before you think. Almost none of it is real.",
-  goalDetail: "You want to buy one specific item: the Adventure Backpack — 40L. Start from the home screen and search for it. Several other backpacks are mixed into the results as decoys. Add the right one to your cart and check out with only that item.",
+  brief: "Fake scarcity and urgency manufacture a false deadline to push you into decisions before you've thought them through. Countdown timers, 'Only 1 left!', 'X people viewing': these create a sense of panic. Almost none of it is real.",
+  goalDetail: "You want to buy one specific item: the Adventure Backpack - 40L. Start from the home screen and search for it. Several other backpacks are mixed into the results as decoys. Add the right one to your cart and check out with only that item.",
   dollars: {
     label: "If every urgency signal worked on you",
     amount: 47.97,
@@ -238,13 +238,13 @@ const level7 = {
     link: "https://www.deceptive.design/hall-of-shame",
   },
   replay: [
-    { trap: true, note: "A \"Lightning Deal ends in...\" timer counts down, then resets and starts over — the deal never actually ends." },    
+    { trap: true, note: "A \"Lightning Deal ends in...\" timer counts down, then resets and starts over. The deal never actually ends." },
     { trap: true,  note: "\"Only 1 left in stock!\" is a static number that never changes regardless of cart activity." },
     { trap: true,  note: "A viewer count (\"X people viewed today\") fluctuates randomly, with no real data behind it." },
-    { trap: true,  note: "\"Items reserved for X:XX\" implies a cart will be released to someone else — nothing is actually being held." },
+    { trap: true,  note: "\"Items reserved for X:XX\" implies a cart will be released to someone else. Nothing is actually being held." },
     { trap: true,  note: "Multiple near-identical listings fill the results, making it easy to pick the wrong one while reading quickly." },
     { trap: true,  note: "A warranty or add-on item sneaks into the cart automatically once the main item is added." },
-    { trap: false, note: "The winning move: ignore every timer and counter, read titles in full, and double-check the cart before paying." },
+    { trap: true, note: "The winning move: ignore every timer and counter, read titles in full, and double-check the cart before paying." },
   ],
 
   render(el) {

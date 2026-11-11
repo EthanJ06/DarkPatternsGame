@@ -54,7 +54,7 @@ const PROFILE_MODEL = {
 
 const level2ai = {
   id: "l2ai",
-  title: "Level 2 — Hyper",
+  title: "Level 2 - Hyper",
   isAI: true,
   goal: "Decline without being profiled",
   hints: [
@@ -62,23 +62,23 @@ const level2ai = {
     "Look for the ghost/grey button on each round and click it regardless of what it says.",
   ],
   pattern: "AI Confirmshaming",
-  brief: "Same trick, but the shame is personalized. Pseudo-AI 'analyses your behavior' and generates a decline button that targets your specific psychology. Generic guilt has limits — personalized guilt doesn't.",
+  brief: "Same trick, but the shame is personalized. Pseudo-AI 'analyses your behavior' and generates a decline button targeting your specific psychology. Generic guilt has limits. Personalized guilt is harder to shrug off.",
   goalDetail: "Decline every AI-personalized offer. The shame copy will try to make you feel like the 'no' option reflects badly on you. Ignore it and click it anyway.",
-  aiIntro: "The AI has 'profiled' you and will generate shame copy tailored to your apparent personality. The profile is fake — but the discomfort is real.",
+  aiIntro: "The AI has 'profiled' you and will generate shame copy matched to your apparent personality. The profile is fabricated. The discomfort it's designed to produce is not.",
   dollars: {
     label: "If you accepted every AI-targeted offer",
     amount: 0,
     period: null,
-    note: "No direct cost — but profiling enriches your behavioral dossier, sold to data brokers and advertisers.",
+    note: "No direct cost, but profiling enriches your behavioral dossier, sold to data brokers and advertisers.",
   },
-  aiWhy: "Generic confirmshaming has a ceiling — \"I hate saving money\" works on some people and feels absurd to others. AI removes that ceiling by personalizing the shame to each user's inferred profile. Someone flagged as \"price-sensitive\" gets financial shame; someone flagged as \"health-focused\" gets health shame. The insult is customized.",
+  aiWhy: "\"I hate saving money\" works on some people and reads as absurd to others. That's the ceiling on generic confirmshaming. AI removes it by matching the shame to each user's inferred profile: financial shame for someone flagged as \"price-sensitive,\" health shame for someone flagged as \"health-focused.\" The insult is calibrated.",
   replay: [
-    { trap: false, note: "A profile banner appears immediately — algorithmic confidence stated before any choice is presented." },
-    { trap: false, note: "An analysis block shows a confidence percentage and a behavioral label, priming you before you can respond." },
-    { trap: true,  note: "The accept button appears alone at first — there is no visible way to disagree yet." },
-    { trap: true,  note: "The decline option is revealed only after a delay, by which point you have been sitting with just the accept button." },
-    { trap: true,  note: "The stated \"confidence\" percentage has no real statistical basis — it exists to make refusal feel like arguing with data." },
-    { trap: false, note: "The underlying \"profile\" is typically assigned from a handful of clicks, not deep analysis, even though it is presented as established fact." },
+    { trap: true, note: "A profile banner appears first, confidence stated before you've seen the offer." },
+    { trap: true, note: "An analysis block shows a confidence percentage and a behavioral label, priming you before you can respond." },
+    { trap: true,  note: "Only the accept button is visible at first. No way to disagree yet." },
+    { trap: true,  note: "The decline option appears after a delay, by which point you've been sitting with just the accept button." },
+    { trap: true,  note: "The confidence percentage has no statistical basis. It exists to make refusal feel like arguing with data." },
+    { trap: true, note: "The \"profile\" is typically assigned from a handful of clicks, not any real analysis, even though it's presented as fact." },
   ],
 
   render(el) {

@@ -35,30 +35,30 @@ const VARIANTS = [
 
 const level4ai = {
   id: "l4ai",
-  title: "Level 4 — Hyper",
+  title: "Level 4 - Hyper",
   isAI: true,
   goal: "Find the real opt-out",
   hints: [
-    "Two options each round are the real privacy protections. Read every label — position and starting state don't tell you anything.",
+    "Two options each round are the real privacy protections. Read every label. Position and starting state don't tell you anything.",
     "The other two are worded to sound similar but keep sharing or tracking your data. Switch those off.",
   ],
   pattern: "AI A/B Gaslighting",
-  brief: "The same trick, now with an AI twist: every time you try to opt out, the form reshuffles with new label wording — and a new position for the real opt-out. Real consent management platforms A/B test their forms this way.",
-  goalDetail: "Three rounds, one shot each — the form relabels itself, and which two options are genuinely correct moves every round. Get at least 2 of 3 right to clear the level.",
-  aiIntro: "The form reshuffles each time you get it wrong. Each round has four options, and two of them are genuine privacy protections — the other two just sound similar while leaving sharing or tracking on. Read every label; neither position nor starting state is a shortcut.",
+  brief: "The same trick, now with an AI twist: every time you try to opt out, the form reshuffles with new label wording and a new position for the real opt-out. Real consent management platforms A/B test their forms this way.",
+  goalDetail: "Three rounds, one shot each. The form relabels itself, and which two options are genuinely correct moves every round. Get at least 2 of 3 right to clear the level.",
+  aiIntro: "The form reshuffles each time you get it wrong. Each round has four options, and two of them are genuine privacy protections. The other two just sound similar while leaving sharing or tracking on. Read every label; neither position nor starting state is a shortcut.",
   dollars: {
     label: "If the reshuffling wore you down into consenting",
     amount: 0,
     period: null,
-    note: "Your data profile — now enriched with consent — is worth an estimated $240–480/year to the data brokerage ecosystem.",
+    note: "Your data profile, now enriched with consent, is worth an estimated $240-480/year to the data brokerage ecosystem.",
   },
-  aiWhy: "A/B testing consent UI has existed for years. AI accelerates the iteration cycle from weeks to hours, auto-generating new variants and retiring underperformers. Every time you \"save\" incorrect preferences, the system learns which phrasing — and which position — caught you, and serves it more often.",
+  aiWhy: "A/B testing consent UI has existed for years. AI accelerates the iteration cycle from weeks to hours, auto-generating new variants and retiring underperformers. Every time you \"save\" incorrect preferences, the system learns which phrasing and which position caught you, and serves it more often.",
   replay: [
-    { trap: true,  note: "The wording changes between versions, but the choices are basically the same. This can make it harder to understand what you're agreeing to." },
-    { trap: true,  note: "Two of the four options are genuinely correct each round, and which two moves every time, so memorizing a position or pattern stops working." },
-    { trap: true,  note: "A timer and changing wording pressures you to make a decision quickly instead of taking time to read everything." },
-    { trap: true,  note: "The choices are rearranged or worded differently, making you doubt what each option actually does." },
-    { trap: false, note: "The best approach is to read each toggle independently. Ask yourself \"What am I actually agreeing to?\" instead of trusting its position or starting state." },
+    { trap: true,  note: "The wording shifts between rounds but the underlying choices stay the same. The relabeling makes each round feel new and harder to parse." },
+    { trap: true,  note: "Which two options are correct moves every round, so position and starting state are both red herrings." },
+    { trap: true,  note: "A timer adds pressure on top of relabeled options. The combination is designed to push a guess rather than a considered read." },
+    { trap: true,  note: "Rearranging and rewording the same choices makes each option feel unfamiliar, even if you got the last round right." },
+    { trap: true, note: "The only reliable move: read each toggle independently and ask what it actually enables or prevents. Not where it sits or how it starts." },
   ],
 
   render(el) {

@@ -4,17 +4,17 @@ const level2 = {
   isAI: false,
   goal: "Decline every offer",
   hints: [
-    "You need to decline every offer — look for the smaller, greyed-out button.",
-    "The 'no' button is styled to feel bad to click. Click it anyway — it's always the right move.",
+    "You need to decline every offer. Look for the smaller, greyed-out button.",
+    "The 'no' button is styled to feel bad to click. Click it anyway. It's always the right move.",
   ],
   pattern: "Confirmshaming",
-  brief: "Confirmshaming makes the 'no' option feel like a personal failing. Instead of 'No thanks', the button says something like 'No thanks, I hate saving money.' It's designed to make declining feel embarrassing — so you click yes instead.",
-  goalDetail: "You'll be offered something in each round. Your goal is to decline every single offer. Click the 'no' button each time — but read it carefully first.",
+  brief: "Confirmshaming makes the 'no' option feel like a personal failing. Instead of 'No thanks', the button says something like 'No thanks, I hate saving money.' Declining should feel neutral. It's written to feel embarrassing instead.",
+  goalDetail: "You'll be offered something in each round. Your goal is to decline every single offer. Click the 'no' button each time, but read it carefully first.",
   dollars: {
     label: "If you opted into all four email lists",
     amount: 0,
     period: null,
-    note: "No direct cost — but your inbox and attention are the product. Your data is sold to list brokers.",
+    note: "No direct cost, but your inbox and attention are the product. Your data is sold to list brokers.",
   },
   rw: {
     company: "MyMedic",
@@ -22,10 +22,10 @@ const level2 = {
     link: "https://www.deceptive.design/hall-of-shame",
   },
   replay: [
-    { trap: false, note: "The \"yes\" option is always friendly, positive, and aspirational in tone." },
-    { trap: true,  note: "The \"no\" option is written so declining feels like confessing a character flaw, not making a choice." },
-    { trap: false, note: "The \"no\" button is consistently smaller or less visually prominent than the \"yes\" button." },
-    { trap: true,  note: "Each additional offer in the same session escalates the emotional pointedness of the shame copy." },
+    { trap: true, note: "The \"yes\" option is always warm and affirming." },
+    { trap: true,  note: "The \"no\" option is written so declining feels like confessing a character flaw rather than just making a choice." },
+    { trap: true, note: "The \"no\" button is consistently smaller or less prominent than the \"yes\" button." },
+    { trap: true,  note: "Each offer in the same session makes the shame copy more pointed than the last." },
   ],
 
   render(el) {

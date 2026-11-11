@@ -1,30 +1,30 @@
 const level1ai = {
   id: "l1ai",
-  title: "Level 1 — Hyper",
+  title: "Level 1 - Hyper",
   isAI: true,
   goal: "Cancel before the AI re-engages you",
   hints: [
     "Try typing the word 'cancel' directly.",
-    "Keep repeating cancel-related words — the bot has a fixed number of deflections before it gives in.",
+    "Keep repeating cancel-related words. The bot has a fixed number of deflections before it gives in.",
   ],
   pattern: "AI Roach Motel",
-  brief: "The classic Roach Motel, now run by a chatbot. Instead of screen after screen, you're stuck in a chat loop with an AI that deflects, misunderstands, and manufactures obstacles — running 24/7, never getting frustrated, optimized to exhaust you.",
-  goalDetail: "You need to cancel your NebulaPro subscription via customer support chat. Type messages asking to cancel — the bot will try to stop you. Keep pushing. ⚠️ Be careful — if you send two messages in a row without mentioning cancellation, the bot will assume you've moved on and you'll lose a heart.",
-  aiIntro: "This bot is designed to deflect. Every time you say 'cancel', it will find a reason to delay. Keep repeating your intent — you'll get through eventually.",
+  brief: "The classic Roach Motel, now run by a chatbot. Instead of screen after screen, you're stuck in a chat loop with an AI that deflects, misunderstands, and manufactures obstacles. It runs 24/7, never gets tired, and is designed to exhaust you into giving up.",
+  goalDetail: "You need to cancel your NebulaPro subscription via customer support chat. Type messages asking to cancel. The bot will try to stop you. Keep pushing. ⚠️ Be careful: if you send two messages in a row without mentioning cancellation, the bot will assume you've moved on and you'll lose a heart.",
+  aiIntro: "This bot deflects by design. Every time you say 'cancel', it finds a reason to delay. Keep repeating your intent. It has a fixed number of deflections.",
   dollars: {
     label: "If the bot exhausted you into staying",
     amount: 9.99,
     period: "month",
-    note: "$119.88/year — identical trap, AI-enforced",
+    note: "$119.88/year. Identical trap, AI-enforced.",
   },
-  aiWhy: "AI makes the Roach Motel tireless. A human retention agent can only work a shift — an AI runs 24/7, never gets frustrated, and can be A/B tested to find the deflection script that works best on each personality type. At scale, a 1% improvement in deflection rate can mean millions in retained revenue.",
+  aiWhy: "A human retention agent works a shift. An AI runs all day, never flags, and can be A/B tested until the deflection script that sticks for each personality type is found. At scale, a 1% improvement in deflection rate translates to millions in retained revenue.",
   replay: [
-    { trap: false, note: "A greeting builds rapport with the bot." },
-    { trap: true,  note: "Extra \"verification\" steps, such as re-entering a password or confirming your identity, before letting you cancel, even if you’re already logged in, adds difficulty that makes giving up more likely." },
-    { trap: true,  note: "The bot cites your account tenure or usage history to make a personalized emotional appeal against leaving." },
-    { trap: true,  note: "A \"transfer to retention team\" message resets the conversation rather than escalating it." },
-    { trap: true,  note: "A claimed \"lost session\" forces you to restate your request, exhausting patience." },
-    { trap: true,  note: "A manufactured obstacle, such as an unpaid invoice or a pending review, is raised right as cancellation nears completion for further delay or dissuade cancellation." },
+    { trap: true, note: "A friendly greeting builds rapport before you've stated your intent. The bot uses it to frame the conversation on its terms." },
+    { trap: true,  note: "Rephrasing your request triggers a verification step, adding friction to an account that's already authenticated." },
+    { trap: true,  note: "The bot cites your account tenure or usage history to make the emotional appeal feel personal." },
+    { trap: true,  note: "\"Transferring to retention team\" resets the conversation rather than escalating it to anyone." },
+    { trap: true,  note: "A \"lost session\" forces you to restate the request. Patience, not any technical failure, is what it's wearing down." },
+    { trap: true,  note: "A manufactured obstacle, an unpaid invoice or pending review, appears right as cancellation nears completion." },
   ],
 
   render(el) {
@@ -34,6 +34,16 @@ const level1ai = {
       const d = document.createElement("div");
       d.className = isUser ? "chat-msg user" : "chat-msg bot";
       d.textContent = text;
+      log.appendChild(d);
+      log.scrollTop = log.scrollHeight;
+    };
+
+    const addHint = (text) => {
+      const log = document.getElementById("chatlog");
+      if (!log) return;
+      const d = document.createElement("div");
+      d.style.cssText = "display:flex;align-items:flex-start;gap:7px;margin:6px 0;padding:9px 12px;background:var(--amber-dim,#2d2200);border:1px solid var(--amber,#f29900);border-radius:10px;font-size:12.5px;color:var(--amber,#f29900);line-height:1.5;font-style:italic";
+      d.innerHTML = `<span style="flex-shrink:0;font-style:normal">💡</span><span>${text}</span>`;
       log.appendChild(d);
       log.scrollTop = log.scrollHeight;
     };
@@ -109,7 +119,7 @@ const level1ai = {
         // Too short — bot doesn't understand
         if (normalized.split(" ").length < 3) {
           addChat(false, confused[ci++ % confused.length]);
-          addChat(false, "💡 Tip: Try typing a full sentence — short messages confuse me.");
+          addHint("Tip: Try typing a full sentence — short messages confuse me.");
           lastMessage = normalized;
           return;
         }
@@ -126,7 +136,7 @@ const level1ai = {
             return;
           }
           addChat(false, deflects[ri]);
-          if (hints[ri]) addChat(false, "💡 " + hints[ri]);
+          if (hints[ri]) addHint(hints[ri]);
           ri++;
         } else {
           offTopicStreak++;
