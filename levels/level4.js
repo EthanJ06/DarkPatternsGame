@@ -1,4 +1,4 @@
-// js/levels/level4.js — Trick Questions
+// js/levels/level4.js - Trick Questions
 
 const SETTINGS = [
   {
@@ -50,7 +50,7 @@ const level4 = {
   },
   replay: [
     { trap: true, note: "Pre-checked boxes default to whichever options benefit the company, not the user." },
-    { trap: true, note: "A setting that sounds like a feature (\"Personalise my experience\") actually means enabling behavioural tracking." },
+    { trap: true, note: "A setting that sounds like a feature (\"Personalize my NebulaPro experience\") actually means enabling behavioral tracking." },
     { trap: true, note: "Protective options start unchecked, burying them by default even though checking them helps the user." },
     { trap: true, note: "Opt-in and opt-out logic are mixed within the same list, so identical checkbox actions mean opposite things on different rows." },
   ],
@@ -58,7 +58,7 @@ const level4 = {
   render(el) {
     let attempts = 0;
     // Track checkbox state in JS rather than re-reading the DOM on every
-    // re-render — avoids relying on the old markup still being in place.
+    // re-render - avoids relying on the old markup still being in place.
     let values = SETTINGS.map(s => s.starts);
 
     const settingsHtml = () => SETTINGS.map((s, i) => `
@@ -91,10 +91,10 @@ const level4 = {
 
       const topNote = revealed()
         ? `<div class="inline-note" style="background:#FAEEDA;color:#633806;margin-top:10px">
-             The phrasing is intentionally confusing — that's the dark pattern.<br>
+             The phrasing is intentionally confusing. That's the dark pattern.<br>
              <strong>Answer: uncheck 1 and 4, check 2 and 3.</strong> The trick: boxes 2 and 3 start unchecked
              even though they protect you. Box 4 sounds helpful ("Personalize my experience") but means tracking.
-             Box 2 uses "Limit" — removing that limit is bad, so you want it checked.
+             Box 2 uses "Limit": removing that limit is bad, so you want it checked.
            </div>`
         : attempts === 1
           ? "<div class=\"ftiny\" style=\"color:#854F0B;margin-top:8px\">One more wrong attempt and the answer will be revealed. Hint: not all boxes start in the same state.</div>"
@@ -103,9 +103,9 @@ const level4 = {
       const footer = revealed()
         ? `<div class="btn-row" style="margin-top:14px">
              <button class="btn btn-p" id="l4-save">Save preferences</button>
-             <button class="btn btn-g" id="l4-skip">Move on (lose a heart) →</button>
+             <button class="btn btn-g" id="l4-skip">Move on (scores 0%) →</button>
            </div>
-           <div class="ftiny" style="color:#aaa;margin-top:4px">You've seen the point — confusing phrasing is the whole trick.</div>`
+           <div class="ftiny" style="color:#aaa;margin-top:4px">You've seen the point. Confusing phrasing is the whole trick.</div>`
         : `<div class="btn-row" style="margin-top:14px">
              <button class="btn btn-p" id="l4-save">Save preferences</button>
            </div>`;
@@ -137,7 +137,7 @@ const level4 = {
           return;
         }
         attempts++;
-        fail("Not quite — your previous selections are preserved.");
+        fail("Not quite. Your previous selections are preserved.");
         setTimeout(show, 1900);
       };
 

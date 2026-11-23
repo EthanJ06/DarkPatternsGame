@@ -1,7 +1,7 @@
-// js/levels/level4ai.js — AI A/B Gaslighting
+// js/levels/level4ai.js - AI A/B Gaslighting
 
 // Each variant has 4 options. `correctIndex` marks which one is the genuine
-// opt-out and is DIFFERENT per round on purpose — so players can't just
+// opt-out and is DIFFERENT per round on purpose - so players can't just
 // learn "pick the last one" and skip reading the labels.
 const VARIANTS = [
   {
@@ -37,15 +37,15 @@ const level4ai = {
   id: "l4ai",
   title: "Level 4 - Hyper",
   isAI: true,
-  goal: "Find the real opt-out",
+  goal: "Find the two real opt-outs, 3 rounds",
   hints: [
     "Two options each round are the real privacy protections. Read every label. Position and starting state don't tell you anything.",
     "The other two are worded to sound similar but keep sharing or tracking your data. Switch those off.",
   ],
   pattern: "AI A/B Gaslighting",
-  brief: "The same trick, now with an AI twist: every time you try to opt out, the form reshuffles with new label wording and a new position for the real opt-out. Real consent management platforms A/B test their forms this way.",
-  goalDetail: "Three rounds, one shot each. The form relabels itself, and which two options are genuinely correct moves every round. Get at least 2 of 3 right to clear the level.",
-  aiIntro: "The form reshuffles each time you get it wrong. Each round has four options, and two of them are genuine privacy protections. The other two just sound similar while leaving sharing or tracking on. Read every label; neither position nor starting state is a shortcut.",
+  brief: "The same trick, now with an AI twist: each time the form comes back, it has new label wording and the real opt-outs have moved. Real consent management platforms A/B test their forms this way.",
+  goalDetail: "Three rounds. In each one, turn on the two options that genuinely protect your privacy, turn off the other two, then hit Save. After each round the form relabels itself and the two correct options move. Two wrong saves in a round and the answer is shown.",
+  aiIntro: "The form relabels and reshuffles itself every round. Each round has four options, and two of them are genuine privacy protections. The other two just sound similar while leaving sharing or tracking on. Read every label; neither position nor starting state is a shortcut.",
   dollars: {
     label: "If the reshuffling wore you down into consenting",
     amount: 0,
@@ -56,7 +56,7 @@ const level4ai = {
   replay: [
     { trap: true,  note: "The wording shifts between rounds but the underlying choices stay the same. The relabeling makes each round feel new and harder to parse." },
     { trap: true,  note: "Which two options are correct moves every round, so position and starting state are both red herrings." },
-    { trap: true,  note: "A timer adds pressure on top of relabeled options. The combination is designed to push a guess rather than a considered read." },
+    { trap: true,  note: "Starting states are mixed: some real protections start on, some start off, so the default position tells you nothing." },
     { trap: true,  note: "Rearranging and rewording the same choices makes each option feel unfamiliar, even if you got the last round right." },
     { trap: true, note: "The only reliable move: read each toggle independently and ask what it actually enables or prevents. Not where it sits or how it starts." },
   ],
@@ -81,7 +81,7 @@ const level4ai = {
         .filter(i => !v.correctIndices.includes(i))
         .map(i => `"${v.options[i].label}"`)
         .join(" and ");
-      return `Check ${check} — those are the real opt-outs. Leave ${uncheck} unchecked, no matter how safe they sound.`;
+      return `Check ${check}. Those are the real opt-outs. Leave ${uncheck} unchecked, no matter how safe they sound.`;
     };
 
     const show = () => {
@@ -92,7 +92,7 @@ const level4ai = {
 
       const topNote = revealed()
         ? `<div class="inline-note" style="background:#FAEEDA;color:#633806;margin-top:10px">
-             The wording is designed to confuse — that's the whole trick.<br>
+             The wording is designed to confuse. That's the whole trick.<br>
              <strong>Answer:</strong> ${correctAnswerText(v)}
            </div>`
         : attempts === 1
@@ -103,7 +103,7 @@ const level4ai = {
         ? `<div class="btn-row" style="margin-top:14px">
              <button class="btn btn-p" id="l4a-save">Save</button>
            </div>
-           <div class="ftiny" style="color:#aaa;margin-top:4px">You've seen the point — the wording is the whole trick.</div>`
+           <div class="ftiny" style="color:#aaa;margin-top:4px">You've seen the point. The wording is the whole trick.</div>`
         : `<div class="btn-row" style="margin-top:14px">
              <button class="btn btn-p" id="l4a-save">Save</button>
            </div>`;
@@ -127,7 +127,7 @@ const level4ai = {
             </div>
           </div>
           <div class="inline-note" style="background:#EEEDFE;color:#26215C">
-            NexusAI has re-optimized this form (variant ${round + 1}). <em>Two options genuinely protect your privacy — find both.</em>
+            NexusAI has re-optimized this form (variant ${round + 1}). <em>Two options genuinely protect your privacy. Find both.</em>
           </div>
           ${topNote}
           <div style="margin-top:6px">

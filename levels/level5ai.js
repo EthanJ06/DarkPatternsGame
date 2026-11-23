@@ -1,25 +1,25 @@
-// js/levels/level5ai.js — AI Hyper-Personalized Upsell
+// js/levels/level5ai.js - AI Hyper-Personalized Upsell
 const OFFER_SECS = 20;
 const UPSELLS = [
   {
     name: "RunPro Membership",
-    sub: "AI-predicted it is your idealmatch",
+    sub: "AI-predicted to be your ideal match",
     desc: "Guided training plans, pace coaching, and a route library for every distance.",
-    reason: "You've logged runs on 4 of the last 7 days — that cadence places you in the top 12% of active users, a segment where membership take-rate is highest. NexusAI also weighs the fact that you've opened the training-plan screen twice without subscribing, which it reads as latent intent rather than a 'no'.",
+    reason: "You've logged runs on 4 of the last 7 days. That cadence places you in the top 12% of active users, a segment where membership take-rate is highest. NexusAI also weighs the fact that you've opened the training-plan screen twice without subscribing, which it reads as latent intent rather than a 'no'.",
     price: 7.99,
   },
   {
     name: "Performance Insoles",
     sub: "Recommended for your gait",
     desc: "Cushioned support insoles built to reduce impact on longer runs.",
-    reason: "Your average pace and stride length suggest a heel-strike running style — a biomechanical profile NexusAI associates with a 3x higher insole purchase rate. No gait scan was actually performed; this is inferred from pace data alone, and the model has never seen your stride.",
+    reason: "Your average pace and stride length suggest a heel-strike running style, a biomechanical profile NexusAI associates with a 3x higher insole purchase rate. No gait scan was actually performed; this is inferred from pace data alone, and the model has never seen your stride.",
     price: 19.99,
   },
   {
     name: "HydrationTrack+ bundle",
     sub: "Users like you bought this",
     desc: "A smart bottle and app reminders to track intake on long runs.",
-    reason: "Runners NexusAI clustered into your \"budget-conscious\" cohort added this bundle within their first two weeks at a noticeably higher rate. The cohort itself was assigned from a handful of clicks, and \"noticeably higher\" is doing a lot of work here — the underlying sample is small and the comparison group is never shown to you.",
+    reason: "Runners NexusAI clustered into your \"budget-conscious\" cohort added this bundle within their first two weeks at a noticeably higher rate. The cohort itself was assigned from a handful of clicks, and \"noticeably higher\" is doing a lot of work here. The underlying sample is small and the comparison group is never shown to you.",
     price: 12.99,
   },
 ];
@@ -30,13 +30,13 @@ const level5ai = {
   isAI: true,
   goal: "Resist the personalized upsell",
   hints: [
-    "The confidence percentage is made up. It has no statistical basis.",
+    "The match percentage is made up. It has no statistical basis.",
     "Just click 'No thanks' on every recommendation. All three are upsells you don't need.",
   ],
   pattern: "AI Hyper-Personalized Upsell",
   brief: "The same trick as before, but now an AI backs it up. Instead of just sneaking items into your cart, it \"predicts\" you'll want them and shows a made-up confidence score, so saying no feels like arguing with facts instead of just declining an offer.",
   goalDetail: "Decline every AI-recommended upsell. The percentages and \"users like you\" framing are designed to make saying no feel like a mistake. They're not based on anything real.",
-  aiIntro: "Each recommendation comes with a confidence score (94%, 87%...). These numbers are fabricated. They exist to make declining feel statistically unusual.",
+  aiIntro: "Each recommendation comes with a match score (91%, 87%, 83%). These numbers are fabricated. They exist to make declining feel statistically unusual.",
   dollars: {
     label: "If you accepted all three AI recommendations",
     amount: 40.97,
@@ -44,13 +44,13 @@ const level5ai = {
     note: "$491.64/year in subscriptions you didn't need, sold to you by an algorithm",
   },
   aiWhy:
-    "Upsells have always been part of shopping. The difference with AI is that they can feel personalized and unavoidable. A \"94% match\" score creates the impression that most people like you would choose this, so turning it down feels like the unusual choice.",
+    "Upsells have always been part of shopping. The difference with AI is that they can feel personalized and unavoidable. A \"91% match\" score creates the impression that most people like you would choose this, so turning it down feels like the unusual choice.",
   replay: [
     { trap: true, note: "\"NexusAI identified you as X\" states an inferred profile as established fact, generated from minimal signals." },
-    { trap: true,  note: "The confidence percentage (94%, 91%...) has no statistical basis. It exists to make declining feel irrational, like arguing with data." },
+    { trap: true,  note: "The match percentage (91%, 87%, 83%) has no statistical basis. It exists to make declining feel irrational, like arguing with data." },
     { trap: true,  note: "\"Offer expires in Xs\" is fake urgency. The offer doesn't actually expire, it just auto-advances to pressure a faster decision." },
     { trap: true,  note: "\"Users like you bought this\" implies a peer group has already said yes, making refusal feel like an outlier decision." },
-    { trap: true,  note: "\"Our model predicts you'll regret skipping this\" threatens a future self rather than describing a present benefit." },
+    { trap: true,  note: "\"Why NexusAI recommends this\" dresses up guesses as analysis: a gait inferred from pace data, a cohort assigned from a handful of clicks." },
     { trap: true, note: "The winning move: the timer expiring costs nothing. Every offer auto-advances whether or not you act. Patience beats urgency." },
   ],
 
@@ -193,14 +193,14 @@ const level5ai = {
         adds++;
         if (adds >= 2) {
           clearTimer();
-          fail("Two AI upsells worked — the algorithm got you!");
+          fail("Two AI upsells worked. The algorithm got you!");
           setTimeout(() => {
             succeed();
             setLevelGrade(levelIdx, "F");
           }, 1900);
           return;
         }
-        fail("Two personalized upsells got through. Repeated, tailored exposure is exactly what the targeting is optimized for.");
+        fail("A personalized upsell got through. Repeated, tailored pitches are exactly what the targeting is optimized for.");
         // Disable buttons to prevent double-clicks during the brief pause
         document.getElementById("l5ai-add").disabled  = true;
         document.getElementById("l5ai-skip").disabled = true;

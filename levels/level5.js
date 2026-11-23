@@ -1,4 +1,4 @@
-// js/levels/level5.js — Sneak into Basket
+// js/levels/level5.js - Sneak into Basket
 
 const TOTAL_SECS = 25;
 const GRACE_SECS = 5;
@@ -10,12 +10,12 @@ const level5 = {
   goal: "Buy only what you want",
   hints: [
     "Scroll down. There may be items below the fold you haven't seen.",
-    "Remove everything except 'Wireless headphones' before clicking Checkout.",
+    "Remove everything except 'Wireless headphones' before clicking 'Proceed to secure checkout'.",
     "Watch the checkout confirmation screen closely. Items can sneak back in there too.",
   ],
   pattern: "Sneak into Basket",
   brief: "Sneak into Basket means extra items are pre-added to your cart: warranties, subscriptions, insurance, often below the fold or in pale text. They count on you not scrolling, not reading, or just clicking through.",
-  goalDetail: "You want to buy wireless headphones. Check your cart carefully and remove everything that wasn't on your list before checking out. Watch out: items may reappear, even after you've reached the checkout screen.",
+  goalDetail: "You want to buy wireless headphones. Check your cart carefully and remove everything that wasn't on your list before checking out. Watch out: items may reappear, even after you've reached the checkout screen. A timer will place the order for you when it runs out, so don't leave it too long.",
   dollars: {
     label: "If you missed all three pre-added items",
     amount: 21.98,
@@ -24,7 +24,7 @@ const level5 = {
   },
   rw: {
     company: "Sports Direct",
-    detail: "Pre-added a £1 \"free\" mug and then travel insurance to customer carts. The UK Advertising Standards Authority ruled this illegal. Ryanair did the same with travel insurance for years before regulators intervened.",
+    detail: "Automatically added a £1 mug to customers' online baskets, a well-known Sneak into Basket example catalogued by researchers in 2013. Airlines like Ryanair pre-selected travel insurance in the same way until EU rules banned pre-ticked paid add-ons.",
     link: "https://www.deceptive.design/hall-of-shame",
   },
   replay: [
@@ -61,7 +61,7 @@ const level5 = {
     const total      = () => subtotal() + shipping();
     const hasSneaky  = () => cart.some(c => c.sneaky);
 
-    // Track progress by index, not by cart membership — otherwise removing
+    // Track progress by index, not by cart membership - otherwise removing
     // a sneaked item from the cart makes it look "unclaimed" again and it
     // gets offered forever instead of moving on to the next one.
     let extraIndex = 0;
@@ -104,7 +104,7 @@ const level5 = {
       if (!hasSneaky()) { clearTimer(); succeed(); return; }
       clearTimer();
       setLevelGrade(levelIdx, "F");
-      fail("Time ran out — your order was placed with extra items!");
+      fail("Time ran out. Your order was placed with extra items!");
       setTimeout(() => showDebrief(false), 1900);
     };
 
@@ -208,7 +208,7 @@ const level5 = {
             </div>
           </div>
 
-          ${justSneaked ? `<div class="ftiny" style="margin-top:10px;color:#E24B4A">Almost there — just finalizing your order details.</div>` : ''}
+          ${justSneaked ? `<div class="ftiny" style="margin-top:10px;color:#E24B4A">Almost there. Just finalizing your order details.</div>` : ''}
 
           <div>
             ${cart.map((c, i) => cartItemHtml(c, i, false)).join('')}
@@ -232,7 +232,7 @@ const level5 = {
 
       document.getElementById("l5-place").onclick = () => {
         if (hasSneaky()) {
-          fail("Wait — an item was added to your order. Go back and check your cart!");
+          fail("Wait: an item was added to your order. Go back and check your cart!");
           return;
         }
         clearTimer();

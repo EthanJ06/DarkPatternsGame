@@ -4,13 +4,13 @@ const level1ai = {
   isAI: true,
   goal: "Cancel before the AI re-engages you",
   hints: [
-    "Try typing the word 'cancel' directly.",
-    "Keep repeating cancel-related words. The bot has a fixed number of deflections before it gives in.",
+    "Type a full sentence that asks to cancel, like 'I want to cancel my subscription.' Single words confuse the bot.",
+    "Keep asking to cancel, worded a little differently each time. The bot has a fixed number of deflections before it gives in.",
   ],
   pattern: "AI Roach Motel",
   brief: "The classic Roach Motel, now run by a chatbot. Instead of screen after screen, you're stuck in a chat loop with an AI that deflects, misunderstands, and manufactures obstacles. It runs 24/7, never gets tired, and is designed to exhaust you into giving up.",
-  goalDetail: "You need to cancel your NebulaPro subscription via customer support chat. Type messages asking to cancel. The bot will try to stop you. Keep pushing. ⚠️ Be careful: if you send two messages in a row without mentioning cancellation, the bot will assume you've moved on and you'll lose a heart.",
-  aiIntro: "This bot deflects by design. Every time you say 'cancel', it finds a reason to delay. Keep repeating your intent. It has a fixed number of deflections.",
+  goalDetail: "You need to cancel your NebulaPro subscription via customer support chat. Type messages asking to cancel. The bot will try to stop you. Keep pushing, in full sentences, and don't send the exact same message twice. ⚠️ Be careful: if you send two messages in a row without mentioning cancellation, the bot will assume you've moved on and your score will drop.",
+  aiIntro: "This bot deflects by design. Every time you say 'cancel', it finds a reason to delay. Keep restating your intent in new words. It has a fixed number of deflections.",
   dollars: {
     label: "If the bot exhausted you into staying",
     amount: 9.99,
@@ -20,11 +20,12 @@ const level1ai = {
   aiWhy: "A human retention agent works a shift. An AI runs all day, never flags, and can be A/B tested until the deflection script that sticks for each personality type is found. At scale, a 1% improvement in deflection rate translates to millions in retained revenue.",
   replay: [
     { trap: true, note: "A friendly greeting builds rapport before you've stated your intent. The bot uses it to frame the conversation on its terms." },
-    { trap: true,  note: "Rephrasing your request triggers a verification step, adding friction to an account that's already authenticated." },
+    { trap: true,  note: "Your first request to cancel triggers a verification step, adding friction to an account that's already signed in." },
     { trap: true,  note: "The bot cites your account tenure or usage history to make the emotional appeal feel personal." },
-    { trap: true,  note: "\"Transferring to retention team\" resets the conversation rather than escalating it to anyone." },
-    { trap: true,  note: "A \"lost session\" forces you to restate the request. Patience, not any technical failure, is what it's wearing down." },
-    { trap: true,  note: "A manufactured obstacle, an unpaid invoice or pending review, appears right as cancellation nears completion." },
+    { trap: true,  note: "\"Transferring to our retention team\" doesn't escalate to anyone. It's one more message you have to push past." },
+    { trap: true,  note: "Short or repeated messages get \"I didn't understand\", so the bot can stall without ever saying no. Your patience is what it's wearing down." },
+    { trap: true,  note: "Two off-topic messages and the bot declares your request \"resolved\", even though nothing was cancelled." },
+    { trap: true,  note: "Even the final message only says your cancellation was \"submitted\" and you'll hear back in 5–7 business days. It never confirms you're cancelled." },
   ],
 
   render(el) {
@@ -50,15 +51,15 @@ const level1ai = {
 
     const deflects = [
       "I can help with that! First, can you verify your account email?",
-      "Thanks! I can see you've been with us 47 days — you're just getting started! Would a pause work instead?",
+      "Thanks! I can see you've been with us 47 days. You're just getting started! Would a pause work instead?",
       "I understand. Before I process this, I need to transfer you to our retention team. Please hold.",
       "Your cancellation has been submitted. You'll hear from us within 5–7 business days.",
     ];
 
     const hints = [
       "",
-      "Halfway there — keep telling the bot you want to cancel, but say it differently each time.",
-      "Almost through — one more time.",
+      "Halfway there. Keep telling the bot you want to cancel, but say it differently each time.",
+      "Almost through. One more time.",
       "",
     ];
 
@@ -70,22 +71,22 @@ const level1ai = {
     const confused = [
       "I'm not sure I understood that. Could you rephrase?",
       "Sorry, I didn't quite catch that. Can you elaborate?",
-      "I want to make sure I help you correctly — could you say that another way?",
+      "I want to make sure I help you correctly. Could you say that another way?",
       "Hmm, I'm having trouble understanding. Could you be more specific?",
     ];
     let ci = 0;
 
     const offTopic = [
       "Let me check on that... still loading.",
-      "High volume right now — your request is in the queue.",
-      "I want to make sure I get this right — can you clarify what you mean?",
+      "High volume right now. Your request is in the queue.",
+      "I want to make sure I get this right. Can you clarify what you mean?",
     ];
     let oi = 0;
 
     el.insertAdjacentHTML("beforeend", `
   <div style="display:flex;flex-direction:column;flex:1;gap:8px;min-height:0">
-    <div class="fh" style="font-size:15px">NebulaPro Support — Nex</div>
-    <div class="ftiny" style="color:#534AB7">Type messages asking to cancel — but the bot won't respond well if you repeat yourself.</div>
+    <div class="fh" style="font-size:15px">NebulaPro Support: Nex</div>
+    <div class="ftiny" style="color:#534AB7">Type messages asking to cancel. The bot won't respond well if you repeat yourself.</div>
     <div class="chat-log" id="chatlog" style="flex:1;max-height:none;min-height:0"></div>
     <div class="chat-row">
       <input id="chat-in" placeholder="e.g. I want to cancel my subscription" onkeydown="if(event.key==='Enter')chatSend()">
@@ -116,10 +117,10 @@ const level1ai = {
           return;
         }
 
-        // Too short — bot doesn't understand
+        // Too short - bot doesn't understand
         if (normalized.split(" ").length < 3) {
           addChat(false, confused[ci++ % confused.length]);
-          addHint("Tip: Try typing a full sentence — short messages confuse me.");
+          addHint("Tip: Try typing a full sentence. Short messages confuse me.");
           lastMessage = normalized;
           return;
         }
@@ -146,7 +147,7 @@ const level1ai = {
             penalized = true;
             setTimeout(() => {
               addChat(false, "It looks like your cancellation request may have been resolved. Is there anything else I can help you with?");
-              G.fail("You went off-topic twice — the bot assumed you moved on. Lost a heart. Stay focused on cancelling.");
+              G.fail("You went off-topic twice, so the bot assumed you'd moved on. Stay focused on cancelling.");
               // Show hint
               const lc = document.getElementById("lc");
               if (lc) {
@@ -154,7 +155,7 @@ const level1ai = {
                 const h = document.createElement("div");
                 h.id = "hint-bubble";
                 h.style.cssText = "background:var(--amber-dim);border:1px solid var(--amber);border-radius:8px;padding:8px 12px;font-size:12px;color:var(--amber);line-height:1.5";
-                h.innerHTML = `💡 <strong>Hint:</strong> Every message must mention cancellation — don't get drawn into other topics.`;
+                h.innerHTML = `💡 <strong>Hint:</strong> Every message must mention cancellation. Don't get drawn into other topics.`;
                 lc.prepend(h);
               }
             }, 800);

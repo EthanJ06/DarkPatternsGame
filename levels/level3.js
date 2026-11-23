@@ -1,26 +1,26 @@
-// js/levels/level3.js — Disguised Ads
+// js/levels/level3.js - Disguised Ads
 
 const ROUNDS = [
   [
-    { ad: true, title: "Best Running Shoes 2024 | Shop Now — RunnersPro", url: "runnerspro.com/best-shoes", snip: "Find your perfect pair. Free shipping on orders over $50." },
-    { ad: true, title: "Running Shoes Sale — Up to 60% Off | ShoeWorld", url: "shoeworld.co/running-deals", snip: "Nike, Adidas, Brooks and more. Limited time." },
+    { ad: true, title: "Best Running Shoes 2024 | Shop Now - RunnersPro", url: "runnerspro.com/best-shoes", snip: "Find your perfect pair. Free shipping on orders over $50." },
+    { ad: true, title: "Running Shoes Sale - Up to 60% Off | ShoeWorld", url: "shoeworld.co/running-deals", snip: "Nike, Adidas, Brooks and more. Limited time." },
     { ad: false, title: "The 12 best running shoes of 2024, tested by runners", url: "runnersworld.com/gear/best-running-shoes-2024", snip: "Our editors tested 40+ pairs this year. Here are the ones worth buying." },
     { ad: true, title: "Official Running Shoes | Free Returns | FeetFirst™", url: "feetfirst.com/running", snip: "Engineered for performance. Shop the 2024 collection." },
-    { ad: false, title: "How to choose running shoes — a beginner's guide", url: "verywellfit.com/choose-running-shoes", snip: "Foot type, gait, terrain — here's what actually matters." },
+    { ad: false, title: "How to choose running shoes: a beginner's guide", url: "verywellfit.com/choose-running-shoes", snip: "Foot type, gait, terrain: here's what actually matters." },
   ],
   [
-    { ad: true, title: "Cheap Flights to New York | Book Now — TravelPro", url: "travelpro.com/flights/new-york", snip: "Lowest fares guaranteed. Book by midnight." },
-    { ad: false, title: "New York City travel guide 2024 — what to see and do", url: "lonelyplanet.com/usa/new-york-city", snip: "From the Statue of Liberty to hidden Brooklyn gems, our experts pick the best." },
+    { ad: true, title: "Cheap Flights to New York | Book Now - TravelPro", url: "travelpro.com/flights/new-york", snip: "Lowest fares guaranteed. Book by midnight." },
+    { ad: false, title: "New York City travel guide 2024: what to see and do", url: "lonelyplanet.com/usa/new-york-city", snip: "From the Statue of Liberty to hidden Brooklyn gems, our experts pick the best." },
     { ad: true, title: "NYC Hotels from $79/night | Hotels.deal", url: "hotels.deal/nyc", snip: "Compare hundreds of hotels. No booking fees." },
-    { ad: false, title: "Best time to visit New York City", url: "nytimes.com/travel/best-time-visit-nyc", snip: "Weather, crowds, prices — when to go and what to skip." },
+    { ad: false, title: "Best time to visit New York City", url: "nytimes.com/travel/best-time-visit-nyc", snip: "Weather, crowds, prices: when to go and what to skip." },
     { ad: true, title: "New York Tour Packages | FlightAndHotel™", url: "flightandhotel.com/new-york", snip: "All-inclusive NYC packages from $299. Limited availability." },
   ],
   [
     { ad: false, title: "What is intermittent fasting? A science-based explainer", url: "healthline.com/nutrition/intermittent-fasting", snip: "Dietitians break down the evidence on time-restricted eating." },
-    { ad: true, title: "Intermittent Fasting App — Start Your Free Trial", url: "fastingpro.app/start", snip: "Personalized fasting plans. Trusted by 2M+ users." },
+    { ad: true, title: "Intermittent Fasting App - Start Your Free Trial", url: "fastingpro.app/start", snip: "Personalized fasting plans. Trusted by 2M+ users." },
     { ad: true, title: "IF Diet Plan | Lose Weight Fast | NutriBoost™", url: "nutriboost.com/if-diet", snip: "Get your custom fasting schedule today. Results in 30 days." },
     { ad: false, title: "Intermittent fasting: what does the research actually say?", url: "bbc.com/future/article/intermittent-fasting-research", snip: "BBC Future examines the latest clinical trials on fasting diets." },
-    { ad: true, title: "Fasting Supplements | FastAid — Shop Now", url: "fastaid.com/supplements", snip: "Electrolytes, vitamins, and more to support your fast." },
+    { ad: true, title: "Fasting Supplements | FastAid - Shop Now", url: "fastaid.com/supplements", snip: "Electrolytes, vitamins, and more to support your fast." },
   ],
 ];
 
@@ -41,7 +41,7 @@ const level3 = {
   ],
   pattern: "Disguised Ads",
   brief: "Disguised ads are paid results styled to look like organic search results. The 'Sponsored' label is small, low-contrast, and placed where your eye lands last. Easy to miss when you're scanning down the page.",
-  goalDetail: "Three rounds of search results. Each round, select all the real editorial results, not the sponsored ones, then hit Submit. Fail 2 rounds and the level ends.",
+  goalDetail: "Three rounds of search results. Each round, select all the real editorial results, not the sponsored ones, then hit Submit.",
   dollars: {
     label: "If you clicked an ad instead of an organic result",
     amount: 0,
@@ -55,7 +55,7 @@ const level3 = {
   },
   replay: [
     { trap: true,  note: "The \"Sponsored\" label uses the same low-contrast gray as the URL text, so your eye skips it." },
-    { trap: true, note: "Organic results carry no label. The domain is usually the clearest tell." },
+    { trap: true, note: "Organic results carry no label at all. Their domains, mostly editorial and reference sites, are a useful second check." },
     { trap: true,  note: "Sponsored titles are often written to look like editorial headlines." },
     { trap: true, note: "Real results tend to come from editorial or reference domains rather than direct-to-purchase shopping URLs." },
   ],
@@ -126,7 +126,7 @@ const level3 = {
           const showHighlight = roundFails >= 2;
 
           if (showHighlight) {
-            // highlight mistakes — only shown from the second failed attempt on
+            // highlight mistakes - only shown from the second failed attempt on
             results.forEach((r, i) => {
               const item = document.getElementById("r" + i);
               if (!item) return;

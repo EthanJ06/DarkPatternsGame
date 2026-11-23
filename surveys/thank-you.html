@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Thank you — Dark Patterns Study</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: Arial, sans-serif;
+    background: #b8c4cc;
+    min-height: 100vh;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 40px 16px;
+  }
+  .card {
+    background: #fff;
+    border-radius: 6px;
+    width: 100%;
+    max-width: 780px;
+    padding: 52px 64px;
+    box-shadow: 0 2px 16px rgba(0,0,0,.12);
+  }
+  h1 {
+    font-size: 26px;
+    font-weight: 700;
+    color: #111;
+    margin-bottom: 10px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #ddd;
+  }
+  p { font-size: 14px; color: #333; line-height: 1.6; margin-top: 14px; }
+</style>
+</head>
+<body>
+<div class="card">
+  <h1>Thank you!</h1>
+  <p id="msg">Your post-survey has been submitted. Thank you for taking part in the Dark Patterns study.</p>
+  <p>You can close this page now.</p>
+</div>
+<script>
+  if (new URLSearchParams(location.search).has('already')) {
+    document.getElementById('msg').textContent =
+      "You've already submitted the post-survey, so your earlier answers have been kept. Thank you for taking part in the Dark Patterns study.";
+  }
+</script>
+</body>
+</html>

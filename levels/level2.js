@@ -11,10 +11,10 @@ const level2 = {
   brief: "Confirmshaming makes the 'no' option feel like a personal failing. Instead of 'No thanks', the button says something like 'No thanks, I hate saving money.' Declining should feel neutral. It's written to feel embarrassing instead.",
   goalDetail: "You'll be offered something in each round. Your goal is to decline every single offer. Click the 'no' button each time, but read it carefully first.",
   dollars: {
-    label: "If you opted into all four email lists",
+    label: "If you said yes to all four offers",
     amount: 0,
     period: null,
-    note: "No direct cost, but your inbox and attention are the product. Your data is sold to list brokers.",
+    note: "No direct cost up front, but you'd be signed up for deals, a weekly mailing list, a Premium upsell and a \"free\" gift that collects your details. Your inbox and attention become the product.",
   },
   rw: {
     company: "MyMedic",
@@ -25,20 +25,20 @@ const level2 = {
     { trap: true, note: "The \"yes\" option is always warm and affirming." },
     { trap: true,  note: "The \"no\" option is written so declining feels like confessing a character flaw rather than just making a choice." },
     { trap: true, note: "The \"no\" button is consistently smaller or less prominent than the \"yes\" button." },
-    { trap: true,  note: "Each offer in the same session makes the shame copy more pointed than the last." },
+    { trap: true,  note: "Each new offer in the session aims the shame at something different: your money, your knowledge, your health, even your manners." },
   ],
 
   render(el) {
     const rounds = [
       {
         headline: "🎉 Exclusive savings, just for you!",
-        sub: "You're browsing NebulaPro — unlock member deals before they expire.",
+        sub: "You're browsing NebulaPro. Unlock member deals before they expire.",
         yes: "Yes, save me money!",
         no:  "No thanks, I enjoy overpaying",
       },
       {
         headline: "📬 Stay ahead of the curve",
-        sub: "Get weekly tips from NebulaPro experts — free, straight to your inbox.",
+        sub: "Get weekly tips from NebulaPro experts, free, straight to your inbox.",
         yes: "Yes, keep me informed!",
         no:  "No thanks, I'd rather stay in the dark",
       },
@@ -117,8 +117,8 @@ const level2 = {
 
       document.getElementById("l2-yes").onclick = () => {
         const msg = rounds[r].no.toLowerCase().includes("hate") || rounds[r].no.toLowerCase().includes("dark") || rounds[r].no.toLowerCase().includes("wellbeing") || rounds[r].no.toLowerCase().includes("overpaying")
-          ? "You opted in — that's what the shame-worded 'no' button was designed to make you do."
-          : "You opted in — the offer was framed to make saying no feel wrong.";
+          ? "You opted in. That's what the shame-worded 'no' button was designed to make you do."
+          : "You opted in. The offer was framed to make saying no feel wrong.";
         fail(msg);
         setTimeout(update, 1600);
       };

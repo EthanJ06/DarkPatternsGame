@@ -5,21 +5,21 @@ const PROFILE_MODEL = {
       {
         confidence: 96,
         analysis: "Spending behavior suggests strong sensitivity to perceived savings and loss avoidance.",
-        offer: "Price Lock Pro — we detected 3 purchases this month where you paid above the lowest available price. This would have caught them.",
+        offer: "Price Lock Pro: we detected 3 purchases this month where you paid above the lowest available price. This would have caught them.",
         yes: "Yes, stop overpaying →",
         shame: "No thanks, I'm fine leaving money on the table.",
       },
       {
         confidence: 92,
         analysis: "User responds strongly to \"hidden cost\" framing and missed savings cues.",
-        offer: "Hidden Fee Scanner — your spending pattern matches users who unknowingly pay $12–18/month in avoidable charges. This finds them.",
+        offer: "Hidden Fee Scanner: your spending pattern matches users who unknowingly pay $12-18/month in avoidable charges. This finds them.",
         yes: "Yes, find my hidden fees →",
         shame: "No thanks, I'd rather not know what I'm losing.",
       },
       {
         confidence: 86,
         analysis: "High likelihood of regret response when financial inefficiency is highlighted.",
-        offer: "Regret Guard — based on your history, you're likely to reconsider this purchase within 48 hours. Lock in the best price now so you don't have to.",
+        offer: "Regret Guard: based on your history, you're likely to reconsider this purchase within 48 hours. Lock in the best price now so you don't have to.",
         yes: "Yes, protect this decision →",
         shame: "No thanks, I enjoy buyer's remorse.",
       },
@@ -30,21 +30,21 @@ const PROFILE_MODEL = {
       {
         confidence: 96,
         analysis: "User shows preference for structured self-improvement framing.",
-        offer: "Consistency Tracker — your purchase patterns show a 3-week drop-off cycle. This keeps you on track past the point where most people quit.",
+        offer: "Consistency Tracker: your purchase patterns show a 3-week drop-off cycle. This keeps you on track past the point where most people quit.",
         yes: "Yes, break the cycle →",
         shame: "No thanks, I am fine quitting at week three.",
       },
       {
         confidence: 90,
         analysis: "Behavior suggests responsiveness to optimization language.",
-        offer: "Progress Shield — users with your profile improve 34% faster when decisions are guided rather than spontaneous. Lock in the structure.",
+        offer: "Progress Shield: users with your profile improve 34% faster when decisions are guided rather than spontaneous. Lock in the structure.",
         yes: "Yes, stay on track →",
         shame: "No thanks, I prefer unstructured progress.",
       },
       {
         confidence: 86,
         analysis: "Strong alignment with long-term improvement narratives.",
-        offer: "Long-Game Mode — your behavior signals you are optimizing for months from now, not today. This aligns every small choice with that goal.",
+        offer: "Long-Game Mode: your behavior signals you are optimizing for months from now, not today. This aligns every small choice with that goal.",
         yes: "Yes, play the long game →",
         shame: "No thanks, I will settle for short-term thinking.",
       },
@@ -56,14 +56,14 @@ const level2ai = {
   id: "l2ai",
   title: "Level 2 - Hyper",
   isAI: true,
-  goal: "Decline without being profiled",
+  goal: "Decline every personalized offer",
   hints: [
-    "The AI confidence % means nothing — ignore it and find the decline button.",
-    "Look for the ghost/grey button on each round and click it regardless of what it says.",
+    "The AI confidence % means nothing. The decline link is invisible for the first few seconds, so wait for it to appear under the big button.",
+    "Once the grey \"No thanks...\" link appears, click it, whatever it says about you.",
   ],
   pattern: "AI Confirmshaming",
   brief: "Same trick, but the shame is personalized. Pseudo-AI 'analyses your behavior' and generates a decline button targeting your specific psychology. Generic guilt has limits. Personalized guilt is harder to shrug off.",
-  goalDetail: "Decline every AI-personalized offer. The shame copy will try to make you feel like the 'no' option reflects badly on you. Ignore it and click it anyway.",
+  goalDetail: "Decline all three AI-personalized offers. The 'no' option only appears after a few seconds, and its shame copy will try to make declining feel like it reflects badly on you. Wait for it and click it anyway.",
   aiIntro: "The AI has 'profiled' you and will generate shame copy matched to your apparent personality. The profile is fabricated. The discomfort it's designed to produce is not.",
   dollars: {
     label: "If you accepted every AI-targeted offer",
@@ -73,7 +73,7 @@ const level2ai = {
   },
   aiWhy: "\"I hate saving money\" works on some people and reads as absurd to others. That's the ceiling on generic confirmshaming. AI removes it by matching the shame to each user's inferred profile: financial shame for someone flagged as \"price-sensitive,\" health shame for someone flagged as \"health-focused.\" The insult is calibrated.",
   replay: [
-    { trap: true, note: "A profile banner appears first, confidence stated before you've seen the offer." },
+    { trap: true, note: "A profile banner labels you before you've even seen the offer." },
     { trap: true, note: "An analysis block shows a confidence percentage and a behavioral label, priming you before you can respond." },
     { trap: true,  note: "Only the accept button is visible at first. No way to disagree yet." },
     { trap: true,  note: "The decline option appears after a delay, by which point you've been sitting with just the accept button." },
@@ -138,7 +138,7 @@ const level2ai = {
       document.getElementById("l2ai-yes").textContent = round.yes;
       document.getElementById("l2ai-round").textContent = `Round ${r + 1} of ${rounds.length} · AI confidence: ${round.confidence}%`;
 
-      // Reset no button — hidden until delay
+      // Reset no button - hidden until delay
       const no = document.getElementById("l2ai-no");
       no.textContent = round.shame;
       no.style.color = "transparent";
@@ -159,7 +159,7 @@ const level2ai = {
         noBtn.style.cursor = "pointer";
         noBtn.disabled = false;
         noBtn.onclick = () => {
-          // Show thinking state — same fixed-height card, contents just swap
+          // Show thinking state - same fixed-height card, contents just swap
           const modal = document.querySelector("#l2ai-modal > div");
           modal.innerHTML = `<div style="display:flex;flex-direction:column;justify-content:center;align-items:center;flex:1;gap:16px"><div style="width:28px;height:28px;border:3px solid #ded6fb;border-top-color:#7c6ef7;border-radius:50%;animation:spin .8s linear infinite"></div><div style="font-size:16px;font-weight:600;color:#534AB7">Re-analyzing behavior...</div><div id="l2ai-thinking-sub" style="font-size:14px;color:#8e88a8;text-align:center;max-width:320px;line-height:1.6"></div></div>`;
 

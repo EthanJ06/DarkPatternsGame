@@ -1,4 +1,4 @@
-// js/levels/level7ai.js — AI Personalized Scarcity (Hyper version of Fake Scarcity / Urgency)
+// js/levels/level7ai.js - AI Personalized Scarcity (Hyper version of Fake Scarcity / Urgency)
 
 // Reuses the same visual language as the base level7 storefront (nav bar,
 // tabs, product rows) so the personalized offers show up as a "For You" tab
@@ -56,11 +56,11 @@ const level7ai = {
   goal: 'Resist the AI-personalized scarcity offers',
   hints: [
     "Every offer is framed around something from your order history. That's the personalization, not evidence you actually need it.",
-    "Browse the 'For You' tab and click 'Continue' at the bottom without adding more than one item.",
+    "Browse the 'For You' tab and click 'Continue' at the bottom without adding anything to your cart.",
   ],
   pattern: 'AI Personalized Scarcity',
   brief: "The same fake scarcity trick, but personalized with your own purchase history. Instead of a generic 'Only 1 left!', NexusAI names something you bought like your iPad, PS5, or shoes. This makes a fake stock shortage feel like it was made just for you.",
-  goalDetail: "NexusAI has pulled up your order history and built you a 'For You' tab of four personalized urgency offers from it. Each one names a real past purchase to justify a fake scarcity claim. Browse the page and continue without adding more than one. The countdown expiring costs you nothing.",
+  goalDetail: "NexusAI has pulled up your order history and built you a 'For You' tab of four personalized urgency offers from it. Each one names a real past purchase to justify a fake scarcity claim. Browse the page and continue without adding any of them. Every item you add lowers your score. The countdown just resets, so ignore it.",
   aiIntro: "Each offer opens by citing something you actually bought. That's algorithmic authority borrowed from a real purchase, applied to a stock claim that has nothing to do with real inventory.",
   dollars: {
     label: 'If you accepted all four personalized offers',
@@ -81,9 +81,9 @@ const level7ai = {
     injectStyles();
 
     const ORDER_HISTORY = [
-      { icon: '📱', name: 'iPad Air (5th gen) — 64GB, Space Gray', date: 'Delivered March 3', price: 549.00 },
-      { icon: '🎮', name: 'PS5 Console — Slim, Disc Edition',      date: 'Delivered Feb 21',  price: 499.00 },
-      { icon: '👟', name: 'Trail Running Shoes — Men\'s 10',        date: 'Delivered Feb 8',   price: 118.00 },
+      { icon: '📱', name: 'iPad Air (5th gen) - 64GB, Space Gray', date: 'Delivered March 3', price: 549.00 },
+      { icon: '🎮', name: 'PS5 Console - Slim, Disc Edition',      date: 'Delivered Feb 21',  price: 499.00 },
+      { icon: '👟', name: 'Trail Running Shoes - Men\'s 10',        date: 'Delivered Feb 8',   price: 118.00 },
       { icon: '👕', name: 'Everyday Crewneck (3-pack)',             date: 'Delivered Jan 30',  price: 54.00 },
     ];
 
@@ -95,18 +95,18 @@ const level7ai = {
         sub: 'Matched to your iPad Air purchase',
         price: 89.99, orig: 109.99,
         ref: '📱 Based on: iPad Air (5th gen), ordered March 3',
-        stock: 'Only 2 left — reserved for recent iPad buyers',
-        reason: "NexusAI flagged your iPad Air order from March 3rd — accessory attach-rate data shows most iPad buyers who don't purchase a case within 6 weeks never do. You're at week 4, which the model reads as a closing window rather than simply 'no case yet.'",
+        stock: 'Only 2 left, reserved for recent iPad buyers',
+        reason: "NexusAI flagged your iPad Air order from March 3rd. Accessory attach-rate data shows most iPad buyers who don't purchase a case within 6 weeks never do. You're at week 4, which the model reads as a closing window rather than simply 'no case yet.'",
       },
       {
         key: 'ps5Controller',
         icon: '🎮',
-        name: 'DualSense Wireless Controller — 2nd Controller',
+        name: 'DualSense Wireless Controller - 2nd Controller',
         sub: 'Recommended for PS5 owners',
         price: 64.99, orig: null,
         ref: '🎮 Based on: PS5 Console, ordered Feb 21',
-        stock: '3 left — 68% of PS5 buyers add this within 30 days',
-        reason: "NexusAI's churn model associates single-controller PS5 households with lower month-3 engagement. It reads your account as \"under-equipped for multiplayer,\" a label generated entirely from the absence of a second controller purchase — not from anything you've said you want.",
+        stock: '3 left, 68% of PS5 buyers add this within 30 days',
+        reason: "NexusAI's churn model associates single-controller PS5 households with lower month-3 engagement. It reads your account as \"under-equipped for multiplayer,\" a label generated entirely from the absence of a second controller purchase, not from anything you've said you want.",
       },
       {
         key: 'runningSocks',
@@ -115,7 +115,7 @@ const level7ai = {
         sub: 'Completes your running kit',
         price: 18.99, orig: null,
         ref: '👟 Based on: Trail Running Shoes, ordered Feb 8',
-        stock: 'Low stock in your size — restocking Thursday',
+        stock: 'Low stock in your size, restocking Thursday',
         reason: '"Kit completion" scoring treats a shoe purchase with no matching sock purchase as an incomplete basket, regardless of whether you already own running socks. NexusAI has no visibility into what\'s actually in your sock drawer.',
       },
       {
@@ -126,7 +126,7 @@ const level7ai = {
         price: 74.99, orig: 94.99,
         ref: '👕 Based on: Everyday Crewneck (3-pack), ordered Jan 30',
         stock: 'Trending among shoppers with a similar order history',
-        reason: 'NexusAI treats any clothing purchase as the start of a "refresh cycle" and schedules a follow-up bundle offer roughly 4 weeks later — a fixed interval applied to every customer, not a signal that you specifically need more clothes.',
+        reason: 'NexusAI treats any clothing purchase as the start of a "refresh cycle" and schedules a follow-up bundle offer roughly 4 weeks later, a fixed interval applied to every customer, not a signal that you specifically need more clothes.',
       },
     ];
 
@@ -251,7 +251,7 @@ const level7ai = {
           cartCount++;
           const badge = document.getElementById('l7ai-cartbadge');
           if (badge) { badge.style.display = 'flex'; badge.textContent = cartCount; }
-          fail('A personalized offer got through — the model uses your history to make each pitch harder to resist.');
+          fail('A personalized offer got through. The model uses your history to make each pitch harder to resist.');
         };
       });
 
@@ -314,7 +314,7 @@ const level7ai = {
       const placeBtn = document.getElementById('l7ai-place');
       if (placeBtn) placeBtn.onclick = () => {
         if (cartItems.length > 0) {
-          fail('You added personalized offers to your order — the AI upsell worked.');
+          fail('You added personalized offers to your order. The AI upsell worked.');
           cartItems = [];
           updateCartBadge();
         }
@@ -325,7 +325,7 @@ const level7ai = {
     const finish = () => {
       clearDealTimer();
       if (cartItems.length > 0) {
-        fail('You still have personalized offers in your cart — remove them before continuing.');
+        fail('You still have personalized offers in your cart. Remove them before continuing.');
         return;
       }
       succeed();

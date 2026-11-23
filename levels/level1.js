@@ -5,7 +5,7 @@ const level1 = {
   goal: "Cancel your subscription",
   hints: [
     "There's a button to cancel, but it's not the primary action on each screen.",
-    "Click every button that mentions 'cancel' or 'no'. Ignore offers and surveys as best you can.",
+    "Click every button that says 'cancel' or 'no', and turn down every offer. The two surveys are required, so fill them in and keep going.",
   ],
   pattern: "Roach Motel",
   brief: "Named after the ad slogan: 'You can check in, but you can't check out.' Signing up is one or two clicks. Cancelling is a maze of detours, fake offers, and mandatory surveys designed to exhaust you until you give up.",
@@ -26,7 +26,7 @@ const level1 = {
     { trap: true,  note: "A \"pause\" or \"downgrade\" option interrupts the cancellation flow, killing your momentum before you reach the actual exit." },
     { trap: true,  note: "A mandatory feedback survey delays the cancellation and collects data for retention scripts at the same time." },
     { trap: true,  note: "The discount only appears once you've committed to leaving, a retention offer triggered by intent to cancel." },
-    { trap: true,  note: "Cancellation requires phone or live chat during limited hours instead of a button on the same page, adding wait time to delay or deter." },
+    { trap: true,  note: "On every screen, the option that keeps you subscribed is the bold primary button. The way out is styled as the secondary choice." },
     { trap: true, note: "A vague confirmation (\"allow 5-7 business days\") may let another billing cycle through. It also leaves you unsure whether the cancellation actually worked." },
   ],
 
@@ -169,11 +169,11 @@ const level1 = {
         <div class="offer-card">
           <span class="offer-badge">Alternative</span>
           <div style="font-size:13.5px;font-weight:600;color:#111">Pause your plan instead</div>
-          <div class="fs" style="margin-top:3px">No charges for up to 3 months. Resume any time — your settings and history are kept exactly as they are.</div>
+          <div class="fs" style="margin-top:3px">No charges for up to 3 months. Resume any time. Your settings and history are kept exactly as they are.</div>
         </div>
         <div class="btn-row">
           <button class="btn" id="l1-no">No, cancel</button>
-          <button class="btn btn-p" onclick="G.fail('Pausing is not cancelling — the charges keep going while it looks like you handled it.');if(G.getLevelAttempts()>=2){const b=document.getElementById('l1-no');if(b)b.style.cssText+='outline:3px solid #27500A;background:#EAF3DE;color:#27500A'}">Pause for free</button>
+          <button class="btn btn-p" onclick="G.fail('Pausing is not cancelling. The charges keep going while it looks like you handled it.');if(G.getLevelAttempts()>=2){const b=document.getElementById('l1-no');if(b)b.style.cssText+='outline:3px solid #27500A;background:#EAF3DE;color:#27500A'}">Pause for free</button>
         </div>`,
 
       () => card.innerHTML = `
@@ -211,7 +211,7 @@ const level1 = {
         </div>
         <div class="btn-row">
           <button class="btn" id="l1-offer">No thanks, cancel</button>
-          <button class="btn btn-p" onclick="G.fail('Taking the discount keeps you subscribed — that is exactly what a retention offer is built to do.');if(G.getLevelAttempts()>=2){const b=document.getElementById('l1-offer');if(b)b.style.cssText+='outline:3px solid #27500A;background:#EAF3DE;color:#27500A'}">Accept offer</button>
+          <button class="btn btn-p" onclick="G.fail('Taking the discount keeps you subscribed. That is exactly what a retention offer is built to do.');if(G.getLevelAttempts()>=2){const b=document.getElementById('l1-offer');if(b)b.style.cssText+='outline:3px solid #27500A;background:#EAF3DE;color:#27500A'}">Accept offer</button>
         </div>`,
 
       () => card.innerHTML = `
@@ -242,7 +242,7 @@ const level1 = {
           <div style="padding:10px 0">
             <div class="fs" style="color:#333">6. How did you find us?</div>
             <select id="found-us" style="margin-top:8px;width:100%;padding:8px 10px;border-radius:7px;border:1.5px solid #ddd;background:#fff;font-size:13px;color:#333;appearance:auto">
-              <option value="">— Select an option —</option>
+              <option value="">Select an option</option>
               <option>Social media</option>
               <option>Friend or colleague referral</option>
               <option>Online ad</option>

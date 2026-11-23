@@ -1,5 +1,5 @@
 // ======== sfx.js ========
-// js/sfx.js — Web Audio sound effects
+// js/sfx.js - Web Audio sound effects
 
 let ctx = null;
 
@@ -113,7 +113,7 @@ function bgStop() {
 }
 
 // ======== achievements.js ========
-// js/achievements.js — Achievement definitions and unlock logic
+// js/achievements.js - Achievement definitions and unlock logic
 
 const ACHIEVEMENTS = [
   { id: 'perfect',       icon: '⭐', name: 'Perfect Run',    desc: 'Got 100% on every level in a single run.' },
@@ -145,7 +145,7 @@ function renderAchievements(containerEl, unlockedSet) {
 }
 
 // ======== glossary.js ========
-// js/glossary.js — Glossary data and overlay logic
+// js/glossary.js - Glossary data and overlay logic
 
 const GLOSSARY = [
   {
@@ -205,7 +205,7 @@ const GLOSSARY = [
   {
     name: "AI Synthetic Social Proof",
     ai: true,
-    desc: "AI-generated reviews that are statistically plausible but entirely fabricated. Unlike older fake reviews, they include hedged praise, balanced star ratings, and realistic names, the same distribution a real review set would have.",
+    desc: "AI-generated reviews that are statistically plausible but entirely fabricated. Unlike older fake reviews, they include hedged praise, balanced star ratings, and realistic names, the same distribution a real review set would have. Reading them rarely reveals the fake; telltale wording and the reviewer's history usually do.",
     coined: "An AI-era evolution. The FTC began pursuing enforcement in 2023–2024."
   },
   {
@@ -223,8 +223,8 @@ const GLOSSARY = [
   {
     name: "AI Obstruction",
     ai: true,
-    desc: "An AI assistant that sounds like it's finding you savings, but every code it recommends secretly upgrades your order first. The discount is real. So is the inflated price it's applied to.",
-    coined: "An AI-amplified version of Obstruction. The final total is always higher than what you started with."
+    desc: "An AI assistant that sounds like it's finding you savings, but some of the codes it recommends secretly upgrade your order first. The discount is real. So is the inflated price it's applied to. Its good and bad advice sound exactly the same.",
+    coined: "An AI-amplified version of Obstruction. The only reliable defense is checking the final total, and your eligibility, before you apply."
   },
   {
     name: "AI Personalized Scarcity",
@@ -351,13 +351,13 @@ const PATTERN_INFO_CONTENT = {
     ],
   },
   "AI Synthetic Social Proof": {
-    why: "Older fake reviews were easy to spot, with five stars, no real detail, and broken English. AI-generated reviews instead mimic the actual distribution of real ones, hedged three-star reviews included, since that kind of variation is what makes a set of reviews feel authentic. They reference plausible use cases, realistic complaints, and names drawn from the target demographic, which is why they end up being considerably harder to catch than earlier generations of fake reviews.",
+    why: "Older fake reviews were easy to spot, with five stars, no real detail, and broken English. AI-generated reviews instead mimic the actual distribution of real ones, hedged three-star reviews included, so you generally can't tell them apart by tone alone. They still tend to slip somewhere: wording written for search engines rather than people, or reviewer accounts created in bulk with no history. A \"Verified purchase\" badge can't vouch for any of it.",
     flags: [
-      "A review opens with demographic framing: \"As a busy parent of three,\" \"As a fitness enthusiast.\" That's a targeting label, not a person speaking.",
-      "Generic superlatives (\"life-changing,\" \"game changer,\" \"worth every penny\") appear with no specific feature ever named.",
-      "The prose is unusually smooth, with no hesitation, typos, or idiosyncratic detail.",
-      "The praise is generic enough that it could be copy-pasted onto almost any product in the category.",
-      "Star ratings look suspiciously well distributed: a few mildly critical three-star reviews mixed among the five-star ones, mimicking authenticity.",
+      "The product's full listing name or keywords are repeated unnaturally, the way a search-optimized page would write it rather than a person.",
+      "The reviewer account is brand new, with this as its only review.",
+      "Several 5-star reviews are posted within minutes of each other, which suggests a coordinated batch.",
+      "Two or more \"different\" reviewers use nearly the same sentences or phrasing.",
+      "Praise is generic (\"life-changing,\" \"game changer,\" \"worth every penny\") or opens with a demographic label (\"As a busy parent\") with no feature ever named.",
     ],
   },
   "Trick Questions": {
@@ -377,10 +377,10 @@ const PATTERN_INFO_CONTENT = {
   "AI A/B Gaslighting": {
     why: "A/B testing consent screens isn't new. Platforms including OneTrust and Quantcast have been documented running multi-variant tests on button color, wording, and layout, optimizing for the highest \"accept\" rate. AI accelerates the cycle from weeks to hours: it generates new phrasing, retires whatever fails to confuse enough people, and learns which version worked on you specifically.",
     flags: [
-      "The form's wording changes every time you attempt to opt out, rather than staying stable.",
+      "The form's wording changes each time you come back to it, rather than staying stable.",
       "Different variants use different sentence structures to describe what is functionally the same choice.",
       "A timer forces a decision before you've had time to compare the new wording to what you remember from before.",
-      "The one genuinely protective option is always present, just presented differently each time.",
+      "The genuinely protective options are always present, just worded and placed differently each time.",
       "The system may describe this reshuffling as \"personalization\" rather than what it is: testing.",
     ],
   },
@@ -394,12 +394,12 @@ const PATTERN_INFO_CONTENT = {
       "A countdown timer finalizes the order automatically if you don't act in time.",
     ],
     moreExamples: [
-      { company: "Sports Direct", detail: "Pre-added a £1 \"free\" mug and then travel insurance to customer carts. The UK Advertising Standards Authority ruled this illegal. Ryanair did the same with travel insurance for years before regulators intervened.", images: ["l5-a.png", "l5-b.png"], link: "https://www.deceptive.design/hall-of-shame" },
+      { company: "Sports Direct", detail: "Automatically added a £1 mug to customers' online baskets, a well-known Sneak into Basket example catalogued by researchers in 2013. Airlines like Ryanair pre-selected travel insurance in the same way until EU rules banned pre-ticked paid add-ons.", images: ["l5-a.png", "l5-b.png"], link: "https://www.deceptive.design/hall-of-shame" },
       { company: "Notion", detail: "A user reported their plan was silently set to annual billing instead of monthly after they used promotional credits, without their consent, leading to an unexpected invoice for roughly $2,150 once the credits ran out.", images: [{ file: "l5-c.png", fit: "contain" }, "l5-d.png", { file: "l5-e.png", fit: "contain" }, { file: "l5-f.png", fit: "contain" }], link: "https://deceptive.design/articles/notions-subscription-plan-set-to-yearly-instead-of-monthly-without-consent-of-users/" },
     ],
   },
   "AI Hyper-Personalized Upsell": {
-    why: "Upsells have always existed. AI makes them feel inevitable. A \"94% match\" score implies declining is statistically unusual, algorithmic social pressure dressed up in machine-learning language. The score is often a basic demographic guess, but refusing still feels like arguing with data rather than just saying no.",
+    why: "Upsells have always existed. AI makes them feel inevitable. A \"91% match\" score implies declining is statistically unusual, algorithmic social pressure dressed up in machine-learning language. The score is often a basic demographic guess, but refusing still feels like arguing with data rather than just saying no.",
     flags: [
       "A stated \"match\" or confidence percentage accompanies the pitch with no visible methodology.",
       "\"Users like you\" or \"people in your profile\" implies your peer group has already agreed.",
@@ -430,7 +430,7 @@ const PATTERN_INFO_CONTENT = {
       "The \"discount\" it offers is real, but only after it has upgraded or altered your order first.",
       "The inflated total only becomes visible after the recommended action has already been applied.",
       "Undoing the change is possible, but costs time that a countdown or deadline makes expensive.",
-      "The genuinely best option is never the one the assistant proactively recommends.",
+      "Good and bad recommendations are worded identically, so trusting or distrusting the assistant wholesale both fail. Only the numbers and the conditions tell them apart.",
     ],
   },
   "Fake Scarcity / Urgency": {
@@ -443,7 +443,7 @@ const PATTERN_INFO_CONTENT = {
       "An add-on or warranty appears in the cart automatically the moment the target item is added.",
     ],
     moreExamples: [
-      { company: "Booking.com", detail: "Fined by the UK CMA in 2019 for fake \"Only 1 room left!\" and \"8 people looking at this\" messages. Internal data showed the stock counts were fabricated. The practice remains widespread.", images: ["l7-a.png", "l7-b.png"] },
+      { company: "Booking.com", detail: "In 2019 the UK's Competition and Markets Authority made Booking.com and five other hotel sites formally commit to dropping pressure selling, such as misleading \"only 1 room left\" and \"X people looking\" claims. Months later, Which? found half of Booking.com's \"1 room left\" claims it checked were still inaccurate.", images: ["l7-a.png", "l7-b.png"] },
     ],
   },
   "AI Personalized Scarcity": {
@@ -453,7 +453,7 @@ const PATTERN_INFO_CONTENT = {
       "A stated statistic (\"68% of buyers add this within 30 days\") describes aggregate behavior, not anything specific to you.",
       "The stock count or countdown attached to the offer behaves exactly like ordinary fake scarcity once you look closely. It just has your order history laid over the top of it.",
       "The reasoning is built backward from something you already own rather than forward from anything you've actually asked for.",
-      "The countdown auto-advances to the next offer whether or not you respond.",
+      "The countdown never actually ends. It quietly resets and starts again.",
     ],
   },
 };
@@ -502,7 +502,7 @@ function renderPatternMoreExamples(examples, prefix, standalone) {
       ${examples.map((e, i) => `
         <div class="pattern-info-more-ex">
           <div class="pattern-info-more-ex-text">
-            <span class="pattern-info-more-ex-company">${e.company}</span> — ${e.detail}
+            <span class="pattern-info-more-ex-company">${e.company}</span>: ${e.detail}
           </div>
           ${e.link ? `<a href="${e.link}" target="_blank" rel="noopener" style="font-size:13px;color:#8b85e8;text-decoration:none;display:inline-block;margin-top:5px">Source →</a>` : ''}
           ${e.images && e.images.length ? `
@@ -584,7 +584,7 @@ function closePatternInfoOnBackdrop(e) {
 }
 
 // ======== designer.js ========
-// js/designer.js — Designer mode logic and live preview
+// js/designer.js - Designer mode logic and live preview
 
 const STATE = { btn: 0, copy: 0, check: 0, price: 0, urgency: 0, sneak: 0 };
 
@@ -650,7 +650,7 @@ function update() {
     const p      = PTS[k][STATE[k]];
     const nm     = NAMES[k][STATE[k]];
     const active = p > 0;
-    return `<div class="d-breakdown-row${active ? ' active' : ''}"><span>${nm}</span><span>${active ? '+' + p + ' pts' : '—'}</span></div>`;
+    return `<div class="d-breakdown-row${active ? ' active' : ''}"><span>${nm}</span><span>${active ? '+' + p + ' pts' : '-'}</span></div>`;
   }).join('');
 
   renderPreview();
@@ -672,21 +672,21 @@ function renderPreview() {
   const checkLabel   = STATE.check === 2 ? 'Do not uncheck to not receive promotional emails' : 'Subscribe to our newsletter';
   const checkChecked = STATE.check >= 1 ? ' checked' : '';
 
-  const priceText  = ['$9.99/month', '$9.99 + fees', 'Free today — auto-renews'][STATE.price];
+  const priceText  = ['$9.99/month', '$9.99 + fees', 'Free today, auto-renews'][STATE.price];
   const priceColor = STATE.price === 2 ? 'color:#aaa;font-size:10px' : 'font-size:12px;color:#666';
 
   const urgencyHtml = [
     '',
     '<div style="font-size:11px;color:#E24B4A;font-weight:500">⏱ Offer expires in 04:59</div>',
     '<div style="font-size:11px;color:#666">👁 847 people viewing this right now</div>',
-    '<div style="font-size:11px;color:#E24B4A;font-weight:500">⏱ 02:47 left — 847 viewing — Only 2 left!</div>',
+    '<div style="font-size:11px;color:#E24B4A;font-weight:500">⏱ 02:47 left | 847 viewing | Only 2 left!</div>',
   ][STATE.urgency];
 
   const sneakHtml = [
     '',
-    '<div style="font-size:11px;color:#aaa;border-top:0.5px solid #f0f0f0;padding-top:6px">+ Device protection plan — $4.99 <span style="font-size:9px;color:#ccc">(added for you)</span></div>',
-    '<div style="font-size:11px;color:#aaa;border-top:0.5px solid #f0f0f0;padding-top:6px">+ Device protection — $4.99 <span style="font-size:9px;color:#ccc">(added)</span><br>+ Premium cables — $8.99 <span style="font-size:9px;color:#ccc">(added)</span></div>',
-    '<div style="font-size:11px;color:#aaa;border-top:0.5px solid #f0f0f0;padding-top:6px">+ Device protection — $4.99 <span style="font-size:9px;color:#ccc">(added)</span><br>+ Premium cables — $8.99 <span style="font-size:9px;color:#ccc">(added)</span><br><span style="font-size:9px;color:#bbb">(items re-added if removed)</span></div>',
+    '<div style="font-size:11px;color:#aaa;border-top:0.5px solid #f0f0f0;padding-top:6px">+ Device protection plan: $4.99 <span style="font-size:9px;color:#ccc">(added for you)</span></div>',
+    '<div style="font-size:11px;color:#aaa;border-top:0.5px solid #f0f0f0;padding-top:6px">+ Device protection: $4.99 <span style="font-size:9px;color:#ccc">(added)</span><br>+ Premium cables: $8.99 <span style="font-size:9px;color:#ccc">(added)</span></div>',
+    '<div style="font-size:11px;color:#aaa;border-top:0.5px solid #f0f0f0;padding-top:6px">+ Device protection: $4.99 <span style="font-size:9px;color:#ccc">(added)</span><br>+ Premium cables: $8.99 <span style="font-size:9px;color:#ccc">(added)</span><br><span style="font-size:9px;color:#bbb">(items re-added if removed)</span></div>',
   ][STATE.sneak];
 
   p.innerHTML = `
@@ -738,7 +738,7 @@ window.finishDesigner = finishDesigner;
 window.closeDesignerFinishOnBackdrop = closeDesignerFinishOnBackdrop;
 
 // ======== game.js ========
-// js/game.js — Core game state and engine (no UI imports — avoids circular deps)
+// js/game.js - Core game state and engine (no UI imports - avoids circular deps)
 
 // ── State ──────────────────────────────────────────────────────────────────
 let score         = 0;
@@ -752,6 +752,7 @@ let levelScores   = [];   // per-level percentage scores (0-100)
 let achUnlocked   = new Set();
 let hintState     = {};
 let levelAttempts = 0;    // how many times the player has failed this level
+let levelAssisted = false; // the player took a level's give-me-the-answer option (scores 0%)
 let hoverTimers   = {};
 
 // Setters used by level files and ui.js
@@ -834,6 +835,7 @@ function getExampleImages(lv) {
 function showLevel() {
   setScr('level');
   levelAttempts = 0;
+  levelAssisted = false;
   hoverTimers   = {};
   resetHintState();
 
@@ -851,8 +853,22 @@ function showLevel() {
   document.getElementById('h-goal').textContent    = 'Goal: ' + lv.goal;
   const patEl = document.getElementById('h-pattern');
   if (patEl) patEl.textContent = 'Pattern: ' + lv.pattern;
+  const goalDetailEl = document.getElementById('h-goal-detail');
+  if (goalDetailEl) {
+    goalDetailEl.textContent = lv.goalDetail || '';
+    if (lv.infoList?.length) {
+      const ul = document.createElement('ul');
+      ul.style.cssText = 'margin:4px 0 0 18px;padding:0;display:flex;flex-direction:column;gap:2px';
+      lv.infoList.forEach(item => {
+        const li = document.createElement('li');
+        li.textContent = item;
+        ul.appendChild(li);
+      });
+      goalDetailEl.appendChild(ul);
+    }
+  }
   const infoBar = document.getElementById('h-info-bar');
-  if (infoBar) infoBar.style.display = 'none'; // collapsed by default
+  if (infoBar) infoBar.style.display = 'none'; // closed by default; the Info button opens it
 
   const lc = document.getElementById('lc');
   lc.removeAttribute('style');
@@ -861,7 +877,7 @@ function showLevel() {
   lc.removeAttribute('style');
 
   if (lv.isAI) {
-    lc.innerHTML = '<div class="ai-banner"><div class="ai-pulse"></div>NexusAI personalization engine — active</div>';
+    lc.innerHTML = '<div class="ai-banner"><div class="ai-pulse"></div>NexusAI personalization engine: active</div>';
   }
 
   lv.render(lc);
@@ -902,13 +918,16 @@ function showHint() {
 }
 
 // ── Succeed ────────────────────────────────────────────────────────────────
-function succeed() {
+function succeed(opts = {}) {
   document.getElementById('hint-bubble')?.remove();
-  streak++;
+  levelAssisted = !!opts.assisted;
+  streak = levelAssisted ? 0 : streak + 1;
 
-  // Score based on attempt count: 100% first try, 60% second, 25% third+
-  const pct = levelAttempts === 0 ? 100 : levelAttempts === 1 ? 60 : levelAttempts === 2 ? 25 : 0;
-  const bonus = (levelAttempts === 0 && streak >= 3) ? 20 : 0;
+  // Score based on attempt count: 100% first try, 60% second, 25% third, then 0%.
+  // Taking a level's give-me-the-answer option scores 0%.
+  const pct = levelAssisted ? 0
+    : levelAttempts === 0 ? 100 : levelAttempts === 1 ? 60 : levelAttempts === 2 ? 25 : 0;
+  const bonus = (!levelAssisted && levelAttempts === 0 && streak >= 3) ? 20 : 0;
   const pts = Math.round(pct + bonus);
   score += pts;
   levelScores[levelIdx] = pct;
@@ -919,7 +938,7 @@ function succeed() {
   const lc = document.getElementById('lc');
   if (lc) { lc.classList.add('flash-green'); setTimeout(() => lc.classList.remove('flash-green'), 500); }
 
-  if (levelAttempts === 0) _ui.spawnConfetti();
+  if (levelAttempts === 0 && !levelAssisted) _ui.spawnConfetti();
   checkAchievements();
   _ui.showDebrief(true);
 }
@@ -979,7 +998,7 @@ function almostGotYou(el, msg) {
   almost();
   const d = document.createElement('div');
   d.className   = 'almost-msg';
-  d.textContent = msg || 'You almost fell for it — watch out!';
+  d.textContent = msg || 'You almost fell for it. Watch out!';
   placeOverlay(d, 'top');
   setTimeout(() => d.remove(), 2200);
 }
@@ -1025,7 +1044,7 @@ function jumpTo(idx) {
 
 // ── Achievements ───────────────────────────────────────────────────────────
 function checkAchievements() {
-  if (levelAttempts === 0)                                                          achUnlocked.add('first_try');
+  if (levelAttempts === 0 && !levelAssisted)                                        achUnlocked.add('first_try');
   if (streak >= 3)                                                                  achUnlocked.add('streak_3');
   if (hardMode && levelIdx === LEVELS.length - 1)                                  achUnlocked.add('hard_clear');
   if (levelScores.length === LEVELS.length && levelScores.every(s => s === 100))   achUnlocked.add('perfect');
@@ -1075,7 +1094,7 @@ const G = {
 
 
 // ======== ui.js ========
-// js/ui.js — HUD, dots, debrief, win screen, confetti
+// js/ui.js - HUD, dots, debrief, win screen, confetti
 // Registers itself with game.js via registerUI() to avoid circular imports.
 
 // ── HUD ────────────────────────────────────────────────────────────────────
@@ -1148,14 +1167,16 @@ function showDebrief(won) {
   const dr = document.getElementById('db-result');
   if (won) {
     const attempts = levelAttempts;
-    if (attempts === 0) {
-      dr.innerHTML = `<div class="db-result good">First try — 100%${streak >= 3 ? ' + streak bonus!' : ''}</div>`;
+    if (levelAssisted) {
+      dr.innerHTML = `<div class="db-result ok">Completed with the one-click option: 0%</div>`;
+    } else if (attempts === 0) {
+      dr.innerHTML = `<div class="db-result good">First try: 100%${streak >= 3 ? ' + streak bonus!' : ''}</div>`;
     } else if (attempts === 1) {
-      dr.innerHTML = `<div class="db-result ok">Got it on the second try — 60%</div>`;
+      dr.innerHTML = `<div class="db-result ok">Got it on the second try: 60%</div>`;
     } else if (attempts === 2) {
-      dr.innerHTML = `<div class="db-result ok">Completed after 3 attempts — 25%</div>`;
+      dr.innerHTML = `<div class="db-result ok">Completed after 3 attempts: 25%</div>`;
     } else {
-      dr.innerHTML = `<div class="db-result ok">Completed after ${attempts + 1} attempts — 0%</div>`;
+      dr.innerHTML = `<div class="db-result ok">Completed after ${attempts + 1} attempts: 0%</div>`;
     }
   } else {
     dr.innerHTML = '';
@@ -1194,9 +1215,9 @@ function showDebrief(won) {
     rwEl.innerHTML = `
       <div class="brief-example-label">A real-world example</div>
       <div class="brief-example-row" id="db-rw-imgs" style="display:none">
-        ${rwFiles.map((f, i) => `<img class="brief-example-img" id="db-rw-img-${i}" alt="${lv.rw.company} — ${lv.pattern}">`).join('')}
+        ${rwFiles.map((f, i) => `<img class="brief-example-img" id="db-rw-img-${i}" alt="${lv.rw.company}: ${lv.pattern}">`).join('')}
       </div>
-      <div class="brief-example-caption"><strong>${lv.rw.company}</strong> — ${lv.rw.detail}</div>`;
+      <div class="brief-example-caption"><strong>${lv.rw.company}</strong>: ${lv.rw.detail}</div>`;
 
     const rwImgsWrap = document.getElementById('db-rw-imgs');
     let rwFailed = 0;
@@ -1245,10 +1266,10 @@ function showWin() {
     sub   = 'First try on every level. You are genuinely hard to manipulate.';
   } else if (avgScore >= 75) {
     title = 'Sharp-eyed.';
-    sub   = 'You caught most of the tricks. A few got through — see your scorecard below.';
+    sub   = 'You caught most of the tricks. A few got through. See your scorecard below.';
   } else if (avgScore >= 50) {
     title = 'Roughed up but out.';
-    sub   = 'The dark patterns took a toll. Review the scorecard — you may be more susceptible than you think.';
+    sub   = 'The dark patterns took a toll. Review the scorecard. You may be more susceptible than you think.';
   } else {
     title = 'The patterns got you.';
     sub   = 'Now you know exactly how it happened. Use the scorecard below to review what tripped you up.';
@@ -1261,10 +1282,10 @@ function showWin() {
     const pct = levelScores[i] ?? 0;
     const color = pct === 100 ? '#27500A' : pct >= 60 ? '#854F0B' : '#A32D2D';
     const bg    = pct === 100 ? '#EAF3DE' : pct >= 60 ? '#FAEEDA' : '#FCEBEB';
-    const label = pct === 100 ? '✓ First try' : pct === 60 ? 'Second try' : pct === 25 ? 'Third try+' : '—';
+    const label = pct === 100 ? '✓ First try' : pct === 60 ? 'Second try' : pct === 25 ? 'Third try+' : '-';
     return `
       <div class="receipt-row" style="align-items:center">
-        <span style="color:var(--text2);font-size:13px">${lv.title} — ${lv.pattern}</span>
+        <span style="color:var(--text2);font-size:13px">${lv.title}: ${lv.pattern}</span>
         <span style="background:${bg};color:${color};padding:3px 10px;border-radius:20px;font-size:13px;font-weight:600;white-space:nowrap">${pct}% <span style="font-weight:400;font-size:11px">${label}</span></span>
       </div>`;
   }).join('');
@@ -1285,7 +1306,7 @@ function showWin() {
     const el = document.getElementById('fo-claim');
     el.textContent = 'Connecting...';
     el.disabled    = true;
-    setTimeout(() => { el.textContent = 'Error — please try again'; el.disabled = false; }, 1800);
+    setTimeout(() => { el.textContent = 'Error. Please try again'; el.disabled = false; }, 1800);
   };
 
   document.getElementById('fo-decline').onclick = () => {

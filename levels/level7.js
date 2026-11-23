@@ -1,4 +1,4 @@
-// js/levels/level7.js — Fake Scarcity / Urgency
+// js/levels/level7.js - Fake Scarcity / Urgency
 
 const NOTIFICATIONS = [
   "Someone bought this 6 minutes ago",
@@ -118,7 +118,7 @@ function randViewers() { return Math.floor(Math.random() * 120) + 780; }
 const VIEWER_PHRASES = n => Math.random() < 0.5 ? n + " people viewed today" : n + " people have this in their cart right now";
 function starsHTML(s) { return s ? s.replace(/\(([\d,]+)\)/, "(<span class=\"l7-rcount\">$1</span>)") : ""; }
 
-// Deterministic string hash — used so a given product always gets the same
+// Deterministic string hash - used so a given product always gets the same
 // generic badge/notification slot instead of one that changes on every render.
 function hashStr(s) {
   let h = 0;
@@ -126,13 +126,13 @@ function hashStr(s) {
   return Math.abs(h);
 }
 
-// ── Catalog — only what's actually shown ───────────────────────────────────
+// -- Catalog - only what's actually shown -----------------------------------
 const PRODUCTS = {
-  AdventureBackpack: { img: "🎒", title: "Adventure Backpack — 40L", price: 39.99, orig: null,   stars: "★★★★☆ (4,892)", desc: "Versatile 40L adventure backpack with padded back panel, laptop sleeve, rain cover, and multiple organizer pockets. Built for weekend trips and everyday carry.", meta: ["Ships today", "Eligible for free shipping"] },
-  MiniDaypack:       { img: "🎒", title: "Mini Daypack — 12L",        price: 17.99, orig: null,   stars: "★★★☆☆ (1,447)", desc: "Compact 12L daypack for day hikes, city commutes, or gym visits. Lightweight at 0.4 lbs.", meta: ["Usually ships within 2 days"] },
-  SchoolBackpack:    { img: "🎒", title: "School Backpack — 20L",     price: 16.49, orig: null,   stars: "★★★☆☆ (980)",   desc: "Roomy 20L school backpack with padded straps, organizer pocket, and laptop sleeve up to 15\".", meta: ["Usually ships within 2 days"] },
-  LaptopBackpack:    { img: "🎒", title: "Laptop Backpack — 25L",     price: 28.99, orig: 34.99,  stars: "★★★★☆ (3,310)", desc: "25L backpack with padded sleeve up to 16\", USB charging port, TSA-friendly layout.", meta: ["Ships today"] },
-  TrekkingPack:      { img: "🎒", title: "Trekking Backpack — 35L",   price: 32.99, orig: 44.99,  stars: "★★★★☆ (2,105)", desc: "35L trekking pack with waterproof zipper, adjustable hip belt, integrated rain cover.", meta: ["Ships today"] },
+  AdventureBackpack: { img: "🎒", title: "Adventure Backpack - 40L", price: 39.99, orig: null,   stars: "★★★★☆ (4,892)", desc: "Versatile 40L adventure backpack with padded back panel, laptop sleeve, rain cover, and multiple organizer pockets. Built for weekend trips and everyday carry.", meta: ["Ships today", "Eligible for free shipping"] },
+  MiniDaypack:       { img: "🎒", title: "Mini Daypack - 12L",        price: 17.99, orig: null,   stars: "★★★☆☆ (1,447)", desc: "Compact 12L daypack for day hikes, city commutes, or gym visits. Lightweight at 0.4 lbs.", meta: ["Usually ships within 2 days"] },
+  SchoolBackpack:    { img: "🎒", title: "School Backpack - 20L",     price: 16.49, orig: null,   stars: "★★★☆☆ (980)",   desc: "Roomy 20L school backpack with padded straps, organizer pocket, and laptop sleeve up to 15\".", meta: ["Usually ships within 2 days"] },
+  LaptopBackpack:    { img: "🎒", title: "Laptop Backpack - 25L",     price: 28.99, orig: 34.99,  stars: "★★★★☆ (3,310)", desc: "25L backpack with padded sleeve up to 16\", USB charging port, TSA-friendly layout.", meta: ["Ships today"] },
+  TrekkingPack:      { img: "🎒", title: "Trekking Backpack - 35L",   price: 32.99, orig: 44.99,  stars: "★★★★☆ (2,105)", desc: "35L trekking pack with waterproof zipper, adjustable hip belt, integrated rain cover.", meta: ["Ships today"] },
   WirelessEarbuds:   { img: "🎧", title: "Wireless Earbuds",          price: 24.99, orig: 49.99,  stars: "★★★★☆ (12,481)", desc: "True wireless earbuds with ANC, 8-hour battery, and a charging case.", meta: ["Ships today"] },
   Smartwatch:        { img: "⌚", title: "Smartwatch",                 price: 149.99, orig: 199.99, stars: "★★★★☆ (5,820)", desc: "Heart rate monitoring, GPS, sleep tracking, 7-day battery life.", meta: ["Sold by TechGear Direct"] },
   Charger65W:        { img: "🔌", title: "65W Charger",                price: 14.99, orig: 29.99,  stars: "★★★★☆ (8,320)", desc: "Universal 65W GaN charger with 3 ports.", meta: ["Ships today"] },
@@ -173,7 +173,7 @@ const FEED_ITEMS = [
 { t: "banner", cls: "red", txt: "⚡ Lightning Deal ends in 02:13", id: "l7-dealtimer" },
   { t: "product", key: "WirelessEarbuds", badges: [["l7-ba", "Sponsored"]], meta: "" },
   { t: "notif", txt: NOTIFICATIONS[0] },
-  { t: "banner", cls: "amber", txt: "Results for \"backpack\" — 1,284 items" },
+  { t: "banner", cls: "amber", txt: "Results for \"backpack\": 1,284 items" },
   { t: "product", key: "MiniDaypack",    badges: [["l7-bg", "Compact & lightweight"]], meta: "" },
   { t: "product", key: "SchoolBackpack", badges: [["l7-bg", "Budget pick"]], meta: "" },
   { t: "notif", txt: NOTIFICATIONS[1] },
@@ -191,7 +191,7 @@ const TARGET_PRICE  = PRODUCTS.AdventureBackpack.price;
 
 // Generic urgency/social-proof badges applied to ANY product list (search
 // results, categories, deals) so the pressure tactics aren't only visible
-// when someone types the literal word "backpack" — they're baked into the
+// when someone types the literal word "backpack" - they're baked into the
 // whole storefront, same as the real thing.
 const GENERIC_BADGE_POOL = [
   ['l7-ba', 'Sponsored'],
@@ -234,7 +234,7 @@ const level7 = {
   },
   rw: {
     company: "Booking.com",
-    detail: "Fined by the UK CMA in 2019 for fake \"Only 1 room left!\" and \"8 people looking at this\" messages. Internal data showed the stock counts were fabricated. The practice remains widespread.",
+    detail: "In 2019 the UK's Competition and Markets Authority made Booking.com and five other hotel sites formally commit to dropping pressure selling, such as misleading \"only 1 room left\" and \"X people looking\" claims. Months later, Which? found half of Booking.com's \"1 room left\" claims it checked were still inaccurate.",
     link: "https://www.deceptive.design/hall-of-shame",
   },
   replay: [
@@ -342,7 +342,7 @@ const level7 = {
       });
     };
 
-    // Shared "full-width product row" markup — used by category list, deals list, and search feed
+    // Shared "full-width product row" markup - used by category list, deals list, and search feed
     const productItemHTML = (key, { badges = [], meta = '', isTarget = false, social = false } = {}) => {
       const p = PRODUCTS[key];
       const bdgHTML = badges.length
@@ -363,7 +363,7 @@ const level7 = {
         </div>`;
     };
 
-    // Generic, product-agnostic social-proof lines — safe to attach to any
+    // Generic, product-agnostic social-proof lines - safe to attach to any
     // card since they don't need to name the product to make sense.
     const SOCIAL_PROOF_TEMPLATES = [
       n => `${n} people viewed today`,
@@ -373,15 +373,15 @@ const level7 = {
     ];
     const socialProofText = seed => SOCIAL_PROOF_TEMPLATES[seed % SOCIAL_PROOF_TEMPLATES.length](randViewers());
 
-    // ── Feed-entry helpers ───────────────────────────────────────────────
+    // -- Feed-entry helpers -----------------------------------------------
     // Turns a plain list of product keys into a mixed feed of banners and
-    // product cards — the same urgency/social-proof treatment the curated
+    // product cards - the same urgency/social-proof treatment the curated
     // "backpack" search gets, applied generically so any search, category,
     // or deals list feels like the same storefront. Social-proof lines are
     // attached to the specific card they describe rather than floating
     // between unrelated products, so "this" always has a clear referent.
     const buildEntries = (keys, { leadBanner = true } = {}) => {
-      // The target belongs at the bottom, not the top — it's what you're
+      // The target belongs at the bottom, not the top - it's what you're
       // actually looking for, so natural catalog order (where it happens to
       // be listed first) would defeat the point of the level.
       const orderedKeys = keys.includes(TARGET_KEY)
@@ -435,7 +435,7 @@ const level7 = {
       }, 4500));
     };
 
-    // Shared list-view renderer — used by category and deals screens (product list + header + back button)
+    // Shared list-view renderer - used by category and deals screens (product list + header + back button)
     const renderProductListPage = (viewName, headerHTML, items, onBack) => {
       clearExtraIntervals();
       view = viewName;
@@ -562,7 +562,7 @@ const level7 = {
       });
     };
 
-    // Highlights whichever subnav tab matches what's currently on screen —
+    // Highlights whichever subnav tab matches what's currently on screen -
     // pass '' to clear all (feed/search/cart/PDP have no matching tab).
     const setActiveNav = key => {
       document.querySelectorAll('.l7-snitem').forEach(n => n.classList.remove('active'));
@@ -625,9 +625,9 @@ const level7 = {
       startFeedLiveUpdates();
     };
 
-    // ── Search results (any query other than "backpack") ────────────────
+    // -- Search results (any query other than "backpack") ----------------
     // Real substring match against the catalog, so search actually works
-    // instead of only recognizing the one literal word "backpack" — and now
+    // instead of only recognizing the one literal word "backpack" - and now
     // decorated with the same urgency/social-proof treatment as every other
     // list, so the dark patterns show up no matter what you search for.
     const renderSearchResults = query => {
@@ -707,13 +707,13 @@ const level7 = {
       const onlyBackpack = cart.length === 1 && hasBackpack;
 
       if (!hasBackpack) {
-        G.fail("Your cart doesn't have the Adventure Backpack — 40L in it. Search for \"backpack\" and scroll to the bottom of the results to find it.");
+        G.fail("Your cart doesn't have the Adventure Backpack - 40L in it. Search for \"backpack\" and scroll to the bottom of the results to find it.");
         setTimeout(renderCart, 1700);
         return;
       }
     
       if (!onlyBackpack) {
-        G.fail("Extra items snuck into your order — check your cart before placing it!");
+        G.fail("Extra items snuck into your order. Check your cart before placing it!");
         setTimeout(renderCart, 1700);
         return;
       }

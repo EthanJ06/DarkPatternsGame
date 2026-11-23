@@ -55,7 +55,7 @@
       </div>
     </div>
     <div style="display:flex;gap:16px;font-size:14px;color:var(--text3);flex-wrap:wrap;justify-content:center">
-      <span>14 levels</span><span>·</span><span>5 hearts</span><span>·</span><span>debrief after each</span>
+      <span>14 levels</span><span>·</span><span>debrief after each</span>
     </div>
     <div style="display:flex;gap:14px;flex-wrap:wrap;justify-content:center;align-items:center">
       <button class="gbtn gbtn-glossary" onclick="Glossary.show()">
@@ -108,9 +108,12 @@
         <button class="gbtn gbtn-ghost" id="h-hint-btn" style="display:none" onclick="G.showHint()">💡 Hint</button>
       </div>
     </div>
-    <div id="h-info-bar" style="display:none;background:var(--bg2);border-bottom:1px solid var(--border);padding:8px 16px;font-size:13px;color:var(--text2);gap:16px;flex-wrap:wrap;align-items:center">
-      <span id="h-goal"></span>
-      <span id="h-pattern" style="opacity:.7"></span>
+    <div id="h-info-bar" style="display:flex;background:var(--bg2);border-bottom:1px solid var(--border);padding:8px 16px;font-size:13px;color:var(--text2);gap:4px 16px;flex-wrap:wrap;align-items:baseline;flex-direction:column">
+      <div style="display:flex;gap:16px;flex-wrap:wrap;align-items:center">
+        <span id="h-goal" style="font-weight:600"></span>
+        <span id="h-pattern" style="opacity:.7"></span>
+      </div>
+      <span id="h-goal-detail" style="opacity:.85;line-height:1.45"></span>
     </div>
     <div class="fake-app" id="lc"></div>
     <div class="dots" id="dots-l"></div>
